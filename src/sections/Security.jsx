@@ -19,10 +19,10 @@ function Security() {
               <window.Icons.shield size={14} color="var(--suvvy-success-600)" />
               100% безопасность
             </span>
-            <h2 className="h1 mt-6" style={{ color: "#fff" }}>
+            <h2 className="h1 mt-6 security__title">
               Используйте ИИ без компромиссов — мощность LLM, безопасность ваших данных
             </h2>
-            <p className="lead mt-6" style={{ color: "rgba(255,255,255,0.7)", maxWidth: 720 }}>
+            <p className="lead mt-6 security__lead">
               Савви не передаёт в LLM-модель ни имён, ни телефонов, ни e-mail.
               Все чувствительные поля автоматически маскируются и шифруются до отправки.
             </p>
@@ -34,8 +34,8 @@ function Security() {
                 <div className="security__icon">
                   <window.Icons.shield size={18} />
                 </div>
-                <h3 className="h3" style={{ color: "#fff", fontSize: 17 }}>{pt.title}</h3>
-                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 14, lineHeight: 1.5 }}>{pt.desc}</p>
+                <h3 className="h3 security__card-title">{pt.title}</h3>
+                <p className="security__card-desc">{pt.desc}</p>
               </div>
             ))}
           </div>

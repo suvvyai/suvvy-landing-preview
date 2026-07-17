@@ -891,6 +891,8 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
+  padding-inline: 0;   /* было инлайном; секция во всю ширину контейнера */
+  max-width: 1200px;
 }
 .benefit {
   display: flex;
@@ -909,22 +911,22 @@
   margin-bottom: 34px;
 }
 .benefit__title {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 500;
   color: var(--suvvy-ink-900);
   line-height: 1.28;
   letter-spacing: -0.01em;
-  margin: 0 0 38px;
+  margin: 0 0 20px;
   white-space: pre-line;
 }
 .benefit__desc {
-  font-size: 17px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.55;
   color: var(--suvvy-ink-500);
   margin: 0;
   text-wrap: pretty;
 }
-.benefit__accent { color: var(--suvvy-accent-blue); }
+.benefit__accent { color: var(--suvvy-accent-blue); font-size: 15px; }
 
 /* ═══════════════════════════════════════════════
  *  SOLUTIONS — «Решения для автоматизации звонков и чатов»
@@ -2292,6 +2294,10 @@
   color: #fff;
 }
 .security__head { max-width: 720px; }
+.security__title { color: #fff; }
+.security__lead { color: rgba(255,255,255,0.7); max-width: 720px; }
+.security__card-title { color: #fff; font-size: 17px; }
+.security__card-desc { color: rgba(255,255,255,0.7); font-size: 14px; line-height: 1.5; }
 .security__grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
 }
@@ -2356,7 +2362,7 @@
     linear-gradient(135deg, #F3F5FC 0%, #F7F9FE 50%, #F1F4FC 100%);
   color: var(--suvvy-ink-700);
 }
-.ft__inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 56px 0 28px; }
+.ft__inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 100px 0 28px; }
 .ft__top {
   display: grid; grid-template-columns: 1.3fr 3fr;
   gap: 60px; padding-bottom: 44px;
@@ -3124,22 +3130,22 @@
 }
 .ct__body { position: relative; z-index: 1; padding: 44px 48px; }
 .ct__mark {
-  width: 54px; height: 54px; border-radius: 14px;
+  width: 34px; height: 34px; border-radius: 14px;
   background: rgba(255,255,255,0.6);
   display: inline-flex; align-items: center; justify-content: center;
   margin-bottom: 22px;
 }
 .ct__title {
   font-family: "Onest", var(--font-sans);
-  font-size: clamp(26px, 2.6vw, 34px); font-weight: 700; line-height: 1.2;
+  font-size: 30px; font-weight: 500; line-height: 1.2;
   letter-spacing: -0.02em; color: var(--suvvy-ink-900); margin: 0 0 26px;
 }
 .ct__actions { display: flex; flex-wrap: wrap; gap: 14px; }
 .ct__btn {
   display: inline-flex; align-items: center; gap: 10px;
-  height: 42px; padding: 0 24px; border-radius: 12px;
+  height: 42px; padding: 0 16px 0 12px; border-radius: 10px;
   background: var(--suvvy-accent-blue); color: #fff;
-  font-size: 15px; font-weight: 700;
+  font-size: 15px; font-weight: 600;
   transition: background 160ms var(--ease);
 }
 .ct__btn:hover { background: #2e30b8; }
@@ -3176,7 +3182,7 @@ img, svg, video, canvas { max-width: 100%; }
   .ft__inner { padding-inline: clamp(16px, 3vw, 28px); }
   .keyfn__inner, .cap__inner, .addfn__inner, .cases2__inner,
   .tm__inner, .sc__inner, .ct__inner, .sol-solutions,
-  .solutions.container, .benefits.container, .hero__grid.container,
+  .solutions.container, .hero__grid.container,
   .site-header__row.container { padding-inline: var(--gutter); }
   .cases2__inner { padding-inline: 0; }
   .cases2__inner .cases2__head { padding-inline: var(--gutter); }

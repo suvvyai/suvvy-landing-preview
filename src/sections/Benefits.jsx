@@ -23,7 +23,7 @@ function Benefits() {
     icon: "assets/icons/benefit-accuracy.svg",
     title: "Точность ответов\nCавви от 95%",
     desc:
-    <>Уникальная методика <span className="benefit__accent" style={{ fontSize: "15px" }}>Smart Bot Network</span> позволяет
+    <>Уникальная методика <span className="benefit__accent">Smart Bot Network</span> позволяет
         Cавви качественно улучшить общение с клиентами</>
 
   }];
@@ -31,12 +31,12 @@ function Benefits() {
 
   return (
     <section className="benefits-section">
-      <div className="benefits container" style={{ paddingInline: 0, maxWidth: "1200px" }}>
+      <div className="benefits container">
         {items.map((it) =>
-        <article className="benefit reveal" key={it.title} style={{ gap: "0px" }}>
+        <article className="benefit reveal" key={it.title}>
             <img className="benefit__icon" src={it.icon} alt="" aria-hidden="true" width="20" height="20" />
-            <h3 className="benefit__title" style={{ fontSize: "22px", margin: "0px 0px 20px" }}>{it.title}</h3>
-            <p className="benefit__desc" style={{ fontSize: "15px", lineHeight: "1.55", letterSpacing: "0px", textAlign: "left", padding: "0px" }}>{it.desc}</p>
+            <h3 className="benefit__title">{it.title}</h3>
+            <p className="benefit__desc">{it.desc}</p>
           </article>
         )}
       </div>

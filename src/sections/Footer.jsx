@@ -10,7 +10,7 @@ function Footer() {
   const cols = order.map((t) => all.find((c) => c.title === t)).filter(Boolean);
   return (
     <footer className="ft">
-      <div className="ft__inner" style={{ padding: "100px 0px 28px" }}>
+      <div className="ft__inner">
         <div className="ft__top">
           <div className="ft__brand">
             <img className="ft__logo" src="assets/logo-suvvy-full.svg" alt="Cавви" width="118" height="30" />
