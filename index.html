@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Савви — Платформа для создания мощных ИИ-ботов</title>
+  <meta name="description" content="Платформа для создания мощных AI-ботов. Продажи, поддержка, маркетплейсы и интеграции — всё в одном месте." />
+
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <link rel="stylesheet" href="src/styles.css" />
+  <link rel="stylesheet" href="src/sections.css" />
+
+  <template id="__bundler_thumbnail">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+      <rect width="400" height="400" fill="#11253E"/>
+      <g transform="translate(140,110)" fill="#fff">
+        <path d="M 73 143 C 59 143 47 140 35 134 C 24 127 16 119 9 108 C 3 97 0 85 0 71 C 0 57 3 45 10 35 C 16 24 25 15 36 9 C 47 3 60 0 74 0 C 85 0 96 2 105 6 C 114 10 122 16 129 23 C 119 32 105 31 93 26 C 88 24 81 23 75 23 C 65 23 57 25 49 29 C 42 33 36 39 32 46 C 28 54 25 62 25 71 C 25 80 28 89 32 96 C 36 104 42 110 49 114 C 57 118 65 120 75 120 C 80 120 84 119 89 118 C 101 115 117 117 122 129 L 126 138 C 127 140 127 143 125 144 C 119 145 112 134 105 137 C 95 141 85 143 73 143 Z"/>
+        <ellipse cx="57" cy="76" rx="16" ry="19"/>
+        <ellipse cx="100" cy="77" rx="16" ry="19"/>
+      </g>
+      <text x="200" y="320" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="44" fill="#fff">Савви</text>
+    </svg>
+  </template>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <!-- Data (plain JS, populates window.SUVVY_DATA) -->
+  <script src="src/data.js"></script>
+  <script src="image-slot.js"></script>
+
+  <!-- Icons and brand mark (JSX, registers window.Icons & window.SuvvyMark) -->
+  <script type="text/babel" src="src/icons.jsx"></script>
+  <script type="text/babel" src="src/sections/ChannelMarks.jsx"></script>
+
+  <!-- Sections (each registers a global component on window.*) -->
+  <script type="text/babel" src="src/sections/Header.jsx"></script>
+  <script type="text/babel" src="src/sections/Hero.jsx"></script>
+  <script type="text/babel" src="src/sections/Benefits.jsx"></script>
+  <script type="text/babel" src="src/sections/Solutions.jsx"></script>
+  <script type="text/babel" src="src/sections/Channels.jsx"></script>
+  <script type="text/babel" src="src/sections/KeyFunctions.jsx"></script>
+  <script type="text/babel" src="src/sections/Capabilities.jsx"></script>
+  <script type="text/babel" src="src/sections/AdditionalFunctions.jsx"></script>
+  <script type="text/babel" src="src/sections/HowItWorks.jsx"></script>
+  <script type="text/babel" src="src/sections/Scenarios.jsx"></script>
+  <script type="text/babel" src="src/sections/Setup.jsx"></script>
+  <script type="text/babel" src="src/sections/Cases.jsx"></script>
+  <script type="text/babel" src="src/sections/Testimonial.jsx"></script>
+  <script type="text/babel" src="src/sections/Testimonial2.jsx"></script>
+  <script type="text/babel" src="src/sections/Pricing.jsx"></script>
+  <script type="text/babel" src="src/sections/Security.jsx"></script>
+  <script type="text/babel" src="src/sections/Contact.jsx"></script>
+  <script type="text/babel" src="src/sections/Footer.jsx"></script>
+
+  <!-- Root app — composes everything -->
+  <script type="text/babel" src="src/App.jsx"></script>
+</body>
+</html>
