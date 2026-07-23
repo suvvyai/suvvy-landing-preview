@@ -64,13 +64,14 @@
   table.io input{width:120px;padding:9px 11px;border:2px solid var(--line);border-radius:10px;
     font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);text-align:right;}
   table.io input:focus{outline:none;border-color:var(--blue);}
-  .res{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .res{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
   .rc{border-radius:14px;padding:18px;background:var(--green-bg);border:1.5px solid #b2e8d2;}
   .rc.blue{background:#eeeffe;border-color:#c5c6f5;}
+  .rc.big{background:var(--ink);border-color:var(--ink);}
   .rc .l{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;color:var(--green);}
-  .rc.blue .l{color:var(--blue);}
-  .rc .v{font-size:23px;font-weight:800;line-height:1.15;color:var(--green);}.rc.blue .v{color:var(--blue);}
-  .rc .s{font-size:12px;color:var(--ink2);margin-top:4px;}
+  .rc.blue .l{color:var(--blue);}.rc.big .l{color:#c8b3f0;}
+  .rc .v{font-size:23px;font-weight:800;line-height:1.15;color:var(--green);}.rc.blue .v{color:var(--blue);}.rc.big .v{color:#fff;}
+  .rc .s{font-size:12px;color:var(--ink2);margin-top:4px;}.rc.big .s{color:#b8c1cf;}
   .item{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
   .item .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
   .item .t2{font-size:14px;font-weight:700;}.item .a{font-size:17px;font-weight:800;color:var(--green);white-space:nowrap;}
@@ -257,6 +258,7 @@
       <div class="rc"><div class="l">Конверсия</div><div class="v" id="r-conv">—</div><div class="s" id="r-conv-s">рост в бронь/квал-лид</div></div>
       <div class="rc"><div class="l">Доп. выручка / мес</div><div class="v" id="r-rev">—</div><div class="s">за счёт роста конверсии</div></div>
       <div class="rc blue"><div class="l">Эффект / мес всего</div><div class="v" id="r-total">—</div><div class="s">выручка + оптимизация ФОТ − стоимость Савви</div></div>
+      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r-year">—</div><div class="s">годовой эффект</div></div>
     </div>
   </div>
 
@@ -292,6 +294,7 @@
     document.getElementById('r-conv-s').textContent=(dPP>=0?'+':'')+dPP.toFixed(1).replace('.0','')+' п.п.';
     document.getElementById('r-rev').textContent=rub(addRev);
     document.getElementById('r-total').textContent=rub(total);
+    document.getElementById('r-year').textContent=rub(total*12);
     document.getElementById('e-rev').textContent=rub(addRev);
     document.getElementById('f-rev').textContent='('+Math.round(lA)+'×'+(cA*100).toFixed(1).replace('.0','')+'% − '+Math.round(lB)+'×'+(cB*100).toFixed(1).replace('.0','')+'%) × '+rubFull(chA);
     document.getElementById('e-fot').textContent=rub(fot);
