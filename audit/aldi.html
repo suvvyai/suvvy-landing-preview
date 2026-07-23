@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Савви × Алди-Карелия — разбор и расчёт выгоды</title>
+<style>
+  :root{
+    --ink:#11253e;--ink2:#5e748d;--ink3:#8695a7;--bg:#fff;--soft:#f0f4fa;--canvas:#e8ecf3;
+    --line:#e1e6ec;--blue:#3520fc;--purple:#9117d2;
+    --grad:linear-gradient(90deg,#3520fc 0%,#9117d2 50%,#ee0ea8 100%);
+    --green:#15803d;--green-bg:#e7f5ec;--red:#b91c1c;--amber:#b45309;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--canvas);}
+  body{font-family:-apple-system,'Segoe UI',Roboto,'Inter',Arial,sans-serif;color:var(--ink);
+    font-size:15px;line-height:1.5;padding:28px 16px;-webkit-font-smoothing:antialiased;}
+  .page{max-width:900px;margin:0 auto;}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:26px 30px;margin-bottom:16px;}
+  .hero{position:relative;overflow:hidden;}.hero::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad);}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--purple);margin:0 0 8px;}
+  h1{font-size:27px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;font-weight:800;}
+  .sub{color:var(--ink2);font-size:14px;margin:0;}
+  h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0 0 4px;}
+  .lead{color:var(--ink2);font-size:13.5px;margin:0 0 18px;}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px;}
+  .m{background:var(--soft);border-radius:10px;padding:14px 16px;}
+  .m .v{font-size:26px;font-weight:800;line-height:1;letter-spacing:-.02em;}
+  .m .l{font-size:11.5px;color:var(--ink2);margin-top:6px;font-weight:600;}
+  .m.good .v{color:var(--green);}.m.bad .v{color:var(--red);}
+  ul{margin:8px 0 0;padding-left:18px;}li{margin:5px 0;}
+  .tag{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 10px;border-radius:90px;}
+  .tag.g{background:var(--green-bg);color:var(--green);}.tag.a{background:#fdf3e6;color:var(--amber);}
+  .box{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+  .box.red{border-color:#f3c9c9;background:#fdf6f6;}.box.amber{border-color:#f0dcbd;background:#fdf9f2;}
+  .box h3{margin:0 0 6px;font-size:15.5px;font-weight:800;}.box p{margin:0;font-size:13.5px;}
+  .box .why{color:var(--ink2);font-size:12.5px;margin-top:6px;}
+  .pb{margin:0 0 14px;}
+  .pb .h{font-size:13px;font-weight:800;margin:0 0 6px;}
+  .pb pre{margin:0;background:#11253e;color:#e3e9f2;border-radius:10px;padding:14px 16px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;
+    white-space:pre-wrap;word-break:break-word;overflow-x:auto;}
+  .pb pre .t{color:#c8b3f0;font-weight:700;}
+  .steps{counter-reset:s;list-style:none;padding:0;margin:8px 0 0;}
+  .steps li{counter-increment:s;position:relative;padding:10px 0 10px 40px;border-bottom:1px dashed var(--line);}
+  .steps li:last-child{border-bottom:0;}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:9px;width:26px;height:26px;background:var(--ink);
+    color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+  .owner{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;}
+  .effect{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .effect .e{background:var(--soft);border-radius:10px;padding:16px;}.effect .e b{display:block;font-size:15px;}
+  /* ── Калькулятор ── */
+  .calc-hero{background:var(--ink);color:#fff;border:none;}
+  .calc-hero .kicker{color:#c8b3f0;}.calc-hero h1{color:#fff;}.calc-hero .sub{color:#b8c1cf;}
+  .fact{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .fc{background:var(--soft);border-radius:12px;padding:14px;}
+  .fc .fv{font-size:20px;font-weight:800;}.fc .fl{font-size:12px;color:var(--ink2);margin-top:4px;line-height:1.4;}
+  table.io{width:100%;border-collapse:collapse;}
+  table.io th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);text-align:right;padding:0 8px 8px;font-weight:700;}
+  table.io th:first-child{text-align:left;}
+  table.io td{padding:6px 8px;border-top:1px solid var(--line);vertical-align:middle;}
+  table.io td.lbl{font-size:13px;font-weight:600;}
+  table.io td.lbl small{display:block;font-weight:500;color:var(--ink2);font-size:11px;}
+  table.io input{width:120px;padding:9px 11px;border:2px solid var(--line);border-radius:10px;
+    font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);text-align:right;}
+  table.io input:focus{outline:none;border-color:var(--blue);}
+  .res{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .rc{border-radius:14px;padding:18px;background:var(--green-bg);border:1.5px solid #b2e8d2;}
+  .rc.blue{background:#eeeffe;border-color:#c5c6f5;}
+  .rc .l{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;color:var(--green);}
+  .rc.blue .l{color:var(--blue);}
+  .rc .v{font-size:23px;font-weight:800;line-height:1.15;color:var(--green);}.rc.blue .v{color:var(--blue);}
+  .rc .s{font-size:12px;color:var(--ink2);margin-top:4px;}
+  .item{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+  .item .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .item .t2{font-size:14px;font-weight:700;}.item .a{font-size:17px;font-weight:800;color:var(--green);white-space:nowrap;}
+  .item .f{font-size:12px;color:var(--ink2);background:var(--soft);border-radius:8px;padding:7px 10px;margin-top:8px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;}
+  .est{color:var(--blue);font-weight:700;}.sys{color:var(--green);font-weight:700;}
+  .note{font-size:11.5px;color:var(--ink3);line-height:1.5;margin-top:14px;}.note b{color:var(--ink2);}
+  .foot{display:flex;align-items:center;gap:12px;color:var(--ink2);font-size:12.5px;padding:6px 2px 0;}
+  .chip{width:34px;height:34px;border-radius:9px;background:var(--grad);flex-shrink:0;display:flex;
+    align-items:center;justify-content:center;color:#fff;font-weight:800;}
+  @media (max-width:640px){.metrics,.fact,.res,.effect{grid-template-columns:1fr;}table.io input{width:100%;}}
+  @media print{body{background:#fff;padding:0;}.card{break-inside:avoid;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="card hero">
+    <p class="kicker">Разбор работы ИИ-агента</p>
+    <h1>Как ваш ИИ-менеджер обрабатывает заявки — и где скрыт рост</h1>
+    <p class="sub">База отдыха «Алди-Карелия» · агент «Квалификатор ALDI» · период: 2 месяца · июль 2026</p>
+  </div>
+
+  <div class="card">
+    <h2>Что мы сделали</h2>
+    <p class="lead">Разобрали переписки вашего бота и работу интеграций. Ниже — что работает хорошо,
+      что тихо теряет выручку, как это исправить, и расчёт выгоды в конце.</p>
+    <div class="metrics">
+      <div class="m"><div class="v">~330</div><div class="l">диалогов за 2 месяца</div></div>
+      <div class="m good"><div class="v">66%</div><div class="l">доведены до квалификации (даты + гости)</div></div>
+      <div class="m good"><div class="v">19%</div><div class="l">явно позитивный отклик</div></div>
+      <div class="m bad"><div class="v">6%</div><div class="l">дошли до согласования цены</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Сильные стороны <span class="tag g">работает хорошо</span></h2>
+    <ul>
+      <li><b>2 из 3 обращений</b> доводит до квалификации: собирает даты, гостей, пожелания, заполняет карточку в amoCRM.</li>
+      <li><b>Отвечает в среднем за ~16 секунд</b>, вежливо, на языке гостя, работает 24/7.</li>
+      <li><b>Богатая база знаний</b>: домики, услуги, правила, как добраться — отвечает точно.</li>
+      <li>Гости благодарят за скорость и подробность — доверие высокое.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Что тихо теряет выручку</h2>
+    <p class="lead">Три вещи мешают довести готового гостя до брони. Первая — критичная.</p>
+    <div class="box red">
+      <h3>🔴 Сервер проверки цен не отвечает — бот не может назвать стоимость</h3>
+      <p>Когда гость называет даты, бот запрашивает цену и наличие у сервиса бронирования (TravelLine через
+        промежуточный сервер). Мы проверили: сервер недоступен — запрос висит 10 минут и обрывается ошибкой.
+        Так во всех проверенных диалогах.</p>
+      <p class="why"><b>Что видит гость:</b> бот не может сказать цену и переводит на менеджера. Тёплый лид ждёт,
+        часть уходит. Это и есть разрыв «66% квалифицированы → 6% дошли до цены». Плюс в запрос не передаётся число
+        гостей и тип домика — поэтому цена приходит только по одному дефолтному варианту.</p>
+    </div>
+    <div class="box amber">
+      <h3>🟡 Нет автонапоминаний (follow-up)</h3>
+      <p>Гость ушёл посоветоваться или посчитать — и диалог обрывается, никто не возвращается. Одно-два аккуратных
+        касания возвращают заметную долю «подумающих».</p>
+    </div>
+    <div class="box amber">
+      <h3>🟡 Возражения «дорого» и «расчётный час» не отрабатываются</h3>
+      <p>На «дорого» бот не переводит цену в ценность и не предлагает альтернативу. На вопрос про заезд 15:00 /
+        выезд 12:00 повторяет одно и то же — вплоть до потери гостя.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Стоимость диалога — можно снизить без потери качества</h2>
+    <p class="lead">Средний диалог обходится примерно в <b>35 ₽</b>, но длинные переписки доходят до <b>200–600 ₽</b>:
+      на каждом шаге в модель заново уходит вся история сообщений и вызовов функций.</p>
+    <ul>
+      <li><b>Более лёгкая модель под задачу</b> — для квалификации топовая модель избыточна (наибольшая экономия).</li>
+      <li><b>Ограничить историю диалога</b> (по числу сообщений/времени), для amoCRM — саммари. Убирает дорогие длинные диалоги.</li>
+      <li><b>Не хранить историю вызовов функций</b> — прошлые ответы не гоняются повторно.</li>
+      <li><b>Предохранители:</b> лимит стоимости и числа сообщений на диалог + лимит длины ответа.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Готовые блоки для сценария бота</h2>
+    <p class="lead">Можно вставить в инструкцию агента как есть — закрывают частые причины срыва.</p>
+    <div class="pb"><div class="h">💰 Отработка возражения «дорого»</div><pre><span class="t">#ОТРАБОТКА ВОЗРАЖЕНИЯ «ДОРОГО»</span>
+Если клиент говорит, что дорого / сравнивает с отелем:
+1. Согласись с чувством, не спорь.
+2. Кратко покажи ценность: отдельный домик на природе, своя территория, кухня и мангал, баня/чан, тишина.
+3. Сразу предложи бюджетную альтернативу: будни, меньше ночей, номер вместо домика, низкий сезон.
+4. Спроси комфортный бюджет и подбери под него. Не повторяй одну и ту же цену.</pre></div>
+    <div class="pb"><div class="h">🕒 Условия заезда/выезда (расчётный час)</div><pre><span class="t">#ВРЕМЯ ЗАЕЗДА И ВЫЕЗДА</span>
+Заезд после 15:00, выезд до 12:00 — стандартный расчётный час (оплачивается период, а не 24 часа).
+Ранний заезд/поздний выезд — за почасовую доплату, если домик свободен.
+На возражение ответь ОДИН раз понятно и предложи решение. Не повторяй формулировку по кругу.
+Если клиент недоволен — передай менеджеру для индивидуальных условий.</pre></div>
+    <div class="pb"><div class="h">🏡 Показывай именно запрошенный домик</div><pre><span class="t">#ПОДБОР ВАРИАНТА</span>
+Всегда предлагай именно тот вариант, который назвал клиент.
+Если проверка цен вернула другой объект или не вернула запрошенный — НЕ выдавай подмену как ответ.
+Скажи «по [домику] проверю отдельно» и предложи позвать оператора. Альтернативу — дополнительно, не вместо.</pre></div>
+    <div class="pb"><div class="h">📊 Ориентир по цене без точных дат</div><pre><span class="t">#ЕСЛИ КЛИЕНТ НЕ ДАЁТ ДАТЫ</span>
+Не требуй даты повторно более 2 раз. Дай вилку «от … ₽/ночь» по типам размещения из базы знаний
+и мягко предложи закрепить конкретные даты для точного расчёта.</pre></div>
+    <div class="pb"><div class="h">🧭 Гигиена диалога</div><pre><span class="t">#ОГРАНИЧЕНИЯ (дополнить)</span>
+- Один ключевой вопрос за сообщение (даты → гости → вариант), не всё сразу.
+- Не задавай один вопрос более 2 раз — дай ориентир и предложи оператора.
+- На раздражение — эмпатия + конкретное предложение, не повтор вопросов.
+- Не выдавай подмену объекта/цены, если функция вернула ошибку — зови оператора.</pre></div>
+  </div>
+
+  <div class="card">
+    <h2>Отдельно — про рекламу <span class="tag a">маркетинг</span></h2>
+    <p>В переписках всплыл сигнал: реклама в VK откручивается на <b>нецелевую географию</b> (например, Саратов)
+      с <b>частотой 6–7 показов в день</b>. Стоит сузить гео и ограничить частоту — тот же бюджет даст больше заявок.</p>
+  </div>
+
+  <div class="card">
+    <h2>План действий</h2>
+    <ol class="steps">
+      <li><span class="owner">Техника · приоритет 1</span><br>Поднять сервер проверки цен, перенести на стабильный хостинг с мониторингом; передавать число гостей и тип домика; вернуть проверку всех доступных вариантов.</li>
+      <li><span class="owner">Настройка бота · быстрый эффект</span><br>Включить автонапоминания: 2–3 часа → день → три дня, с остановкой при ответе гостя.</li>
+      <li><span class="owner">Сценарий</span><br>Добавить отработку «дорого» и понятный ответ про расчётный час (блоки выше).</li>
+      <li><span class="owner">Стоимость</span><br>Более лёгкая модель + лимит истории + не хранить историю функций.</li>
+      <li><span class="owner">Маркетинг</span><br>Сузить географию и ограничить частоту показов в VK.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Что это даёт</h2>
+    <div class="effect">
+      <div class="e"><b>Больше броней</b><p style="margin:6px 0 0;font-size:13px;color:var(--ink2)">Рабочая проверка цен + напоминания закрывают разрыв «квалифицирован → цена → бронь».</p></div>
+      <div class="e"><b>Меньше нагрузки</b><p style="margin:6px 0 0;font-size:13px;color:var(--ink2)">Бот сам называет цену и напоминает — люди только на закрытии.</p></div>
+      <div class="e"><b>Экономия</b><p style="margin:6px 0 0;font-size:13px;color:var(--ink2)">Точный таргет и оптимизация стоимости диалога.</p></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ КАЛЬКУЛЯТОР ВЫГОДЫ ═══════════════ -->
+  <div class="card calc-hero">
+    <p class="kicker">Расчёт выгоды · заполняем вместе</p>
+    <h1>Что изменилось в деньгах: до и после Савви</h1>
+    <p class="sub">Впишите цифры «до» — расчёт по факту пересчитается сразу. Зелёным — уже измерено в системе, синим — берём у вас.</p>
+  </div>
+
+  <div class="card">
+    <h2>Что бот уже делает сам <span class="sys">из системы</span></h2>
+    <p class="lead">Факты за последний месяц — их не надо спрашивать, они измерены.</p>
+    <div class="fact">
+      <div class="fc"><div class="fv">~170</div><div class="fl">обращений в месяц обрабатывает бот</div></div>
+      <div class="fc"><div class="fv">66%</div><div class="fl">доводит до квалификации без менеджера</div></div>
+      <div class="fc"><div class="fv">~16 сек</div><div class="fl">среднее время ответа 24/7, включая ночь и выходные</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Ваши цифры: до и после</h2>
+    <p class="lead">Впишите на встрече. Зелёные поля уже из системы.</p>
+    <table class="io">
+      <thead><tr><th>Показатель</th><th>Было (до Савви)</th><th>Стало (с Савви)</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">Обращений в месяц</td>
+          <td><input id="leadsB" type="number" value="170"></td>
+          <td><input id="leadsA" type="number" value="170"></td></tr>
+        <tr><td class="lbl">Конверсия в бронь / квал-лид<small>% от обращений</small></td>
+          <td><input id="convB" type="number" value="15"></td>
+          <td><input id="convA" type="number" value="20"></td></tr>
+        <tr><td class="lbl">Средний чек брони, ₽</td>
+          <td><input id="checkB" type="number" value="30000"></td>
+          <td><input id="checkA" type="number" value="30000"></td></tr>
+        <tr><td class="lbl">Менеджеров / операторов</td>
+          <td><input id="mgrsB" type="number" value="2"></td>
+          <td><input id="mgrsA" type="number" value="1"></td></tr>
+        <tr><td class="lbl">Зарплата менеджера, ₽/мес</td>
+          <td><input id="salaryB" type="number" value="70000"></td>
+          <td><input id="salaryA" type="number" value="70000"></td></tr>
+        <tr><td class="lbl">Стоимость 1 диалога в Савви, ₽<small>реальная средняя из системы</small></td>
+          <td style="text-align:right;color:var(--ink3);font-size:13px;padding-right:19px">—</td>
+          <td><input id="dlgCost" type="number" value="35" title="Средняя из системы; можно подставить целевую после оптимизации"></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Что изменилось</h2>
+    <div class="res">
+      <div class="rc"><div class="l">Конверсия</div><div class="v" id="r-conv">—</div><div class="s" id="r-conv-s">рост в бронь/квал-лид</div></div>
+      <div class="rc"><div class="l">Доп. выручка / мес</div><div class="v" id="r-rev">—</div><div class="s">за счёт роста конверсии</div></div>
+      <div class="rc blue"><div class="l">Эффект / мес всего</div><div class="v" id="r-total">—</div><div class="s">выручка + оптимизация ФОТ − стоимость Савви</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Разбор эффекта</h2>
+    <div class="item"><div class="top"><span class="t2">📈 Рост конверсии</span><span class="a" id="e-rev">—</span></div><div class="f" id="f-rev"></div></div>
+    <div class="item"><div class="top"><span class="t2">👥 Оптимизация работы менеджеров</span><span class="a" id="e-fot">—</span></div>
+      <div class="f" id="f-fot"></div><div class="note" style="margin-top:6px" id="n-fot"></div></div>
+    <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="e-cost" style="color:var(--red)">—</span></div><div class="f" id="f-cost"></div></div>
+    <div class="note"><b>Как считаем:</b> доп. выручка = обращения × прирост конверсии × чек; оптимизация ФОТ = (менеджеров было − стало) × зарплата;
+      стоимость Савви = обращения × реальная стоимость диалога (из системы). Если штат не сокращали — эффект по ФОТ читается как высвобожденное время.
+      Итог — ориентир, финальные цифры сверяем с фактом клиента.</div>
+  </div>
+
+
+</div>
+
+<script>
+  function rub(n){n=Math.round(n);var s=n<0?'−':'';n=Math.abs(n);
+    if(n>=1e6)return s+(n/1e6).toFixed(n>=1e7?0:1).replace('.',',')+' млн ₽';
+    if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
+  function rubFull(n){return Math.round(n).toLocaleString('ru-RU')+' ₽';}
+  function v(id){return parseFloat(document.getElementById(id).value)||0;}
+  function calc(){
+    var lB=v('leadsB'),lA=v('leadsA'),cB=v('convB')/100,cA=v('convA')/100,chB=v('checkB'),chA=v('checkA'),
+        mB=v('mgrsB'),mA=v('mgrsA'),sB=v('salaryB'),sA=v('salaryA'),dc=v('dlgCost');
+    var dPP=(cA-cB)*100;
+    var revB=lB*cB*chB, revA=lA*cA*chA, addRev=revA-revB;
+    var fot=mB*sB-mA*sA;
+    var cost=lA*dc;
+    var total=addRev+fot-cost;
+    document.getElementById('r-conv').textContent=(cB*100).toFixed(1).replace('.0','')+'% → '+(cA*100).toFixed(1).replace('.0','')+'%';
+    document.getElementById('r-conv-s').textContent=(dPP>=0?'+':'')+dPP.toFixed(1).replace('.0','')+' п.п.';
+    document.getElementById('r-rev').textContent=rub(addRev);
+    document.getElementById('r-total').textContent=rub(total);
+    document.getElementById('e-rev').textContent=rub(addRev);
+    document.getElementById('f-rev').textContent='('+Math.round(lA)+'×'+(cA*100).toFixed(1).replace('.0','')+'% − '+Math.round(lB)+'×'+(cB*100).toFixed(1).replace('.0','')+'%) × '+rubFull(chA);
+    document.getElementById('e-fot').textContent=rub(fot);
+    document.getElementById('f-fot').textContent=Math.round(mB)+' × '+rubFull(sB)+' − '+Math.round(mA)+' × '+rubFull(sA);
+    document.getElementById('n-fot').textContent='Бот сам доводит до квалификации ~'+Math.round(lA*0.66)+' обращений/мес — раньше это делали руками.';
+    document.getElementById('e-cost').textContent='−'+rub(cost);
+    document.getElementById('f-cost').textContent=Math.round(lA)+' диалогов × '+rubFull(dc)+' (реальная средняя)';
+  }
+  ['leadsB','leadsA','convB','convA','checkB','checkA','mgrsB','mgrsA','salaryB','salaryA','dlgCost']
+    .forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+  calc();
+</script>
+</body>
+</html>
