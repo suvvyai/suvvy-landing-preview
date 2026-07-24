@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Савви × Атоми — разбор работы ИИ-консультанта и расчёт эффекта</title>
+<style>
+  :root{
+    --ink:#11253e;--ink2:#5e748d;--ink3:#8695a7;--bg:#fff;--soft:#f0f4fa;--canvas:#e8ecf3;
+    --line:#e1e6ec;--blue:#3520fc;--purple:#9117d2;
+    --grad:linear-gradient(90deg,#3520fc 0%,#9117d2 50%,#ee0ea8 100%);
+    --green:#15803d;--green-bg:#e7f5ec;--red:#b91c1c;--amber:#b45309;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--canvas);}
+  body{font-family:-apple-system,'Segoe UI',Roboto,'Inter',Arial,sans-serif;color:var(--ink);
+    font-size:15px;line-height:1.5;padding:28px 16px;-webkit-font-smoothing:antialiased;}
+  .page{max-width:900px;margin:0 auto;}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:26px 30px;margin-bottom:16px;}
+  .hero{position:relative;overflow:hidden;}.hero::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad);}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--purple);margin:0 0 8px;}
+  h1{font-size:27px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;font-weight:800;}
+  .sub{color:var(--ink2);font-size:14px;margin:0;}
+  h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0 0 4px;}
+  .lead{color:var(--ink2);font-size:13.5px;margin:0 0 18px;}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px;}
+  .m{background:var(--soft);border-radius:10px;padding:14px 16px;}
+  .m .v{font-size:26px;font-weight:800;line-height:1;letter-spacing:-.02em;}
+  .m .l{font-size:11.5px;color:var(--ink2);margin-top:6px;font-weight:600;}
+  .m.good .v{color:var(--green);}.m.bad .v{color:var(--red);}
+  ul{margin:8px 0 0;padding-left:18px;}li{margin:5px 0;}
+  .tag{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 10px;border-radius:90px;}
+  .tag.g{background:var(--green-bg);color:var(--green);}.tag.a{background:#fdf3e6;color:var(--amber);}
+  .box{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+  .box.red{border-color:#f3c9c9;background:#fdf6f6;}.box.amber{border-color:#f0dcbd;background:#fdf9f2;}
+  .box h3{margin:0 0 6px;font-size:15.5px;font-weight:800;}.box p{margin:0;font-size:13.5px;}
+  .box .why{color:var(--ink2);font-size:12.5px;margin-top:6px;}
+  .pb{margin:0 0 14px;}
+  .pb .h{font-size:13px;font-weight:800;margin:0 0 6px;}
+  .pb pre{margin:0;background:#11253e;color:#e3e9f2;border-radius:10px;padding:14px 16px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;
+    white-space:pre-wrap;word-break:break-word;overflow-x:auto;}
+  .pb pre .t{color:#c8b3f0;font-weight:700;}
+  .steps{counter-reset:s;list-style:none;padding:0;margin:8px 0 0;}
+  .steps li{counter-increment:s;position:relative;padding:10px 0 10px 40px;border-bottom:1px dashed var(--line);}
+  .steps li:last-child{border-bottom:0;}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:9px;width:26px;height:26px;background:var(--ink);
+    color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+  .owner{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;}
+  .effect{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .effect .e{background:var(--soft);border-radius:10px;padding:16px;}.effect .e b{display:block;font-size:15px;}
+  /* ── Калькулятор ── */
+  .calc-hero{background:var(--ink);color:#fff;border:none;}
+  .calc-hero .kicker{color:#c8b3f0;}.calc-hero h1{color:#fff;}.calc-hero .sub{color:#b8c1cf;}
+  .fact{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .fc{background:var(--soft);border-radius:12px;padding:14px;}
+  .fc .fv{font-size:20px;font-weight:800;}.fc .fl{font-size:12px;color:var(--ink2);margin-top:4px;line-height:1.4;}
+  table.io{width:100%;border-collapse:collapse;}
+  table.io th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);text-align:right;padding:0 8px 8px;font-weight:700;}
+  table.io th:first-child{text-align:left;}
+  table.io td{padding:6px 8px;border-top:1px solid var(--line);vertical-align:middle;}
+  table.io td.lbl{font-size:13px;font-weight:600;}
+  table.io td.lbl small{display:block;font-weight:500;color:var(--ink2);font-size:11px;}
+  table.io input{width:150px;padding:9px 11px;border:2px solid var(--line);border-radius:10px;
+    font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);text-align:right;}
+  table.io input:focus{outline:none;border-color:var(--blue);}
+  table.io input.sysv{border-color:#b2e8d2;background:var(--green-bg);}
+  table.io input.askv{border-color:#c5c6f5;background:#eeeffe;}
+  .res{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+  .rc{border-radius:14px;padding:18px;background:var(--green-bg);border:1.5px solid #b2e8d2;}
+  .rc.blue{background:#eeeffe;border-color:#c5c6f5;}
+  .rc.big{grid-column:span 1;background:var(--ink);border-color:var(--ink);}
+  .rc .l{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;color:var(--green);}
+  .rc.blue .l{color:var(--blue);}.rc.big .l{color:#c8b3f0;}
+  .rc .v{font-size:23px;font-weight:800;line-height:1.15;color:var(--green);}.rc.blue .v{color:var(--blue);}.rc.big .v{color:#fff;}
+  .rc .s{font-size:12px;color:var(--ink2);margin-top:4px;}.rc.big .s{color:#b8c1cf;}
+  .item{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+  .item .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .item .t2{font-size:14px;font-weight:700;}.item .a{font-size:17px;font-weight:800;color:var(--green);white-space:nowrap;}
+  .item .f{font-size:12px;color:var(--ink2);background:var(--soft);border-radius:8px;padding:7px 10px;margin-top:8px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;}
+  .est{color:var(--blue);font-weight:700;}.sys{color:var(--green);font-weight:700;}
+  .note{font-size:11.5px;color:var(--ink3);line-height:1.5;margin-top:14px;}.note b{color:var(--ink2);}
+  .foot{display:flex;align-items:center;gap:12px;color:var(--ink2);font-size:12.5px;padding:6px 2px 0;}
+  .chip{width:34px;height:34px;border-radius:9px;background:var(--grad);flex-shrink:0;display:flex;
+    align-items:center;justify-content:center;color:#fff;font-weight:800;}
+  @media (max-width:640px){.metrics,.fact,.res,.effect{grid-template-columns:1fr;}table.io input{width:100%;}}
+  @media print{body{background:#fff;padding:0;}.card{break-inside:avoid;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="card hero">
+    <p class="kicker">Разбор работы ИИ-консультанта</p>
+    <h1>Как ваш ИИ-консультант снимает нагрузку с поддержки — и где скрыт рост</h1>
+    <p class="sub">Atomy Россия · агент «Консультант» (HelpDeskEddy) · период: 30 дней · июль 2026</p>
+  </div>
+
+  <div class="card">
+    <h2>Что мы сделали</h2>
+    <p class="lead">Разобрали все переписки вашего ИИ-консультанта за месяц и его работу с базой знаний.
+      Ниже — что он уже закрывает сам, где теряется часть обращений, как это исправить, и расчёт
+      эффекта в деньгах в конце.</p>
+    <div class="metrics">
+      <div class="m"><div class="v">6 948</div><div class="l">диалогов за 30 дней</div></div>
+      <div class="m good"><div class="v">~¾</div><div class="l">обращений закрывает без оператора</div></div>
+      <div class="m good"><div class="v">~22 сек</div><div class="l">среднее время ответа, 24/7</div></div>
+      <div class="m bad"><div class="v">25%</div><div class="l">уходит на живого сотрудника</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Сильные стороны <span class="tag g">работает хорошо</span></h2>
+    <ul>
+      <li><b>Закрывает сам около трёх из четырёх обращений</b> — снимает основной поток с операторов,
+        особенно в пиковые дни выплат (7 и 22 числа).</li>
+      <li><b>Уверенно ведёт самые болезненные темы MLM</b> — выплаты и вознаграждения, верификация
+        (ИП/НПД/ЧУП), смена реквизитов, отслеживание заказов — отвечает точно и по шагам.</li>
+      <li><b>Отвечает мгновенно, вежливо, на русском</b> и работает круглосуточно — очередь в поддержку
+        не копится.</li>
+      <li><b>Держит границы и не выдумывает</b>: отказывается смотреть персональные данные по ID,
+        при отсутствии ответа в базе корректно передаёт человеку с уже собранным контекстом.</li>
+      <li><b>Понимает вложения</b> — читает скриншоты из личного кабинета.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Где теряется часть обращений</h2>
+    <p class="lead">Мы разложили 65 «тяжёлых» диалогов (эскалации и пустые поиски) по темам. Картина
+      получилась очень чёткая — и хорошая новость в том, что рост упирается в базу знаний, а не в бота.</p>
+    <div class="box red">
+      <h3>🔴 Волна вопросов про переход на WinWork — базы по этой теме нет</h3>
+      <p><b>77% тяжёлых обращений — про выплаты, и 38% прямо про смену платформы</b> (уход с «Нанимателя»
+        на WinWork/ВинВорк): «раньше выплаты приходили, перешла в WinWork — не пришло», «Атоми больше не
+        работает с Нанимателем, куда регистрироваться», «какое приложение скачать, чтобы вывести деньги».</p>
+      <p class="why"><b>Что происходит:</b> в базе знаний нет документа про переход на WinWork, поэтому
+        бот на каждый такой вопрос ищет пусто и передаёт человека. Это самый частый повод эскалации за
+        месяц. Один хорошо написанный документ снимает заметную долю этой волны с операторов.</p>
+    </div>
+    <div class="box amber">
+      <h3>🟡 Семантический поиск почти всегда пустой — лишние холостые вызовы</h3>
+      <p>Ответы бот берёт из базы «Вопрос-ответ» (54 записи). А отдельная векторная база подключена к
+        функции поиска, но в ней всего <b>2 документа</b> («Регионы доставки», «Этический кодекс») — поэтому
+        на подавляющее большинство вопросов поиск возвращает пусто, а бот по инструкции зовёт его на каждое
+        сообщение, даже на «/start» и «спасибо».</p>
+      <p class="why"><b>Решение:</b> перенести эти 2 документа в «Вопрос-ответ» и отключить функцию
+        векторного поиска (или наполнить базу реальными материалами). Диалог станет чище и быстрее —
+        без лишних шагов, качество не пострадает.</p>
+    </div>
+    <div class="box amber">
+      <h3>🟡 5–6 узких тем без документов → предсказуемые эскалации</h3>
+      <p>Возврат/брак и срок годности после вскрытия, приостановка выплат при закрытии ИП, наследование
+        личного кабинета, обращения по другим филиалам (Global). Каждая тема повторяется — и каждый раз
+        уходит на человека, хотя ответ типовой.</p>
+    </div>
+    <div class="box amber">
+      <h3>🟡 Нет автонапоминаний (follow-up)</h3>
+      <p>Сейчас, если партнёр не завершил действие (не закончил регистрацию в WinWork, не прошёл
+        верификацию, не дослал документы) — диалог просто обрывается, и человек остаётся без результата.
+        Автонапоминание вернуло бы его в диалог и <b>реально до-вело до цели</b>: «вы начали регистрацию
+        в WinWork — остался один шаг, помочь?». Для поддержки это не «пуш ради пуша», а доведение
+        обращения до закрытия без участия оператора.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Что добавить в базу знаний</h2>
+    <p class="lead">Темы ниже чаще всего уходят на оператора — просто потому, что готового ответа нет
+      в базе. По каждой достаточно одного выверенного документа, и бот начнёт закрывать её сам.
+      Приоритет — по частоте обращений:</p>
+    <ul>
+      <li><b>Переход на WinWork</b> — самая частая тема: регистрация и идентификация, отклик на заказ
+        в личном кабинете, что делать перешедшим с «Нанимателя».</li>
+      <li><b>Выплата не пришла при выполненных условиях</b> — короткий чек-лист самопроверки.</li>
+      <li><b>Верификация и статусы, доставка и получение в центре, регистрация и смена данных</b> —
+        по одному ответу на тему.</li>
+      <li><b>Возврат и брак, наследование ID, другие филиалы</b> — реже, но повторяются; нужен
+        короткий регламент.</li>
+    </ul>
+    <p class="lead" style="margin-top:12px">Поможем собрать эти документы из ответов вашей поддержки и
+      регламентов. Дальше базу поддерживает <b>Автообучение</b>: бот подсказывает, каких ответов не
+      хватает под реальные вопросы, вы подтверждаете формулировку — и доля закрытых без оператора растёт.</p>
+    <div class="pb"><div class="h">🧹 Правка, которую можно внести сразу (без новых материалов)</div><pre><span class="t">#ОГРАНИЧЕНИЯ (дополнить в инструкцию бота)</span>
+- Не вызывать семантический поиск на приветствие, «/start», «спасибо», прощание и пустой ввод.
+- Приветствовать один раз — только в первом сообщении диалога; дальше сразу к сути.
+- Ответы по фактам брать из документов базы; при отсутствии — передать сотруднику.</pre></div>
+  </div>
+
+  <div class="card">
+    <h2>Новые возможности Савви, которые здесь усилят результат <span class="tag a">апгрейд</span></h2>
+    <ul>
+      <li><b>Анализатор</b> — автоматически размечает все диалоги по темам и исходам: видно в реальном
+        времени, какие вопросы растут (например, волна WinWork), где бот теряет обращения и что
+        добавить в базу. Тот разбор, что мы сделали руками, вы получаете постоянно и сами.</li>
+      <li><b>Автообучение</b> — бот подсказывает, каких документов не хватает под реальные вопросы, и
+        помогает пополнять базу знаний; доля обращений, закрытых без оператора, растёт со временем.</li>
+      <li><b>Автонапоминания (follow-up)</b> — возвращают партнёра, не завершившего регистрацию или
+        верификацию, в диалог и доводят до результата без оператора (подробнее — в блоке выше).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>План действий</h2>
+    <ol class="steps">
+      <li><span class="owner">База знаний · приоритет 1</span><br>Добавить документ про переход на WinWork — снимает самую большую волну эскалаций.</li>
+      <li><span class="owner">База знаний</span><br>Закрыть темы «выплата не пришла» и 5–6 узких тем готовыми документами (каркасы выше).</li>
+      <li><span class="owner">Настройка бота · быстрый эффект</span><br>Убрать пустой семантический поиск и повтор приветствия — диалог станет чище и быстрее.</li>
+      <li><span class="owner">Возможности</span><br>Включить автонапоминания на незавершённую регистрацию/верификацию.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Насколько ещё можно разгрузить операторов</h2>
+    <p class="lead">Мы разобрали причины, по которым обращения сейчас попадают к оператору. В большинстве
+      случаев дело не в том, что бот не справился, — а в том, что <b>в базе знаний нет нужного ответа</b>.</p>
+    <div class="metrics">
+      <div class="m bad"><div class="v">~25%</div><div class="l">обращений сейчас попадает к оператору</div></div>
+      <div class="m"><div class="v">~15%</div><div class="l">из них — из-за отсутствия ответа в базе</div></div>
+      <div class="m good"><div class="v">~¾</div><div class="l">из них можно закрыть, дополнив базу</div></div>
+      <div class="m good"><div class="v">до +10 п.п.</div><div class="l">рост доли обращений, закрытых ботом</div></div>
+    </div>
+    <p style="margin:16px 0 0"><b>Какие темы бот сможет вести сам после пополнения базы</b> (по частоте):
+      переход на WinWork (самая крупная тема — сотни обращений в месяц), условия и сроки выплат, статусы
+      верификации и документов, доставка и получение заказа в центре, возврат и брак, регистрация и смена
+      данных. Это типовые повторяющиеся вопросы — один выверенный ответ закрывает их без оператора.</p>
+    <p class="lead" style="margin:12px 0 0">У оператора останется то, что и должно оставаться, —
+      <b>индивидуальные проверки по конкретному партнёру</b> («почему именно моя выплата не пришла»,
+      «статус моего заказа»): здесь нужен доступ к данным человека, а не ответ из базы. Оценка «до +10 п.п.» —
+      ориентировочная, уточним после пополнения базы.</p>
+  </div>
+
+  <!-- ═══════════════ КАЛЬКУЛЯТОР ЭФФЕКТА ═══════════════ -->
+  <div class="card calc-hero">
+    <p class="kicker">Расчёт эффекта · заполняем вместе</p>
+    <h1>Сколько бот экономит на зарплате поддержки</h1>
+    <p class="sub">Зелёным — уже измерено в системе. Синим — впишем ваши цифры на встрече. Расчёт пересчитается сразу, внизу — эффект за год.</p>
+  </div>
+
+  <div class="card">
+    <h2>Что бот уже делает сам <span class="sys">из системы</span></h2>
+    <p class="lead">Факты за последний месяц — их не нужно спрашивать, они измерены.</p>
+    <div class="fact">
+      <div class="fc"><div class="fv">6 948</div><div class="fl">обращений в месяц обрабатывает бот</div></div>
+      <div class="fc"><div class="fv">~60–76%</div><div class="fl">закрывает сам, без живого оператора</div></div>
+      <div class="fc"><div class="fv">~22 сек</div><div class="fl">среднее время ответа 24/7 вместо очереди в поддержку</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Ваши цифры</h2>
+    <p class="lead"><span class="sys">Зелёные</span> — из системы (можно уточнить). <span class="est">Синие</span> — впишем на встрече по вашим данным поддержки.</p>
+    <table class="io">
+      <tbody>
+        <tr><td class="lbl">Обращений в месяц<small>всего в поддержку — из системы</small></td>
+          <td><input id="tickets" class="sysv" type="number" value="6948"></td></tr>
+        <tr><td class="lbl">Бот закрывает сам, %<small>без передачи оператору — из системы</small></td>
+          <td><input id="defl" class="sysv" type="number" value="60"></td></tr>
+        <tr><td class="lbl">Оператор закрывает обращений в день<small>сколько успевает один человек</small></td>
+          <td><input id="perday" class="askv" type="number" value="25"></td></tr>
+        <tr><td class="lbl">Рабочих дней в месяце</td>
+          <td><input id="days" class="askv" type="number" value="22"></td></tr>
+        <tr><td class="lbl">Зарплата оператора, ₽/мес<small>на руки</small></td>
+          <td><input id="salary" class="askv" type="number" value="50000"></td></tr>
+        <tr><td class="lbl">Налоги и взносы, %<small>страховые по ТК РФ, сверх зарплаты</small></td>
+          <td><input id="tax" class="askv" type="number" value="30"></td></tr>
+        <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td>
+          <td><input id="savvi" class="sysv" type="number" value="74000"></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Что это даёт</h2>
+    <div class="res">
+      <div class="rc"><div class="l">Вопросов на боте</div><div class="v" id="r-tickets">—</div><div class="s">обращений в месяц сам закрывает</div></div>
+      <div class="rc"><div class="l">Заменяет</div><div class="v" id="r-fte">—</div><div class="s">операторов по объёму работы</div></div>
+      <div class="rc blue"><div class="l">Экономия на ФОТ / мес</div><div class="v" id="r-month">—</div><div class="s">зарплата минус стоимость Савви</div></div>
+      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r-year">—</div><div class="s">годовая экономия на ФОТ</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Разбор эффекта</h2>
+    <div class="item"><div class="top"><span class="t2">🎧 Вопросов забирает бот</span><span class="a" id="e-load">—</span></div><div class="f" id="f-load"></div></div>
+    <div class="item"><div class="top"><span class="t2">👥 Скольких операторов заменяет</span><span class="a" id="e-fte">—</span></div>
+      <div class="f" id="f-fte"></div><div class="note" style="margin-top:6px" id="n-oper"></div></div>
+    <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="e-cost" style="color:var(--red)">—</span></div><div class="f" id="f-cost"></div></div>
+    <div class="note"><b>Как считаем:</b> бот сам закрывает часть потока (обращения × доля). Делим этот объём
+      на то, сколько обращений в месяц закрывает один оператор (обращений в день × рабочих дней) — получаем,
+      скольких операторов заменяет бот. Умножаем на полную стоимость оператора (зарплата + страховые взносы),
+      вычитаем стоимость Савви, ×12 за год. Если штат не сокращают — это объём, который поддержка тянет без
+      дополнительного найма. Финальные цифры сверяем с вашими данными.</div>
+  </div>
+
+  <div class="card">
+    <div class="foot"><div class="chip">S</div>
+      <div>Разбор подготовлен на данных вашего проекта в Савви (6 948 диалогов за 30 дней) и выгрузке
+        Анализатора по проблемным обращениям. Цифры калькулятора — ориентир, финальные значения сверяем вместе.</div></div>
+  </div>
+
+</div>
+
+<script>
+  function rub(n){n=Math.round(n);var s=n<0?'−':'';n=Math.abs(n);
+    if(n>=1e6)return s+(n/1e6).toFixed(n>=1e7?0:2).replace('.',',')+' млн ₽';
+    if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
+  function rubFull(n){return Math.round(n).toLocaleString('ru-RU')+' ₽';}
+  function v(id){return parseFloat(document.getElementById(id).value)||0;}
+  function calc(){
+    var t=v('tickets'),d=v('defl')/100,perday=v('perday'),days=v('days'),sal=v('salary'),tax=v('tax')/100,sv=v('savvi');
+    var deflected=t*d;                       // вопросов забирает бот/мес
+    var capacity=perday*days;                // пропускная способность 1 оператора/мес
+    var eqOps=capacity>0?deflected/capacity:0; // скольких операторов заменяет по объёму
+    var fullCost=sal*(1+tax);                // полная стоимость оператора/мес (ЗП + взносы)
+    var laborSaved=eqOps*fullCost;           // экономия ФОТ/мес
+    var month=laborSaved-sv;                 // чистая экономия/мес
+    var year=month*12;                       // ×12
+    var fteStr='≈ '+eqOps.toFixed(1).replace('.',',');
+    document.getElementById('r-tickets').textContent=Math.round(deflected).toLocaleString('ru-RU');
+    document.getElementById('r-fte').textContent=fteStr;
+    document.getElementById('r-month').textContent=rub(month);
+    document.getElementById('r-year').textContent=rub(year);
+    document.getElementById('e-load').textContent=Math.round(deflected).toLocaleString('ru-RU')+' обр./мес';
+    document.getElementById('f-load').textContent=Math.round(t).toLocaleString('ru-RU')+' обращений × '+Math.round(d*100)+'% (бот закрывает сам)';
+    document.getElementById('e-fte').textContent=fteStr+' чел.';
+    document.getElementById('f-fte').textContent=Math.round(deflected).toLocaleString('ru-RU')+' обр. ÷ '+Math.round(capacity)+' обр./мес на человека ('+Math.round(perday)+'×'+Math.round(days)+')';
+    document.getElementById('e-cost').textContent='−'+rub(sv);
+    document.getElementById('f-cost').textContent='реальный расход из системы, '+rubFull(sv)+'/мес';
+    var nf=document.getElementById('n-oper'); if(nf) nf.textContent='Полная стоимость оператора: '+rubFull(sal)+' + '+Math.round(tax*100)+'% взносов = '+rubFull(fullCost)+'/мес.';
+  }
+  ['tickets','defl','perday','days','salary','tax','savvi']
+    .forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+  calc();
+</script>
+</body>
+</html>
