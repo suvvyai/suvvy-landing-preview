@@ -232,12 +232,12 @@
     <h2>Ваши цифры</h2>
     <p class="lead"><span class="sys">Зелёные</span> — из системы. <span class="est">Синие</span> — впишем на встрече.</p>
     <table class="io"><tbody>
-      <tr><td class="lbl">Диалогов в месяц<small>из системы (растёт)</small></td>
+      <tr><td class="lbl">Обращений в месяц<small>из системы, июль 2026 (растёт)</small></td>
         <td><input id="dlg" class="sysv" type="number" value="387"></td></tr>
-      <tr><td class="lbl">Доля диалогов с намерением записаться, %<small>ваша оценка — впишем</small></td>
-        <td><input id="intent" class="askv" type="number" value="25"></td></tr>
-      <tr><td class="lbl">Доходят до записи сейчас, %<small>из намеренных — впишем на встрече</small></td>
-        <td><input id="now" class="askv" type="number" value="50"></td></tr>
+      <tr><td class="lbl">Доля обращение → запись ДО бота, %<small>как было до подключения — впишем на встрече</small></td>
+        <td><input id="cb" class="askv" type="number" value="5"></td></tr>
+      <tr><td class="lbl">Доля обращение → запись СЕЙЧАС, %<small>с ботом 24/7 — впишем/сверим на встрече</small></td>
+        <td><input id="ca" class="askv" type="number" value="12"></td></tr>
       <tr><td class="lbl">Средний чек приёма/процедуры, ₽<small>средний по клинике — впишем</small></td>
         <td><input id="check" class="askv" type="number" value="15000"></td></tr>
       <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td>
@@ -258,10 +258,10 @@
     <div class="item"><div class="top"><span class="t2">🗓️ Записей сейчас</span><span class="a" id="e-now">—</span></div><div class="f" id="f-now"></div></div>
     <div class="item"><div class="top"><span class="t2">📈 Прирост записей от починки</span><span class="a" id="e-dd">—</span></div><div class="f" id="f-dd"></div></div>
     <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="e-cost" style="color:var(--red)">—</span></div><div class="f" id="f-cost"></div></div>
-    <div class="note"><b>Как считаем:</b> диалоги × доля с намерением записаться × доля доходящих до записи
-      = записей в месяц. Починка сбора телефона поднимает доходимость (сейчас ~половина срывается);
-      прирост × средний чек = доп.выручка, минус стоимость Савви, ×12 за год. Долю намерения, чек
-      и текущую доходимость впишем по вашим данным.</div>
+    <div class="note"><b>Как считаем «до/после»:</b> берём долю обращений, доходящих до записи, <b>до
+      подключения бота</b> и <b>сейчас</b>. Записей сейчас = обращения × доля сейчас. Прирост записей =
+      обращения × (доля сейчас − доля до бота). Доп.выручка = прирост × средний чек, минус стоимость
+      Савви, ×12 за год. «До», «сейчас» и чек впишем по вашим данным на встрече.</div>
   </div>
 
   <!-- 10. ФУТЕР -->
@@ -276,20 +276,20 @@
     if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
   function v(id){return parseFloat(document.getElementById(id).value)||0;}
   function calc(){
-    var D=v('dlg'), it=v('intent')/100, nw=v('now')/100, chk=v('check'), sv=v('savvi');
-    var intent=D*it, nowB=intent*nw, ddB=intent*(1-nw), month=ddB*chk-sv, year=month*12;
+    var D=v('dlg'), cb=v('cb')/100, ca=v('ca')/100, chk=v('check'), sv=v('savvi');
+    var nowB=D*ca, ddB=Math.max(0,D*(ca-cb)), month=ddB*chk-sv, year=month*12;
     document.getElementById('r-now').textContent='≈ '+Math.round(nowB).toLocaleString('ru-RU');
-    document.getElementById('r-dd').textContent='+'+Math.round(ddB).toLocaleString('ru-RU');
+    document.getElementById('r-dd').textContent='+ '+Math.round(ddB).toLocaleString('ru-RU');
     document.getElementById('r-month').textContent=rub(month);
     document.getElementById('r-year').textContent=rub(year);
     document.getElementById('e-now').textContent='≈ '+Math.round(nowB)+' записей';
-    document.getElementById('f-now').textContent=Math.round(D)+' диал. × '+Math.round(it*100)+'% намерение × '+Math.round(nw*100)+'% доходят = '+Math.round(nowB);
-    document.getElementById('e-dd').textContent='+'+Math.round(ddB)+' записей';
-    document.getElementById('f-dd').textContent=Math.round(intent)+' намеренных × '+Math.round((1-nw)*100)+' п.п. недобора = '+Math.round(ddB)+' записей/мес';
+    document.getElementById('f-now').textContent=Math.round(D)+' обращений × '+(ca*100).toFixed(0)+'% доходят до записи (сейчас)';
+    document.getElementById('e-dd').textContent='+ '+Math.round(ddB)+' записей';
+    document.getElementById('f-dd').textContent=Math.round(D)+' × ('+(ca*100).toFixed(0)+'% − '+(cb*100).toFixed(0)+'% до бота)';
     document.getElementById('e-cost').textContent='−'+Math.round(sv).toLocaleString('ru-RU')+' ₽';
     document.getElementById('f-cost').textContent='реальный расход в Савви за месяц (июль 2026)';
   }
-  ['dlg','intent','now','check','savvi'].forEach(function(id){
+  ['dlg','cb','ca','check','savvi'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.addEventListener('input',calc);});
   calc();
 </script>
