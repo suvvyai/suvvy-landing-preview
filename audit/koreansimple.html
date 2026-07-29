@@ -195,27 +195,29 @@
     <p class="lead"><span class="sys">Зелёные</span> — из системы. <span class="est">Синие</span> — впишем на встрече.</p>
     <table class="io"><tbody>
       <tr><td class="lbl">Обращений в месяц<small>из системы, июнь 2026</small></td><td><input id="i1" class="sysv" type="number" value="2726"></td></tr>
-      <tr><td class="lbl">Доводит до передачи менеджеру, %<small>из системы</small></td><td><input id="i2" class="sysv" type="number" value="35"></td></tr>
-      <tr><td class="lbl">Конверсия переданного лида в оплату, %<small>впишем на встрече</small></td><td><input id="i3" class="askv" type="number" value="20"></td></tr>
-      <tr><td class="lbl">Средний чек, ₽<small>впишем на встрече</small></td><td><input id="i4" class="askv" type="number" value="15000"></td></tr>
+      <tr><td class="lbl">Доля обращение → передача менеджеру ДО бота, %<small>как было при ручной обработке — впишем на встрече</small></td><td><input id="ib" class="askv" type="number" value="20"></td></tr>
+      <tr><td class="lbl">Доля обращение → передача менеджеру СЕЙЧАС, %<small>с ботом 24/7 — из системы</small></td><td><input id="ia" class="sysv" type="number" value="35"></td></tr>
+      <tr><td class="lbl">Конверсия переданного лида в оплату, %<small>доводит отдел продаж — впишем на встрече</small></td><td><input id="iconv" class="askv" type="number" value="20"></td></tr>
+      <tr><td class="lbl">Средний чек, ₽<small>впишем на встрече</small></td><td><input id="icheck" class="askv" type="number" value="15000"></td></tr>
       <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td><td><input id="isavvi" class="sysv" type="number" value="121000"></td></tr>
     </tbody></table>
   </div>
   <div class="card">
     <h2>Что это даёт</h2>
     <div class="res">
-      <div class="rc"><div class="l">Заявок передано менеджеру</div><div class="v" id="r1">—</div><div class="s">в месяц</div></div>
-      <div class="rc"><div class="l">Из них оплатили</div><div class="v" id="r2">—</div><div class="s">по конверсии с встречи</div></div>
-      <div class="rc blue"><div class="l">Эффект в месяц</div><div class="v" id="r3">—</div><div class="s">доп. выручка минус Савви</div></div>
-      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r4">—</div><div class="s">при сохранении текущих показателей</div></div>
+      <div class="rc"><div class="l">Заявок менеджеру сейчас</div><div class="v" id="r1">—</div><div class="s">в месяц с ботом</div></div>
+      <div class="rc"><div class="l">+ Заявок / мес</div><div class="v" id="r2">—</div><div class="s">прирост к «до бота»</div></div>
+      <div class="rc blue"><div class="l">+ Выручка / мес</div><div class="v" id="r3">—</div><div class="s">за вычетом стоимости Савви</div></div>
+      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r4">—</div><div class="s">прирост выручки</div></div>
     </div>
   </div>
   <div class="card">
     <h2>Разбор эффекта</h2>
-    <div class="item"><div class="top"><span class="t2">Заявок передано менеджеру</span><span class="a" id="e1">—</span></div><div class="f" id="f1">обращений × доля передачи</div></div>
-    <div class="item"><div class="top"><span class="t2">Оплаченных курсов/туров</span><span class="a" id="e2">—</span></div><div class="f" id="f2">заявок × конверсия в оплату</div></div>
+    <div class="item"><div class="top"><span class="t2">📈 Заявок менеджеру сейчас</span><span class="a" id="e1">—</span></div><div class="f" id="f1"></div></div>
+    <div class="item"><div class="top"><span class="t2">➕ Прирост заявок к «до бота»</span><span class="a" id="e2">—</span></div><div class="f" id="f2"></div></div>
+    <div class="item"><div class="top"><span class="t2">💰 Доп. выручка от прироста</span><span class="a" id="e3">—</span></div><div class="f" id="f3"></div></div>
     <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="ec" style="color:var(--red)">—</span></div><div class="f" id="fc">реальный расход за месяц</div></div>
-    <div class="note"><b>Как считаем:</b> доп. выручка/мес = обращения × доля передачи менеджеру × конверсия в оплату × средний чек, минус стоимость Савви. Эффект за год — умножаем месячный результат на 12. Финальные значения сверяем вместе на встрече.</div>
+    <div class="note"><b>Как считаем «до/после»:</b> берём вашу долю обращений, доходящих до передачи менеджеру, <b>до подключения бота</b> и <b>сейчас</b>. Прирост заявок/мес = обращения × (доля сейчас − доля до бота). Доп. выручка = прирост заявок × конверсия в оплату × средний чек. Чистый эффект/мес = доп. выручка − стоимость Савви, далее ×12 — эффект за год. «До» и «сейчас» впишем вместе на встрече.</div>
   </div>
 
   <!-- 10. ФУТЕР -->
@@ -229,16 +231,21 @@
     if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
   function v(id){return parseFloat(document.getElementById(id).value)||0;}
   function calc(){
-    var dlg=v('i1'), cap=v('i2')/100, sale=v('i3')/100, check=v('i4'), sv=v('isavvi');
-    var leads=dlg*cap, sales=leads*sale, month=sales*check-sv, year=month*12;
-    document.getElementById('r1').textContent=Math.round(leads).toLocaleString('ru-RU');
-    document.getElementById('r2').textContent='≈ '+Math.round(sales).toLocaleString('ru-RU');
+    var dlg=v('i1'), capB=v('ib')/100, capA=v('ia')/100, conv=v('iconv')/100, check=v('icheck'), sv=v('isavvi');
+    var leadsNow=dlg*capA, extraLeads=Math.max(0,dlg*(capA-capB));
+    var extraSales=extraLeads*conv, extraRev=extraSales*check, month=extraRev-sv, year=month*12;
+    document.getElementById('r1').textContent=Math.round(leadsNow).toLocaleString('ru-RU');
+    document.getElementById('r2').textContent='+ '+Math.round(extraLeads).toLocaleString('ru-RU');
     document.getElementById('r3').textContent=rub(month); document.getElementById('r4').textContent=rub(year);
-    document.getElementById('e1').textContent=Math.round(leads).toLocaleString('ru-RU');
-    document.getElementById('e2').textContent='≈ '+Math.round(sales).toLocaleString('ru-RU');
+    document.getElementById('e1').textContent=Math.round(leadsNow).toLocaleString('ru-RU')+' /мес';
+    document.getElementById('f1').textContent=Math.round(dlg).toLocaleString('ru-RU')+' обращений × '+Math.round(capA*100)+'% (сейчас)';
+    document.getElementById('e2').textContent='+ '+Math.round(extraLeads).toLocaleString('ru-RU')+' /мес';
+    document.getElementById('f2').textContent=Math.round(dlg).toLocaleString('ru-RU')+' × ('+Math.round(capA*100)+'% − '+Math.round(capB*100)+'% до бота)';
+    document.getElementById('e3').textContent=rub(extraRev)+' /мес';
+    document.getElementById('f3').textContent=Math.round(extraLeads).toLocaleString('ru-RU')+' доп. заявок × '+Math.round(conv*100)+'% конверсии × '+rub(check);
     document.getElementById('ec').textContent='−'+rub(sv);
   }
-  ['i1','i2','i3','i4','isavvi'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',calc);});
+  ['i1','ib','ia','iconv','icheck','isavvi'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',calc);});
   calc();
 </script>
 </body>
