@@ -80,15 +80,15 @@
   <div class="card hero">
     <p class="kicker">Разбор работы ИИ-агента</p>
     <h1>Как ваш ИИ-агент обрабатывает заявки на сплавы — и где скрыт рост</h1>
-    <p class="sub">Райсплав · агент «Ева» (amoCRM, сплавы по рекам Ай и Чусовая) · период: июнь 2026 (3194 диалога)</p>
+    <p class="sub">Райсплав · агент «Ева» (amoCRM, сплавы по рекам Ай и Чусовая) · период: июнь–июль 2026 (8 832 диалога, ~4 400/мес)</p>
   </div>
 
   <!-- 2. ЧТО СДЕЛАЛИ + 4 метрики -->
   <div class="card">
     <h2>Что мы сделали</h2>
-    <p class="lead">Разобрали переписки за месяц, прочитали проблемные диалоги вручную и посчитали, где заявки доходят до передачи в CRM, а где теряются.</p>
+    <p class="lead">Разобрали переписки за два месяца (июнь–июль), прочитали проблемные диалоги вручную и посчитали, где заявки доходят до передачи в CRM, а где теряются. За июль поток вырос почти вдвое к июню — бот держит его без роста времени ответа.</p>
     <div class="metrics">
-      <div class="m"><div class="v">3194</div><div class="l">диалогов за месяц</div></div>
+      <div class="m"><div class="v">≈4 400</div><div class="l">диалогов в месяц (июнь–июль)</div></div>
       <div class="m good"><div class="v">88%</div><div class="l">закрывает бот сам, без оператора</div></div>
       <div class="m good"><div class="v">~25 сек</div><div class="l">среднее время ответа, 24/7</div></div>
       <div class="m bad"><div class="v">12%</div><div class="l">уходит на оператора</div></div>
@@ -160,8 +160,8 @@
     <div class="metrics">
       <div class="m good"><div class="v">29%</div><div class="l">сейчас доходит до передачи данных в CRM</div></div>
       <div class="m bad"><div class="v">71%</div><div class="l">не доходит</div></div>
-      <div class="m"><div class="v">~38%</div><div class="l">из них — вопрос цены/предоплаты</div></div>
-      <div class="m"><div class="v">~18%</div><div class="l">из них — логистика/трансфер</div></div>
+      <div class="m"><div class="v">~35%</div><div class="l">из них — вопрос цены/предоплаты</div></div>
+      <div class="m"><div class="v">~20%</div><div class="l">из них — логистика/трансфер</div></div>
     </div>
     <p style="margin:16px 0 0"><b>Где именно берётся рост:</b> автонапоминания способны вернуть часть лидов из группы «отложил решение по цене», а быстрые правки сценария снимают лишние трения в переписке. Оценка ориентировочная, уточним после правок.</p>
   </div>
@@ -176,7 +176,7 @@
     <h2>Что бот уже делает сам <span class="sys">из системы</span></h2>
     <p class="lead">Факты за месяц — их не нужно спрашивать, они измерены.</p>
     <div class="fact">
-      <div class="fc"><div class="fv">3194</div><div class="fl">диалогов в месяц</div></div>
+      <div class="fc"><div class="fv">≈4 400</div><div class="fl">диалогов в месяц</div></div>
       <div class="fc"><div class="fv">29%</div><div class="fl">доходят до передачи данных в CRM</div></div>
       <div class="fc"><div class="fv">~25 сек</div><div class="fl">среднее время ответа 24/7</div></div>
     </div>
@@ -185,12 +185,12 @@
     <h2>Ваши цифры</h2>
     <p class="lead"><span class="sys">Зелёные</span> — из системы. <span class="est">Синие</span> — впишем на встрече.</p>
     <table class="io"><tbody>
-      <tr><td class="lbl">Обращений в месяц<small>из системы, июнь 2026</small></td><td><input id="i1" class="sysv" type="number" value="3194"></td></tr>
+      <tr><td class="lbl">Обращений в месяц<small>среднее июнь–июль 2026, из системы</small></td><td><input id="i1" class="sysv" type="number" value="4400"></td></tr>
       <tr><td class="lbl">Доля обращение → заявка в CRM ДО бота, %<small>как было при ручной обработке — впишем на встрече</small></td><td><input id="ib" class="askv" type="number" value="15"></td></tr>
-      <tr><td class="lbl">Доля обращение → заявка в CRM СЕЙЧАС, %<small>с ботом 24/7 — из системы</small></td><td><input id="ia" class="sysv" type="number" value="29"></td></tr>
+      <tr><td class="lbl">Доля обращение → заявка в CRM СЕЙЧАС, %<small>с ботом 24/7 — из системы</small></td><td><input id="ia" class="sysv" type="number" value="28"></td></tr>
       <tr><td class="lbl">Конверсия заявки в оплаченную бронь, %<small>доводит отдел продаж — впишем на встрече</small></td><td><input id="iconv" class="askv" type="number" value="35"></td></tr>
       <tr><td class="lbl">Средний чек брони (сплав + трансфер), ₽<small>впишем на встрече</small></td><td><input id="icheck" class="askv" type="number" value="15000"></td></tr>
-      <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td><td><input id="isavvi" class="sysv" type="number" value="99406"></td></tr>
+      <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы (среднее июнь–июль)</small></td><td><input id="isavvi" class="sysv" type="number" value="171000"></td></tr>
     </tbody></table>
   </div>
   <div class="card">
@@ -213,7 +213,7 @@
 
   <!-- 10. ФУТЕР -->
   <div class="card"><div class="foot"><div class="chip">S</div>
-    <div>Разбор подготовлен на данных вашего проекта в Савви (3194 диалога за июнь 2026). Цифры калькулятора — ориентир, финальные значения сверяем вместе.</div></div></div>
+    <div>Разбор подготовлен на данных вашего проекта в Савви (8 832 диалога за июнь–июль 2026). Цифры калькулятора — ориентир, финальные значения сверяем вместе.</div></div></div>
 
 </div>
 <script>
