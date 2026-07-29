@@ -196,27 +196,28 @@
     <p class="lead"><span class="sys">Зелёные</span> — из системы. <span class="est">Синие</span> — впишем на встрече.</p>
     <table class="io"><tbody>
       <tr><td class="lbl">Обращений в месяц<small>среднее июнь–июль, система Савви</small></td><td><input id="i1" class="sysv" type="number" value="890"></td></tr>
-      <tr><td class="lbl">Доля брони сейчас, %<small>захват в чате, система Савви</small></td><td><input id="i2" class="sysv" type="number" value="24"></td></tr>
-      <tr><td class="lbl">Целевая доля брони после правок, %<small>впишем на встрече</small></td><td><input id="i3" class="askv" type="number" value=""></td></tr>
-      <tr><td class="lbl">Средняя стоимость поездки, ₽<small>впишем на встрече</small></td><td><input id="i4" class="askv" type="number" value=""></td></tr>
+      <tr><td class="lbl">Доля обращение → бронь ДО бота, %<small>как было до подключения — впишем на встрече</small></td><td><input id="ib" class="askv" type="number" value="10"></td></tr>
+      <tr><td class="lbl">Доля обращение → бронь СЕЙЧАС, %<small>захват в чате, система Савви</small></td><td><input id="ia" class="sysv" type="number" value="24"></td></tr>
+      <tr><td class="lbl">Средняя стоимость поездки, ₽<small>впишем на встрече</small></td><td><input id="icheck" class="askv" type="number" value="8000"></td></tr>
       <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td><td><input id="isavvi" class="sysv" type="number" value="164000"></td></tr>
     </tbody></table>
   </div>
   <div class="card">
     <h2>Что это даёт</h2>
     <div class="res">
-      <div class="rc"><div class="l">Доп. бронирований/мес</div><div class="v" id="r1">—</div><div class="s">за счёт устранения найденных потерь</div></div>
-      <div class="rc"><div class="l">Доп. выручка/мес</div><div class="v" id="r2">—</div><div class="s">доп. бронирований × средний чек</div></div>
-      <div class="rc blue"><div class="l">Эффект/мес</div><div class="v" id="r3">—</div><div class="s">доработки не увеличивают расход на Савви</div></div>
-      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r4">—</div><div class="s">без роста расходов на бота</div></div>
+      <div class="rc"><div class="l">Броней сейчас</div><div class="v" id="r1">—</div><div class="s">в месяц с ботом</div></div>
+      <div class="rc"><div class="l">+ Броней / мес</div><div class="v" id="r2">—</div><div class="s">прирост к «до бота»</div></div>
+      <div class="rc blue"><div class="l">+ Выручка / мес</div><div class="v" id="r3">—</div><div class="s">за вычетом стоимости Савви</div></div>
+      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r4">—</div><div class="s">прирост выручки</div></div>
     </div>
   </div>
   <div class="card">
     <h2>Разбор эффекта</h2>
-    <div class="item"><div class="top"><span class="t2">📈 Доп. бронирований/мес</span><span class="a" id="e1">—</span></div><div class="f" id="f1"></div></div>
-    <div class="item"><div class="top"><span class="t2">💰 Доп. выручка/мес</span><span class="a" id="e2">—</span></div><div class="f" id="f2"></div></div>
-    <div class="item"><div class="top"><span class="t2">💬 Текущая стоимость Савви</span><span class="a" id="ec" style="color:var(--ink2)">—</span></div><div class="f" id="fc">Уже оплачивается сейчас, доработки промпта и базы не увеличивают эту сумму</div></div>
-    <div class="note"><b>Как считаем:</b> доп. бронирований = обращения × (целевая доля брони − текущая доля брони); доп. выручка = доп. бронирований × средний чек. Эффект за год = эффект за месяц × 12. Финальные значения сверяем вместе на встрече.</div>
+    <div class="item"><div class="top"><span class="t2">📈 Броней сейчас</span><span class="a" id="e1">—</span></div><div class="f" id="f1"></div></div>
+    <div class="item"><div class="top"><span class="t2">➕ Прирост броней к «до бота»</span><span class="a" id="e2">—</span></div><div class="f" id="f2"></div></div>
+    <div class="item"><div class="top"><span class="t2">💰 Доп. выручка от прироста</span><span class="a" id="e3">—</span></div><div class="f" id="f3"></div></div>
+    <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="ec" style="color:var(--red)">—</span></div><div class="f" id="fc">реальный расход из системы</div></div>
+    <div class="note"><b>Как считаем «до/после»:</b> берём вашу доходимость обращения до брони <b>до подключения бота</b> и <b>сейчас</b>. Прирост броней/мес = обращения × (доля сейчас − доля до бота). Доп. выручка = прирост броней × средний чек. Чистый эффект/мес = доп. выручка − стоимость Савви, далее ×12 — эффект за год. Дополнительный рост от устранения найденных потерь (см. раздел «Насколько ещё можно поднять») считаем отдельно. Финальные значения сверяем вместе на встрече.</div>
   </div>
 
   <!-- 10. ФУТЕР -->
@@ -230,20 +231,22 @@
     if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
   function v(id){return parseFloat(document.getElementById(id).value)||0;}
   function calc(){
-    var dlg=v('i1'), before=v('i2')/100, after=v('i3')/100, check=v('i4'), sv=v('isavvi');
-    var extraBook = dlg*(after-before); if(extraBook<0) extraBook=0;
-    var extraRev = extraBook*check;
-    document.getElementById('r1').textContent = Math.round(extraBook).toLocaleString('ru-RU');
-    document.getElementById('r2').textContent = rub(extraRev);
-    document.getElementById('r3').textContent = rub(extraRev);
-    document.getElementById('r4').textContent = rub(extraRev*12);
-    document.getElementById('e1').textContent = Math.round(extraBook).toLocaleString('ru-RU');
-    document.getElementById('f1').textContent = dlg.toLocaleString('ru-RU')+' обращений × ('+(after*100).toFixed(0)+'% − '+(before*100).toFixed(0)+'%)';
-    document.getElementById('e2').textContent = rub(extraRev);
-    document.getElementById('f2').textContent = Math.round(extraBook).toLocaleString('ru-RU')+' брони × '+check.toLocaleString('ru-RU')+' ₽';
-    document.getElementById('ec').textContent = rub(sv)+'/мес';
+    var dlg=v('i1'), capB=v('ib')/100, capA=v('ia')/100, check=v('icheck'), sv=v('isavvi');
+    var bookNow=dlg*capA, extraBook=Math.max(0,dlg*(capA-capB));
+    var extraRev=extraBook*check, month=extraRev-sv, year=month*12;
+    document.getElementById('r1').textContent = Math.round(bookNow).toLocaleString('ru-RU');
+    document.getElementById('r2').textContent = '+ '+Math.round(extraBook).toLocaleString('ru-RU');
+    document.getElementById('r3').textContent = rub(month);
+    document.getElementById('r4').textContent = rub(year);
+    document.getElementById('e1').textContent = Math.round(bookNow).toLocaleString('ru-RU')+' /мес';
+    document.getElementById('f1').textContent = dlg.toLocaleString('ru-RU')+' обращений × '+(capA*100).toFixed(0)+'% (сейчас)';
+    document.getElementById('e2').textContent = '+ '+Math.round(extraBook).toLocaleString('ru-RU')+' /мес';
+    document.getElementById('f2').textContent = dlg.toLocaleString('ru-RU')+' × ('+(capA*100).toFixed(0)+'% − '+(capB*100).toFixed(0)+'% до бота)';
+    document.getElementById('e3').textContent = rub(extraRev)+' /мес';
+    document.getElementById('f3').textContent = Math.round(extraBook).toLocaleString('ru-RU')+' доп. броней × '+check.toLocaleString('ru-RU')+' ₽';
+    document.getElementById('ec').textContent = '−'+rub(sv);
   }
-  ['i1','i2','i3','i4','isavvi'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',calc);});
+  ['i1','ib','ia','icheck','isavvi'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',calc);});
   calc();
 </script>
 </body>
