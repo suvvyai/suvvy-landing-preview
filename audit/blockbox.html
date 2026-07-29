@@ -204,8 +204,8 @@
   <div class="card">
     <h2>Что это даёт</h2>
     <div class="res">
-      <div class="rc"><div class="l">Заявок с ботом сейчас</div><div class="v" id="r1">—</div><div class="s">в месяц</div></div>
-      <div class="rc"><div class="l">+ Заявок / мес</div><div class="v" id="r2">—</div><div class="s">прирост к «до бота»</div></div>
+      <div class="rc"><div class="l">Заявок ДО бота</div><div class="v" id="r0">—</div><div class="s">оценка «как было»</div></div>
+      <div class="rc"><div class="l">Заявок СЕЙЧАС</div><div class="v" id="r1">—</div><div class="s">с ботом (+<span id="r2">—</span>)</div></div>
       <div class="rc blue"><div class="l">+ Выручка / мес</div><div class="v" id="r3">—</div><div class="s">за вычетом стоимости Савви</div></div>
       <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r4">—</div><div class="s">прирост выручки</div></div>
     </div>
@@ -233,8 +233,9 @@
     var dlg=v('i1'), capB=v('ib')/100, capA=v('ia')/100, conv=v('iconv')/100, check=v('icheck'), sv=v('isavvi');
     var leadsNow=dlg*capA, extraLeads=Math.max(0,dlg*(capA-capB));
     var extraSales=extraLeads*conv, extraRev=extraSales*check, month=extraRev-sv, year=month*12;
+    document.getElementById('r0').textContent=Math.round(dlg*capB).toLocaleString('ru-RU');
     document.getElementById('r1').textContent=Math.round(leadsNow).toLocaleString('ru-RU');
-    document.getElementById('r2').textContent='+ '+Math.round(extraLeads).toLocaleString('ru-RU');
+    document.getElementById('r2').textContent=Math.round(extraLeads).toLocaleString('ru-RU');
     document.getElementById('r3').textContent=rub(month);
     document.getElementById('r4').textContent=rub(year);
     document.getElementById('e1').textContent=Math.round(leadsNow).toLocaleString('ru-RU')+' /мес';
