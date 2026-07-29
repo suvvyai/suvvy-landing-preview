@@ -250,8 +250,8 @@
   <div class="card">
     <h2>Что это даёт</h2>
     <div class="res">
-      <div class="rc"><div class="l">Операций/мес сейчас</div><div class="v" id="r-now">—</div><div class="s">с потока агентов</div></div>
-      <div class="rc"><div class="l">+ Операций/мес</div><div class="v" id="r-dd">—</div><div class="s">от возврата обрывов и фиксации лидов</div></div>
+      <div class="rc"><div class="l">Операций/мес ДО бота</div><div class="v" id="r-before">—</div><div class="s">оценка «как было»</div></div>
+      <div class="rc"><div class="l">Операций/мес СЕЙЧАС</div><div class="v" id="r-now">—</div><div class="s">с потоком агентов (+<span id="r-dd">—</span>)</div></div>
       <div class="rc blue"><div class="l">+ Выручка/мес</div><div class="v" id="r-month">—</div><div class="s">за вычетом стоимости Савви</div></div>
       <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r-year">—</div><div class="s">прирост выручки</div></div>
     </div>
@@ -280,9 +280,10 @@
   function v(id){return parseFloat(document.getElementById(id).value)||0;}
   function calc(){
     var D=v('dlg'), cb=v('cb')/100, ca=v('ca')/100, op=v('toop')/100, chk=v('check'), sv=v('savvi');
-    var nowOps=D*ca*op, extraConsult=Math.max(0,D*(ca-cb)), ddOps=extraConsult*op, month=ddOps*chk-sv, year=month*12;
+    var nowOps=D*ca*op, beforeOps=D*cb*op, extraConsult=Math.max(0,D*(ca-cb)), ddOps=extraConsult*op, month=ddOps*chk-sv, year=month*12;
+    document.getElementById('r-before').textContent='≈ '+Math.round(beforeOps).toLocaleString('ru-RU');
     document.getElementById('r-now').textContent='≈ '+Math.round(nowOps).toLocaleString('ru-RU');
-    document.getElementById('r-dd').textContent='+ '+Math.round(ddOps).toLocaleString('ru-RU');
+    document.getElementById('r-dd').textContent=Math.round(ddOps).toLocaleString('ru-RU');
     document.getElementById('r-month').textContent=rub(month);
     document.getElementById('r-year').textContent=rub(year);
     document.getElementById('e-now').textContent='≈ '+Math.round(nowOps)+' операций';
