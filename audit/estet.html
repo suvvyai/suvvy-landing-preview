@@ -233,16 +233,16 @@
     <h2>Ваши цифры</h2>
     <p class="lead"><span class="sys">Зелёные</span> — из системы. <span class="est">Синие</span> — впишем на встрече.</p>
     <table class="io"><tbody>
-      <tr><td class="lbl">Диалогов в месяц<small>из системы</small></td>
+      <tr><td class="lbl">Обращений в месяц<small>из системы, июль 2026</small></td>
         <td><input id="dlg" class="sysv" type="number" value="1225"></td></tr>
-      <tr><td class="lbl">Доля «дошли до консультации», %<small>из системы (по тегам, ≥16,5%)</small></td>
-        <td><input id="consult" class="sysv" type="number" value="17.3"></td></tr>
+      <tr><td class="lbl">Доля обращение → консультация ДО бота, %<small>как было при ручной обработке — впишем на встрече</small></td>
+        <td><input id="cb" class="askv" type="number" value="10"></td></tr>
+      <tr><td class="lbl">Доля обращение → консультация СЕЙЧАС, %<small>с ботом 24/7 — из системы (по тегам)</small></td>
+        <td><input id="ca" class="sysv" type="number" value="17.3"></td></tr>
       <tr><td class="lbl">Консультация → операция, %<small>ваша воронка — впишем на встрече</small></td>
         <td><input id="toop" class="askv" type="number" value="35"></td></tr>
       <tr><td class="lbl">Средний чек операции, ₽<small>средняя по клинике — впишем</small></td>
         <td><input id="check" class="askv" type="number" value="250000"></td></tr>
-      <tr><td class="lbl">Прирост записи после правок, п.п.<small>консервативно, впишем вместе</small></td>
-        <td><input id="uplift" class="askv" type="number" value="4"></td></tr>
       <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td>
         <td><input id="savvi" class="sysv" type="number" value="34839"></td></tr>
     </tbody></table>
@@ -261,9 +261,10 @@
     <div class="item"><div class="top"><span class="t2">🩺 Операций сейчас (с потока агентов)</span><span class="a" id="e-now">—</span></div><div class="f" id="f-now"></div></div>
     <div class="item"><div class="top"><span class="t2">📈 Прирост операций от правок</span><span class="a" id="e-dd">—</span></div><div class="f" id="f-dd"></div></div>
     <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="e-cost" style="color:var(--red)">—</span></div><div class="f" id="f-cost"></div></div>
-    <div class="note"><b>Как считаем:</b> диалоги × доля дошедших до консультации × конверсия консультация→операция
-      = операций в месяц. Прирост записи (устранение обрыва 21%, фиксация лидов) в п.п. × чек операции = доп.выручка,
-      минус стоимость Савви, ×12 за год. Конверсию, чек и прирост впишем по вашим данным.</div>
+    <div class="note"><b>Как считаем «до/после»:</b> берём долю обращений, доходящих до консультации, <b>до
+      подключения бота</b> и <b>сейчас</b>. Операций сейчас = обращения × доля сейчас × конверсия в операцию.
+      Прирост операций = обращения × (доля сейчас − доля до бота) × конверсия в операцию. Доп.выручка = прирост ×
+      чек операции, минус стоимость Савви, ×12 за год. «До», конверсию и чек впишем по вашим данным.</div>
   </div>
 
   <!-- 10. ФУТЕР -->
@@ -278,20 +279,20 @@
     if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
   function v(id){return parseFloat(document.getElementById(id).value)||0;}
   function calc(){
-    var D=v('dlg'), c=v('consult')/100, op=v('toop')/100, chk=v('check'), up=v('uplift')/100, sv=v('savvi');
-    var consult=D*c, nowOps=consult*op, ddOps=D*up*op, month=ddOps*chk-sv, year=month*12;
+    var D=v('dlg'), cb=v('cb')/100, ca=v('ca')/100, op=v('toop')/100, chk=v('check'), sv=v('savvi');
+    var nowOps=D*ca*op, extraConsult=Math.max(0,D*(ca-cb)), ddOps=extraConsult*op, month=ddOps*chk-sv, year=month*12;
     document.getElementById('r-now').textContent='≈ '+Math.round(nowOps).toLocaleString('ru-RU');
-    document.getElementById('r-dd').textContent='+'+Math.round(ddOps).toLocaleString('ru-RU');
+    document.getElementById('r-dd').textContent='+ '+Math.round(ddOps).toLocaleString('ru-RU');
     document.getElementById('r-month').textContent=rub(month);
     document.getElementById('r-year').textContent=rub(year);
     document.getElementById('e-now').textContent='≈ '+Math.round(nowOps)+' операций';
-    document.getElementById('f-now').textContent=Math.round(D)+' диал. × '+(c*100).toFixed(1)+'% консультаций × '+Math.round(op*100)+'% в операцию = '+Math.round(nowOps);
-    document.getElementById('e-dd').textContent='+'+Math.round(ddOps)+' операций';
-    document.getElementById('f-dd').textContent=Math.round(D)+' × '+(up*100).toFixed(0)+' п.п. × '+Math.round(op*100)+'% = '+Math.round(ddOps)+' операций/мес';
+    document.getElementById('f-now').textContent=Math.round(D)+' диал. × '+(ca*100).toFixed(1)+'% консультаций (сейчас) × '+Math.round(op*100)+'% в операцию';
+    document.getElementById('e-dd').textContent='+ '+Math.round(ddOps)+' операций';
+    document.getElementById('f-dd').textContent=Math.round(D)+' × ('+(ca*100).toFixed(1)+'% − '+(cb*100).toFixed(0)+'% до бота) × '+Math.round(op*100)+'% в операцию';
     document.getElementById('e-cost').textContent='−'+Math.round(sv).toLocaleString('ru-RU')+' ₽';
     document.getElementById('f-cost').textContent='реальный расход в Савви за месяц (июль 2026)';
   }
-  ['dlg','consult','toop','check','uplift','savvi'].forEach(function(id){
+  ['dlg','cb','ca','toop','check','savvi'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.addEventListener('input',calc);});
   calc();
 </script>
