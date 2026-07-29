@@ -247,8 +247,8 @@
   <div class="card">
     <h2>Что это даёт</h2>
     <div class="res">
-      <div class="rc"><div class="l">Записей/мес сейчас</div><div class="v" id="r-now">—</div><div class="s">доходят до записи</div></div>
-      <div class="rc"><div class="l">+ Записей/мес</div><div class="v" id="r-dd">—</div><div class="s">от починки записи (до 100% из намеренных)</div></div>
+      <div class="rc"><div class="l">Записей/мес ДО бота</div><div class="v" id="r-before">—</div><div class="s">оценка «как было»</div></div>
+      <div class="rc"><div class="l">Записей/мес СЕЙЧАС</div><div class="v" id="r-now">—</div><div class="s">с ботом (+<span id="r-dd">—</span>)</div></div>
       <div class="rc blue"><div class="l">+ Выручка/мес</div><div class="v" id="r-month">—</div><div class="s">за вычетом стоимости Савви</div></div>
       <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r-year">—</div><div class="s">прирост выручки</div></div>
     </div>
@@ -278,8 +278,9 @@
   function calc(){
     var D=v('dlg'), cb=v('cb')/100, ca=v('ca')/100, chk=v('check'), sv=v('savvi');
     var nowB=D*ca, ddB=Math.max(0,D*(ca-cb)), month=ddB*chk-sv, year=month*12;
+    document.getElementById('r-before').textContent='≈ '+Math.round(D*cb).toLocaleString('ru-RU');
     document.getElementById('r-now').textContent='≈ '+Math.round(nowB).toLocaleString('ru-RU');
-    document.getElementById('r-dd').textContent='+ '+Math.round(ddB).toLocaleString('ru-RU');
+    document.getElementById('r-dd').textContent=Math.round(ddB).toLocaleString('ru-RU');
     document.getElementById('r-month').textContent=rub(month);
     document.getElementById('r-year').textContent=rub(year);
     document.getElementById('e-now').textContent='≈ '+Math.round(nowB)+' записей';
