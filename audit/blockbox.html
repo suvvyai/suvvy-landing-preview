@@ -80,7 +80,7 @@
   <div class="card hero">
     <p class="kicker">Разбор работы ИИ-агента</p>
     <h1>Как Виктория обрабатывает заявки на бытовки и где скрыт дополнительный рост</h1>
-    <p class="sub">ООО «Блок-Бокс» · агент «Виктория» (Bitrix24, интеграция с Avito) · период: июнь–июль 2026 (свыше 6 700 диалогов)</p>
+    <p class="sub">ООО «Блок-Бокс» · агент «Виктория» (Bitrix24, интеграция с Avito) · период: июнь–июль 2026 (6 750 диалогов, ~3 375/мес)</p>
   </div>
 
   <!-- 2. ЧТО СДЕЛАЛИ + 4 метрики -->
@@ -88,10 +88,10 @@
     <h2>Что мы сделали</h2>
     <p class="lead">Разобрали переписки и работу интеграций (Bitrix24, расчёт доставки), прочитали проблемные диалоги и посчитали, где реально теряются заявки.</p>
     <div class="metrics">
-      <div class="m"><div class="v">3 199</div><div class="l">диалогов за июнь</div></div>
+      <div class="m"><div class="v">≈3 375</div><div class="l">диалогов в месяц (июнь–июль)</div></div>
       <div class="m good"><div class="v">86%</div><div class="l">бот закрывает сам, без оператора</div></div>
       <div class="m good"><div class="v">23 сек</div><div class="l">медианное время ответа, 24/7</div></div>
-      <div class="m bad"><div class="v">37%</div><div class="l">вовлечённых обращений теряются на теме документов/легальности компании</div></div>
+      <div class="m bad"><div class="v">20%</div><div class="l">вовлечённых обращений теряются на теме документов/легальности компании</div></div>
     </div>
   </div>
 
@@ -168,8 +168,8 @@
     <div class="metrics">
       <div class="m good"><div class="v">86%</div><div class="l">закрывается ботом сейчас</div></div>
       <div class="m bad"><div class="v">14%</div><div class="l">уходит на оператора или обрывается</div></div>
-      <div class="m"><div class="v">37%</div><div class="l">от вовлечённых без заявки — тема документов</div></div>
-      <div class="m"><div class="v">22%</div><div class="l">от вовлечённых без заявки — стоимость доставки</div></div>
+      <div class="m"><div class="v">21%</div><div class="l">от вовлечённых без заявки — стоимость доставки</div></div>
+      <div class="m"><div class="v">20%</div><div class="l">от вовлечённых без заявки — тема документов</div></div>
     </div>
     <p style="margin:16px 0 0"><b>Где именно берётся рост:</b> документ с реквизитами компании и более активное предложение самовывоза/альтернатив по доставке напрямую снимают две крупнейшие причины утечки среди клиентов, которые уже были готовы общаться. Оценка ориентировочная, уточним после внедрения правок.</p>
   </div>
@@ -184,7 +184,7 @@
     <h2>Что бот уже делает сам <span class="sys">из системы</span></h2>
     <p class="lead">Факты за период — их не нужно спрашивать, они измерены.</p>
     <div class="fact">
-      <div class="fc"><div class="fv">≈3 200</div><div class="fl">диалогов в месяц</div></div>
+      <div class="fc"><div class="fv">≈3 375</div><div class="fl">диалогов в месяц</div></div>
       <div class="fc"><div class="fv">67%</div><div class="fl">доходит до «горящего лида» в CRM</div></div>
       <div class="fc"><div class="fv">23 сек</div><div class="fl">среднее время ответа 24/7</div></div>
     </div>
@@ -193,33 +193,35 @@
     <h2>Ваши цифры</h2>
     <p class="lead"><span class="sys">Зелёные</span> — из системы. <span class="est">Синие</span> — впишем на встрече.</p>
     <table class="io"><tbody>
-      <tr><td class="lbl">Обращений в месяц<small>из системы, июнь 2026</small></td><td><input id="i1" class="sysv" type="number" value="3199"></td></tr>
-      <tr><td class="lbl">Доля до «горящего лида», %<small>из системы — заполнение CRM</small></td><td><input id="i2" class="sysv" type="number" value="67"></td></tr>
-      <tr><td class="lbl">Доля до заявки без бота (оценка), %<small>впишем на встрече</small></td><td><input id="i3" class="askv" type="number" value="50"></td></tr>
-      <tr><td class="lbl">Средняя сумма сделки, ₽<small>впишем на встрече</small></td><td><input id="i4" class="askv" type="number" value="30000"></td></tr>
-      <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td><td><input id="isavvi" class="sysv" type="number" value="153900"></td></tr>
+      <tr><td class="lbl">Обращений в месяц<small>среднее июнь–июль 2026, из системы</small></td><td><input id="i1" class="sysv" type="number" value="3375"></td></tr>
+      <tr><td class="lbl">Доля до «горящего лида» ДО бота, %<small>как было при ручной обработке — впишем на встрече</small></td><td><input id="ib" class="askv" type="number" value="50"></td></tr>
+      <tr><td class="lbl">Доля до «горящего лида» СЕЙЧАС, %<small>с ботом 24/7 — из системы</small></td><td><input id="ia" class="sysv" type="number" value="71"></td></tr>
+      <tr><td class="lbl">Конверсия «горящего лида» в сделку, %<small>доводит отдел продаж — впишем на встрече</small></td><td><input id="iconv" class="askv" type="number" value="30"></td></tr>
+      <tr><td class="lbl">Средняя сумма сделки, ₽<small>впишем на встрече</small></td><td><input id="icheck" class="askv" type="number" value="30000"></td></tr>
+      <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы (среднее июнь–июль)</small></td><td><input id="isavvi" class="sysv" type="number" value="143279"></td></tr>
     </tbody></table>
   </div>
   <div class="card">
     <h2>Что это даёт</h2>
     <div class="res">
-      <div class="rc"><div class="l">Заявок с ботом</div><div class="v" id="r1">—</div><div class="s">в месяц</div></div>
-      <div class="rc"><div class="l">Доп. заявок vs без бота</div><div class="v" id="r2">—</div><div class="s">в месяц</div></div>
-      <div class="rc blue"><div class="l">Эффект / мес</div><div class="v" id="r3">—</div><div class="s">доп. выручка минус Савви</div></div>
-      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r4">—</div><div class="s">при сохранении темпа</div></div>
+      <div class="rc"><div class="l">Заявок с ботом сейчас</div><div class="v" id="r1">—</div><div class="s">в месяц</div></div>
+      <div class="rc"><div class="l">+ Заявок / мес</div><div class="v" id="r2">—</div><div class="s">прирост к «до бота»</div></div>
+      <div class="rc blue"><div class="l">+ Выручка / мес</div><div class="v" id="r3">—</div><div class="s">за вычетом стоимости Савви</div></div>
+      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r4">—</div><div class="s">прирост выручки</div></div>
     </div>
   </div>
   <div class="card">
     <h2>Разбор эффекта</h2>
     <div class="item"><div class="top"><span class="t2">📈 Заявок с ботом сейчас</span><span class="a" id="e1">—</span></div><div class="f" id="f1"></div></div>
-    <div class="item"><div class="top"><span class="t2">💰 Доп. выручка от роста доли заявок</span><span class="a" id="e2">—</span></div><div class="f" id="f2"></div></div>
+    <div class="item"><div class="top"><span class="t2">➕ Прирост заявок к «до бота»</span><span class="a" id="e2">—</span></div><div class="f" id="f2"></div></div>
+    <div class="item"><div class="top"><span class="t2">💰 Доп. выручка от прироста</span><span class="a" id="e3">—</span></div><div class="f" id="f3"></div></div>
     <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="ec" style="color:var(--red)">—</span></div><div class="f" id="fc"></div></div>
-    <div class="note"><b>Как считаем:</b> доп. выручка/мес = обращения × (доля до горящего лида с ботом − доля без бота) × средняя сумма сделки; эффект/мес = доп. выручка − стоимость Савви; эффект/год = эффект/мес × 12. Финальные значения сверяем вместе на встрече.</div>
+    <div class="note"><b>Как считаем «до/после»:</b> берём долю обращений, доходящих до «горящего лида», <b>до подключения бота</b> и <b>сейчас</b>. Прирост заявок/мес = обращения × (доля сейчас − доля до бота). Доп. выручка = прирост заявок × конверсия в сделку × средняя сумма сделки. Чистый эффект/мес = доп. выручка − стоимость Савви, далее ×12 — эффект за год. «До», конверсию и сумму сделки впишем вместе на встрече.</div>
   </div>
 
   <!-- 10. ФУТЕР -->
   <div class="card"><div class="foot"><div class="chip">S</div>
-    <div>Разбор подготовлен на данных вашего проекта в Савви (свыше 3 000 диалогов за июнь 2026). Цифры калькулятора — ориентир, финальные значения сверяем вместе.</div></div></div>
+    <div>Разбор подготовлен на данных вашего проекта в Савви (6 750 диалогов за июнь–июль 2026). Цифры калькулятора — ориентир, финальные значения сверяем вместе.</div></div></div>
 
 </div>
 <script>
@@ -228,21 +230,23 @@
     if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
   function v(id){return parseFloat(document.getElementById(id).value)||0;}
   function calc(){
-    var dlg=v('i1'), capAfter=v('i2')/100, capBefore=v('i3')/100, check=v('i4'), sv=v('isavvi');
-    var leadsAfter=dlg*capAfter, leadsBefore=dlg*capBefore, extraLeads=Math.max(0,leadsAfter-leadsBefore);
-    var extraRevenue=extraLeads*check, month=extraRevenue-sv, year=month*12;
-    document.getElementById('r1').textContent=Math.round(leadsAfter).toLocaleString('ru-RU');
-    document.getElementById('r2').textContent='≈ '+Math.round(extraLeads).toLocaleString('ru-RU');
+    var dlg=v('i1'), capB=v('ib')/100, capA=v('ia')/100, conv=v('iconv')/100, check=v('icheck'), sv=v('isavvi');
+    var leadsNow=dlg*capA, extraLeads=Math.max(0,dlg*(capA-capB));
+    var extraSales=extraLeads*conv, extraRev=extraSales*check, month=extraRev-sv, year=month*12;
+    document.getElementById('r1').textContent=Math.round(leadsNow).toLocaleString('ru-RU');
+    document.getElementById('r2').textContent='+ '+Math.round(extraLeads).toLocaleString('ru-RU');
     document.getElementById('r3').textContent=rub(month);
     document.getElementById('r4').textContent=rub(year);
-    document.getElementById('e1').textContent=Math.round(leadsAfter).toLocaleString('ru-RU')+' /мес';
-    document.getElementById('f1').textContent=dlg+' обращений × '+(capAfter*100).toFixed(0)+'%';
-    document.getElementById('e2').textContent=rub(extraRevenue);
-    document.getElementById('f2').textContent=Math.round(extraLeads)+' доп. заявок × '+check.toLocaleString('ru-RU')+' ₽';
+    document.getElementById('e1').textContent=Math.round(leadsNow).toLocaleString('ru-RU')+' /мес';
+    document.getElementById('f1').textContent=Math.round(dlg).toLocaleString('ru-RU')+' обращений × '+Math.round(capA*100)+'% (сейчас)';
+    document.getElementById('e2').textContent='+ '+Math.round(extraLeads).toLocaleString('ru-RU')+' /мес';
+    document.getElementById('f2').textContent=Math.round(dlg).toLocaleString('ru-RU')+' × ('+Math.round(capA*100)+'% − '+Math.round(capB*100)+'% до бота)';
+    document.getElementById('e3').textContent=rub(extraRev)+' /мес';
+    document.getElementById('f3').textContent=Math.round(extraLeads).toLocaleString('ru-RU')+' доп. заявок × '+Math.round(conv*100)+'% конверсии × '+rub(check);
     document.getElementById('ec').textContent='−'+rub(sv);
     document.getElementById('fc').textContent=sv.toLocaleString('ru-RU')+' ₽/мес, реальный расход из системы';
   }
-  ['i1','i2','i3','i4','isavvi'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',calc);});
+  ['i1','ib','ia','iconv','icheck','isavvi'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',calc);});
   calc();
 </script>
 </body>
