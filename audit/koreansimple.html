@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Савви × Korean Simple — разбор работы ИИ-агента и расчёт эффекта</title>
+<style>
+  :root{--ink:#11253e;--ink2:#5e748d;--ink3:#8695a7;--bg:#fff;--soft:#f0f4fa;--canvas:#e8ecf3;
+    --line:#e1e6ec;--blue:#3520fc;--purple:#9117d2;
+    --grad:linear-gradient(90deg,#3520fc 0%,#9117d2 50%,#ee0ea8 100%);
+    --green:#15803d;--green-bg:#e7f5ec;--red:#b91c1c;--amber:#b45309;}
+  *{box-sizing:border-box;margin:0;padding:0;} html,body{background:var(--canvas);}
+  body{font-family:-apple-system,'Segoe UI',Roboto,'Inter',Arial,sans-serif;color:var(--ink);font-size:15px;
+    line-height:1.5;padding:28px 16px;-webkit-font-smoothing:antialiased;}
+  .page{max-width:900px;margin:0 auto;}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:26px 30px;margin-bottom:16px;}
+  .hero{position:relative;overflow:hidden;}.hero::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad);}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--purple);margin:0 0 8px;}
+  h1{font-size:27px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;font-weight:800;}
+  .sub{color:var(--ink2);font-size:14px;margin:0;}
+  h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0 0 4px;} .lead{color:var(--ink2);font-size:13.5px;margin:0 0 18px;}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px;}
+  .m{background:var(--soft);border-radius:10px;padding:14px 16px;}
+  .m .v{font-size:26px;font-weight:800;line-height:1;letter-spacing:-.02em;} .m .l{font-size:11.5px;color:var(--ink2);margin-top:6px;font-weight:600;}
+  .m.good .v{color:var(--green);}.m.bad .v{color:var(--red);}
+  ul{margin:8px 0 0;padding-left:18px;}li{margin:5px 0;}
+  .tag{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 10px;border-radius:90px;}
+  .tag.g{background:var(--green-bg);color:var(--green);}.tag.a{background:#fdf3e6;color:var(--amber);}
+  .box{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+  .box.red{border-color:#f3c9c9;background:#fdf6f6;}.box.amber{border-color:#f0dcbd;background:#fdf9f2;}
+  .box h3{margin:0 0 6px;font-size:15.5px;font-weight:800;}.box p{margin:0;font-size:13.5px;}
+  .box .why{color:var(--ink2);font-size:12.5px;margin-top:6px;}
+  .pb{margin:0 0 14px;}.pb .h{font-size:13px;font-weight:800;margin:0 0 6px;}
+  .pb pre{margin:0;background:#11253e;color:#e3e9f2;border-radius:10px;padding:14px 16px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;
+    white-space:pre-wrap;word-break:break-word;overflow-x:auto;}
+  .pb pre .t{color:#c8b3f0;font-weight:700;}
+  .steps{counter-reset:s;list-style:none;padding:0;margin:8px 0 0;}
+  .steps li{counter-increment:s;position:relative;padding:10px 0 10px 40px;border-bottom:1px dashed var(--line);}
+  .steps li:last-child{border-bottom:0;}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:9px;width:26px;height:26px;background:var(--ink);
+    color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+  .owner{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;}
+  .calc-hero{background:var(--ink);color:#fff;border:none;}
+  .calc-hero .kicker{color:#c8b3f0;}.calc-hero h1{color:#fff;}.calc-hero .sub{color:#b8c1cf;}
+  .fact{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .fc{background:var(--soft);border-radius:12px;padding:14px;}
+  .fc .fv{font-size:20px;font-weight:800;}.fc .fl{font-size:12px;color:var(--ink2);margin-top:4px;line-height:1.4;}
+  table.io{width:100%;border-collapse:collapse;}
+  table.io td{padding:6px 8px;border-top:1px solid var(--line);vertical-align:middle;}
+  table.io td.lbl{font-size:13px;font-weight:600;} table.io td.lbl small{display:block;font-weight:500;color:var(--ink2);font-size:11px;}
+  table.io input{width:150px;padding:9px 11px;border:2px solid var(--line);border-radius:10px;
+    font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);text-align:right;}
+  table.io input:focus{outline:none;border-color:var(--blue);}
+  table.io input.sysv{border-color:#b2e8d2;background:var(--green-bg);}
+  table.io input.askv{border-color:#c5c6f5;background:#eeeffe;}
+  .res{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+  .rc{border-radius:14px;padding:18px;background:var(--green-bg);border:1.5px solid #b2e8d2;}
+  .rc.blue{background:#eeeffe;border-color:#c5c6f5;}.rc.big{background:var(--ink);border-color:var(--ink);}
+  .rc .l{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;color:var(--green);}
+  .rc.blue .l{color:var(--blue);}.rc.big .l{color:#c8b3f0;}
+  .rc .v{font-size:23px;font-weight:800;line-height:1.15;color:var(--green);}.rc.blue .v{color:var(--blue);}.rc.big .v{color:#fff;}
+  .rc .s{font-size:12px;color:var(--ink2);margin-top:4px;}.rc.big .s{color:#b8c1cf;}
+  .item{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+  .item .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .item .t2{font-size:14px;font-weight:700;}.item .a{font-size:17px;font-weight:800;color:var(--green);white-space:nowrap;}
+  .item .f{font-size:12px;color:var(--ink2);background:var(--soft);border-radius:8px;padding:7px 10px;margin-top:8px;font-family:ui-monospace,Menlo,Consolas,monospace;}
+  .est{color:var(--blue);font-weight:700;}.sys{color:var(--green);font-weight:700;}
+  .note{font-size:11.5px;color:var(--ink3);line-height:1.5;margin-top:14px;}.note b{color:var(--ink2);}
+  .foot{display:flex;align-items:center;gap:12px;color:var(--ink2);font-size:12.5px;padding:6px 2px 0;}
+  .chip{width:34px;height:34px;border-radius:9px;background:var(--grad);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;}
+  @media (max-width:640px){.metrics,.fact,.res{grid-template-columns:1fr;}table.io input{width:100%;}}
+  @media print{body{background:#fff;padding:0;}.card{break-inside:avoid;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 1. HERO -->
+  <div class="card hero">
+    <p class="kicker">Разбор работы ИИ-агента</p>
+    <h1>Как ИИ-менеджер Korean Simple обрабатывает заявки и где скрыт рост</h1>
+    <p class="sub">Korean Simple · агенты «Алина / Юнги / Кира» (amoCRM) · период: июнь 2026 (2 726 диалогов)</p>
+  </div>
+
+  <!-- 2. ЧТО СДЕЛАЛИ + 4 метрики -->
+  <div class="card">
+    <h2>Что мы сделали</h2>
+    <p class="lead">Разобрали переписки, воронку по функциям и интеграцию с amoCRM, прочитали проблемные и самые дорогие диалоги вручную.</p>
+    <div class="metrics">
+      <div class="m"><div class="v">2 726</div><div class="l">диалогов за месяц</div></div>
+      <div class="m good"><div class="v">35%</div><div class="l">доводит до передачи менеджеру</div></div>
+      <div class="m good"><div class="v">~10 сек</div><div class="l">среднее время ответа, 24/7</div></div>
+      <div class="m bad"><div class="v">26%</div><div class="l">вовлечённых лидов уходят из-за цены без результата</div></div>
+    </div>
+  </div>
+
+  <!-- 3. СИЛЬНЫЕ СТОРОНЫ -->
+  <div class="card">
+    <h2>Сильные стороны <span class="tag g">работает хорошо</span></h2>
+    <ul>
+      <li><b>Быстрый и стабильный ответ</b> — в среднем 10 секунд, 85% ответов укладываются в 5–15 секунд, круглосуточно.</li>
+      <li><b>Гибкая отработка цены</b> — агент предлагает рассрочку, меньший пакет уроков или скидку 50–70%, не просто повторяет цену.</li>
+      <li><b>Реально работающие напоминания</b> — на остывающих заявках агент сам возвращается: промежуточный вопрос, затем персональное предложение со скидкой, затем финальный пинг.</li>
+      <li><b>Корректная работа с несовершеннолетними</b> — при обращении клиента младше 18 лет агент запрашивает контакт родителя, прежде чем продолжать оформление.</li>
+      <li><b>Первичная квалификация без участия человека</b> — большая часть потока проходит через агента полностью самостоятельно, менеджеру передаются только готовые к разговору заявки.</li>
+    </ul>
+  </div>
+
+  <!-- 4. ГДЕ ТЕРЯЕТСЯ -->
+  <div class="card">
+    <h2>Где теряются заявки</h2>
+    <p class="lead">Среди тех, кто реально пообщался с агентом (3+ сообщений), но не дошёл до передачи менеджеру — разложили причины по темам.</p>
+    <div class="box red"><h3>🔴 Цена и рассрочка — 26%</h3>
+      <p>Самая частая причина остановки диалога — клиент называет цену высокой, даже после предложенной скидки или рассрочки.</p>
+      <p class="why"><b>Что это значит:</b> часть этих заявок реально ограничена бюджетом, но часть — уходит из-за того, что цена называется раньше, чем агент узнаёт комфортный бюджет клиента. Более раннее уточнение бюджета может увеличить долю удержанных заявок.</p></div>
+    <div class="box amber"><h3>🟡 «Справлюсь сам, без преподавателя» — 9%</h3>
+      <p>Часть клиентов считает, что для их цели хватит приложения и самостоятельных занятий.</p>
+      <p class="why"><b>Что это значит:</b> потенциал допродажи онлайн-курса вместо потери лида целиком — сейчас агент предлагает такой переход не во всех случаях.</p></div>
+    <div class="box amber"><h3>🟡 «Подумаю, напишу позже» — 5%</h3>
+      <p>Клиент интересуется, но не готов принять решение сразу.</p>
+      <p class="why"><b>Что это значит:</b> именно на этих заявках уже видно, что работают напоминания — можно усилить их точность (более персональный повод для возврата, а не общий шаблон).</p></div>
+  </div>
+
+  <!-- 5. ЧТО НАСТРОИТЬ -->
+  <div class="card">
+    <h2>Что настроить и чем наполнить базу</h2>
+    <p class="lead">Правки сценария — можно внести сразу. Факты для базы знаний — берём из реальных ответов ваших операторов, не придумываем.</p>
+    <ul>
+      <li><b>Смягчить повтор в отработке возражения «доверие/мошенники»</b> — в части диалогов агент несколько раз подряд повторяет похожую формулировку, что раздражает клиента вместо того, чтобы убедить.</li>
+      <li><b>Ограничить продуктовую консультацию для несовершеннолетних до появления родителя</b> — контакт запрашивается верно, но точные цены и оформление иногда продолжают обсуждаться с самим ребёнком.</li>
+      <li><b>Добавить в базу знаний три готовых сценария из ответов ваших операторов</b> — пауза/заморозка обучения, запрос подтверждения оплаты (фото чека), восстановление доступа к платформе — сейчас это каждый раз решает человек вручную, хотя ответ типовой.</li>
+    </ul>
+    <div class="pb" style="margin-top:14px"><div class="h">🧹 Правки сценария, которые можно внести сразу</div><pre><span class="t">#ПРАВИЛА (отработка возражения «недоверие/мошенники»)</span>
+- Если клиент дважды повторил сомнение в подлинности школы/бота — не повторять
+  третий раз похожую формулировку про прозрачность. Сразу предложить проверку
+  (сайт с офертой + отзывы) и звонок с живым человеком.
+
+<span class="t">#ПРАВИЛА (клиенты младше 18 лет)</span>
+- После запроса контакта представителя — не называть точные цены и не предлагать
+  оформление заказа, пока в диалоге не появится сообщение от родителя.</pre></div>
+  </div>
+
+  <!-- 6. НОВЫЕ ВОЗМОЖНОСТИ САВВИ -->
+  <div class="card">
+    <h2>Новые возможности Савви, которые здесь усилят результат <span class="tag a">апгрейд</span></h2>
+    <ul>
+      <li><b>Анализатор</b> — автоматическая разметка диалогов по темам и исходам (цена/самостоятельно/подумаю), без ручного прогона — вы сами увидите, где именно теряются заявки, в режиме реального времени.</li>
+      <li><b>Автообучение</b> — подсказывает, каких документов не хватает в базе, и помогает быстро превратить ответ оператора (пауза, оплата, доступ) в документ базы знаний — доля вопросов, закрытых агентом без оператора, будет расти.</li>
+      <li><b>Фоллоуапы</b> — у вас уже есть работающая цепочка напоминаний; с настроенными сценариями Савви её можно сделать более персональной и управляемой, не завязанной на промпт вручную.</li>
+    </ul>
+  </div>
+
+  <!-- 7. ПЛАН ДЕЙСТВИЙ -->
+  <div class="card">
+    <h2>План действий</h2>
+    <ol class="steps">
+      <li><span class="owner">Техника · приоритет 1</span><br>Сверить с интеграцией amoCRM — часть данных о клиенте (страна, возраст, цель обучения) не сохраняется в карточке сделки из-за ошибки в записи полей.</li>
+      <li><span class="owner">Сценарий · быстрый эффект</span><br>Смягчить повтор в отработке возражения «доверие», уточнять бюджет клиента раньше в разговоре, ограничить оформление для несовершеннолетних без родителя.</li>
+      <li><span class="owner">База</span><br>Оформить три сценария из ответов операторов (пауза, подтверждение оплаты, доступ к платформе) как документы базы знаний.</li>
+      <li><span class="owner">Возможности</span><br>Подключить Анализатор для автоматической разметки причин потери заявок и Автообучение для роста самостоятельных закрытий.</li>
+    </ol>
+  </div>
+
+  <!-- 8. АПСАЙД -->
+  <div class="card">
+    <h2>Насколько ещё можно поднять передачу заявок менеджеру</h2>
+    <p class="lead">Агент уже держит основной поток и первично квалифицирует заявки 24/7; рост — в устранимых причинах, которые видны прямо в переписках.</p>
+    <div class="metrics">
+      <div class="m good"><div class="v">35%</div><div class="l">доводится до передачи менеджеру сейчас</div></div>
+      <div class="m bad"><div class="v">65%</div><div class="l">не доходит до передачи</div></div>
+      <div class="m"><div class="v">26%</div><div class="l">из них — вопрос цены/бюджета</div></div>
+      <div class="m"><div class="v">9%</div><div class="l">из них — «справлюсь без преподавателя»</div></div>
+    </div>
+    <p style="margin:16px 0 0"><b>Где именно берётся рост:</b> более раннее уточнение бюджета снижает долю уходов по цене; предложение онлайн-курса взамен полной потери лида для «самостоятельных» клиентов; более персональные напоминания на «подумаю». Рабочие напоминания уже дают эффект — ориентировочно на цепочках возврата можно получать порядка на 10% больше доведённых заявок. Точную оценку роста уточним на встрече.</p>
+  </div>
+
+  <!-- 9. КАЛЬКУЛЯТОР -->
+  <div class="card calc-hero">
+    <p class="kicker">Расчёт эффекта · заполняем вместе</p>
+    <h1>Сколько дополнительной выручки приносит ИИ-агент</h1>
+    <p class="sub">Зелёным — уже измерено в системе. Синим — впишем ваши цифры на встрече. Внизу — эффект за год.</p>
+  </div>
+  <div class="card">
+    <h2>Что агент уже делает сам <span class="sys">из системы</span></h2>
+    <p class="lead">Факты за месяц — их не нужно спрашивать, они измерены.</p>
+    <div class="fact">
+      <div class="fc"><div class="fv">2 726</div><div class="fl">обращений в месяц</div></div>
+      <div class="fc"><div class="fv">35%</div><div class="fl">доводит до передачи менеджеру</div></div>
+      <div class="fc"><div class="fv">~10 сек</div><div class="fl">среднее время ответа 24/7</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Ваши цифры</h2>
+    <p class="lead"><span class="sys">Зелёные</span> — из системы. <span class="est">Синие</span> — впишем на встрече.</p>
+    <table class="io"><tbody>
+      <tr><td class="lbl">Обращений в месяц<small>из системы, июнь 2026</small></td><td><input id="i1" class="sysv" type="number" value="2726"></td></tr>
+      <tr><td class="lbl">Доводит до передачи менеджеру, %<small>из системы</small></td><td><input id="i2" class="sysv" type="number" value="35"></td></tr>
+      <tr><td class="lbl">Конверсия переданного лида в оплату, %<small>впишем на встрече</small></td><td><input id="i3" class="askv" type="number" value="20"></td></tr>
+      <tr><td class="lbl">Средний чек, ₽<small>впишем на встрече</small></td><td><input id="i4" class="askv" type="number" value="15000"></td></tr>
+      <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td><td><input id="isavvi" class="sysv" type="number" value="121000"></td></tr>
+    </tbody></table>
+  </div>
+  <div class="card">
+    <h2>Что это даёт</h2>
+    <div class="res">
+      <div class="rc"><div class="l">Заявок передано менеджеру</div><div class="v" id="r1">—</div><div class="s">в месяц</div></div>
+      <div class="rc"><div class="l">Из них оплатили</div><div class="v" id="r2">—</div><div class="s">по конверсии с встречи</div></div>
+      <div class="rc blue"><div class="l">Эффект в месяц</div><div class="v" id="r3">—</div><div class="s">доп. выручка минус Савви</div></div>
+      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r4">—</div><div class="s">при сохранении текущих показателей</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Разбор эффекта</h2>
+    <div class="item"><div class="top"><span class="t2">Заявок передано менеджеру</span><span class="a" id="e1">—</span></div><div class="f" id="f1">обращений × доля передачи</div></div>
+    <div class="item"><div class="top"><span class="t2">Оплаченных курсов/туров</span><span class="a" id="e2">—</span></div><div class="f" id="f2">заявок × конверсия в оплату</div></div>
+    <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="ec" style="color:var(--red)">—</span></div><div class="f" id="fc">реальный расход за месяц</div></div>
+    <div class="note"><b>Как считаем:</b> доп. выручка/мес = обращения × доля передачи менеджеру × конверсия в оплату × средний чек, минус стоимость Савви. Эффект за год — умножаем месячный результат на 12. Финальные значения сверяем вместе на встрече.</div>
+  </div>
+
+  <!-- 10. ФУТЕР -->
+  <div class="card"><div class="foot"><div class="chip">S</div>
+    <div>Разбор подготовлен на данных вашего проекта в Савви (2 726 диалогов за июнь 2026). Цифры калькулятора — ориентир, финальные значения сверяем вместе.</div></div></div>
+
+</div>
+<script>
+  function rub(n){n=Math.round(n);var s=n<0?'−':'';n=Math.abs(n);
+    if(n>=1e6)return s+(n/1e6).toFixed(n>=1e7?0:2).replace('.',',')+' млн ₽';
+    if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
+  function v(id){return parseFloat(document.getElementById(id).value)||0;}
+  function calc(){
+    var dlg=v('i1'), cap=v('i2')/100, sale=v('i3')/100, check=v('i4'), sv=v('isavvi');
+    var leads=dlg*cap, sales=leads*sale, month=sales*check-sv, year=month*12;
+    document.getElementById('r1').textContent=Math.round(leads).toLocaleString('ru-RU');
+    document.getElementById('r2').textContent='≈ '+Math.round(sales).toLocaleString('ru-RU');
+    document.getElementById('r3').textContent=rub(month); document.getElementById('r4').textContent=rub(year);
+    document.getElementById('e1').textContent=Math.round(leads).toLocaleString('ru-RU');
+    document.getElementById('e2').textContent='≈ '+Math.round(sales).toLocaleString('ru-RU');
+    document.getElementById('ec').textContent='−'+rub(sv);
+  }
+  ['i1','i2','i3','i4','isavvi'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',calc);});
+  calc();
+</script>
+</body>
+</html>
