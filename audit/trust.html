@@ -94,7 +94,7 @@
   <div class="card hero">
     <p class="kicker">Разбор работы ИИ-агента</p>
     <h1>Как ваш ИИ-менеджер записывает водителей на встречу — и где скрыт рост выручки</h1>
-    <p class="sub">Trust Taxi · агент «Пускач» (Битрикс24) · период: ~2 месяца (3 199 диалогов)</p>
+    <p class="sub">Trust Taxi · агент «Пускач» (Битрикс24) · июнь–июль 2026 · 3 299 диалогов</p>
   </div>
 
   <div class="card">
@@ -103,7 +103,7 @@
       проблемные диалоги. Ниже — что уже работает сильно, где теряются записи на встречу, как это исправить,
       и расчёт эффекта в деньгах в конце.</p>
     <div class="metrics">
-      <div class="m"><div class="v">3 199</div><div class="l">диалогов за период</div></div>
+      <div class="m"><div class="v">3 299</div><div class="l">диалогов за июнь–июль</div></div>
       <div class="m good"><div class="v">72%</div><div class="l">ведёт бот сам, без оператора</div></div>
       <div class="m good"><div class="v">~12 сек</div><div class="l">среднее время ответа, 24/7</div></div>
       <div class="m bad"><div class="v">28%</div><div class="l">доводит живой оператор</div></div>
@@ -149,7 +149,7 @@
         Это снимает часть отказов без изменения самих условий.</p>
     </div>
     <div class="box amber">
-      <h3>🟡 Дорогой диалог — 67 ₽, есть точечный рычаг</h3>
+      <h3>🟡 Дорогой диалог — ~71 ₽, есть точечный рычаг</h3>
       <p>Средний диалог заметно дороже типичного. В переписках видно причину: на каждый повторный вопрос о
         цене бот заново подгружает один и тот же файл с прайсом — в длинном диалоге один документ читается
         по 4–5 раз.</p>
@@ -160,7 +160,7 @@
       <h3>🟡 «Подумаю» и «не приехал» не догреваются автоматически</h3>
       <p>Напоминания о встрече бот ставит, есть и рассылки «вы ранее интересовались». Но системной цепочки
         догрева для тех, кто засомневался в диалоге или не доехал, нет — это тёплая аудитория, уходящая молча.
-        Отдельно 12% не доходят из-за требований (стаж, СМЗ/ИП, банкротство) — им можно предлагать понятный
+        Отдельно ~11% не доходят из-за требований (стаж, СМЗ/ИП, банкротство) — им можно предлагать понятный
         путь (оформить самозанятость), а не просто «до встречи проверим».</p>
     </div>
   </div>
@@ -235,7 +235,7 @@
     <h2>Что бот уже делает сам <span class="sys">из системы</span></h2>
     <p class="lead">Факты за период — их не нужно спрашивать, они измерены.</p>
     <div class="fact">
-      <div class="fc"><div class="fv">~1 600</div><div class="fl">диалогов в месяц обрабатывает бот</div></div>
+      <div class="fc"><div class="fv">~1 650</div><div class="fl">диалогов в месяц обрабатывает бот</div></div>
       <div class="fc"><div class="fv">72%</div><div class="fl">ведёт сам, без живого оператора</div></div>
       <div class="fc"><div class="fv">~12 сек</div><div class="fl">среднее время ответа 24/7, лид не остывает</div></div>
     </div>
@@ -246,16 +246,16 @@
     <p class="lead"><span class="sys">Зелёные</span> — из системы (можно уточнить). <span class="est">Синие</span> — впишем на встрече по вашим данным.</p>
     <table class="io">
       <tbody>
-        <tr><td class="lbl">Лидов (диалогов) в месяц<small>входящих на бота — из системы</small></td>
-          <td><input id="leads" class="sysv" type="number" value="1600"></td></tr>
+        <tr><td class="lbl">Лидов (диалогов) в месяц<small>входящих на бота — из системы (июнь 1738 · июль 1561)</small></td>
+          <td><input id="leads" class="sysv" type="number" value="1650"></td></tr>
         <tr><td class="lbl">Доходимость лид → сделка ДО бота, %<small>как было при ручной обработке</small></td>
           <td><input id="before" class="askv" type="number" value="8"></td></tr>
         <tr><td class="lbl">Доходимость лид → сделка СЕЙЧАС, %<small>с ботом 24/7</small></td>
           <td><input id="after" class="askv" type="number" value="12"></td></tr>
         <tr><td class="lbl">Средняя маржа с одной сделки, ₽<small>с одного выкупа</small></td>
           <td><input id="margin" class="askv" type="number" value="60000"></td></tr>
-        <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td>
-          <td><input id="savvi" class="sysv" type="number" value="120000"></td></tr>
+        <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы (июнь 114,8к · июль 120к)</small></td>
+          <td><input id="savvi" class="sysv" type="number" value="117000"></td></tr>
       </tbody>
     </table>
   </div>
@@ -263,8 +263,8 @@
   <div class="card">
     <h2>Что это даёт</h2>
     <div class="res">
-      <div class="rc"><div class="l">Сделок сейчас</div><div class="v" id="r-now">—</div><div class="s">в месяц с потока бота</div></div>
-      <div class="rc"><div class="l">+ Сделок / мес</div><div class="v" id="r-dd">—</div><div class="s">прирост к «до бота»</div></div>
+      <div class="rc"><div class="l">Сделок / мес ДО бота</div><div class="v" id="r-before">—</div><div class="s">оценка «как было» до внедрения</div></div>
+      <div class="rc"><div class="l">Сделок / мес СЕЙЧАС</div><div class="v" id="r-now">—</div><div class="s">с ботом 24/7 (+<span id="r-dd">—</span>)</div></div>
       <div class="rc blue"><div class="l">+ Выручка / мес</div><div class="v" id="r-month">—</div><div class="s">за вычетом стоимости Савви</div></div>
       <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r-year">—</div><div class="s">прирост выручки</div></div>
     </div>
@@ -297,7 +297,8 @@
   function v(id){return parseFloat(document.getElementById(id).value)||0;}
   function calc(){
     var L=v('leads'),b=v('before')/100,a=v('after')/100,M=v('margin'),sv=v('savvi');
-    var now=L*a, dd=L*(a-b), monthGross=dd*M, month=monthGross-sv, year=month*12;
+    var before=L*b, now=L*a, dd=L*(a-b), monthGross=dd*M, month=monthGross-sv, year=month*12;
+    document.getElementById('r-before').textContent='≈ '+Math.round(before).toLocaleString('ru-RU');
     document.getElementById('r-now').textContent='≈ '+Math.round(now).toLocaleString('ru-RU');
     document.getElementById('r-dd').textContent='+'+Math.round(dd).toLocaleString('ru-RU');
     document.getElementById('r-month').textContent=rub(month);
