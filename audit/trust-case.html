@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Кейс Савви × Trust Taxi — масштабирование отдела продаж без роста штата</title>
+<style>
+  :root{
+    --ink:#11253e;--ink2:#5e748d;--ink3:#8695a7;--bg:#fff;--soft:#f0f4fa;--canvas:#e8ecf3;
+    --line:#e1e6ec;--blue:#3520fc;--purple:#9117d2;
+    --grad:linear-gradient(90deg,#3520fc 0%,#9117d2 50%,#ee0ea8 100%);
+    --green:#15803d;--green-bg:#e7f5ec;--red:#b91c1c;--amber:#b45309;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--canvas);}
+  body{font-family:-apple-system,'Segoe UI',Roboto,'Inter',Arial,sans-serif;color:var(--ink);
+    font-size:15px;line-height:1.55;padding:28px 16px;-webkit-font-smoothing:antialiased;}
+  .page{max-width:820px;margin:0 auto;}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:26px 30px;margin-bottom:16px;}
+  .hero{position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad);}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--purple);margin:0 0 8px;}
+  h1{font-size:26px;line-height:1.18;letter-spacing:-.02em;margin:0 0 8px;font-weight:800;}
+  .sub{color:var(--ink2);font-size:14px;margin:0;}
+  h2{font-size:18px;font-weight:800;letter-spacing:-.01em;margin:0 0 10px;}
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px;}
+  .m{background:var(--soft);border-radius:10px;padding:16px;}
+  .m .v{font-size:27px;font-weight:800;line-height:1;letter-spacing:-.02em;}
+  .m .v.g{color:var(--green);}
+  .m .l{font-size:12px;color:var(--ink2);margin-top:7px;font-weight:600;line-height:1.35;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .col{border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+  .col.before{background:#fdf9f2;border-color:#f0dcbd;}
+  .col.after{background:var(--green-bg);border-color:#b2e8d2;}
+  .col .h{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;}
+  .col.before .h{color:var(--amber);}.col.after .h{color:var(--green);}
+  .col ul{margin:0;padding-left:18px;}.col li{margin:6px 0;font-size:13.5px;}
+  p.lead{color:var(--ink2);font-size:13.5px;margin:0 0 14px;}
+  .quote{border-left:3px solid var(--purple);padding:4px 0 4px 16px;margin:4px 0 0;font-size:15px;font-style:italic;color:var(--ink);}
+  ul.plain{margin:8px 0 0;padding-left:18px;}ul.plain li{margin:7px 0;font-size:14px;}
+  .tag{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 10px;border-radius:90px;background:var(--green-bg);color:var(--green);}
+  .foot{display:flex;align-items:center;gap:12px;color:var(--ink2);font-size:12.5px;padding:6px 2px 0;}
+  .chip{width:34px;height:34px;border-radius:9px;background:var(--grad);flex-shrink:0;display:flex;
+    align-items:center;justify-content:center;color:#fff;font-weight:800;}
+  b.hl{color:var(--ink);}
+  @media (max-width:640px){.metrics,.two{grid-template-columns:1fr;}}
+  @media print{body{background:#fff;padding:0;}.card{break-inside:avoid;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="card hero">
+    <p class="kicker">Кейс · Савви для таксопарка</p>
+    <h1>Trust Taxi: как ИИ-агент снял потолок отдела продаж и дал масштабироваться без найма</h1>
+    <p class="sub">Продажа авто под выкуп для работы в такси · Москва и МО · с Савви больше года</p>
+  </div>
+
+  <div class="card">
+    <h2>Ситуация до Савви</h2>
+    <p class="lead">Заявки на выкуп авто обрабатывали вручную. Рост упирался не в спрос, а в людей.</p>
+    <div class="two">
+      <div class="col before">
+        <div class="h">Было</div>
+        <ul>
+          <li><b class="hl">2 менеджера</b> с ЗП по <b class="hl">70 000 ₽</b>.</li>
+          <li>Потолок одного — <b class="hl">10–15 диалогов в день</b>, дальше физически не тянет.</li>
+          <li>Чтобы масштабироваться — нанимать и обучать ещё людей.</li>
+          <li>В нише таксопарков <b class="hl">мало сильных продажников</b>, найм долгий и дорогой.</li>
+          <li>Раздувать штат и управлять им — не хотелось.</li>
+        </ul>
+      </div>
+      <div class="col after">
+        <div class="h">Стало с ИИ-агентом</div>
+        <ul>
+          <li>Агент в мессенджерах ведёт диалог, квалифицирует водителя и передаёт заявку в <b class="hl">Битрикс24</b>.</li>
+          <li><b class="hl">72% диалогов</b> закрывает сам, без оператора — люди только на сложных.</li>
+          <li>Отвечает мгновенно и круглосуточно — заявки ночью не остывают.</li>
+          <li>Из <b class="hl">2 менеджеров остался 1</b> — второй высвободился, рутину по входящим забрал агент.</li>
+          <li>Пропускная способность больше не упирается в людей: агент тянет <b class="hl">весь входящий поток 24/7</b> —
+            сейчас ~1 650 диалогов в месяц и может кратно больше без найма.</li>
+          <li>Масштаб перестал зависеть от найма: поток вырос без роста штата.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Результат</h2>
+    <div class="metrics">
+      <div class="m"><div class="v g">40%</div><div class="l">конверсия обращение → запись на личный визит — держит плановый показатель</div></div>
+      <div class="m"><div class="v g">72%</div><div class="l">диалогов агент ведёт и закрывает без участия оператора</div></div>
+      <div class="m"><div class="v">~1 650</div><div class="l">обращений в месяц обрабатывает сейчас (июнь–июль; старт — сотни в месяц)</div></div>
+    </div>
+    <ul class="plain">
+      <li><b class="hl">Ключевая задача решена.</b> Главный показатель для клиента — конверсия из обращения
+        в запись на личный визит в офис. Агент держит <b class="hl">плановые 40%</b>, которые клиент замеряет сам.</li>
+      <li><b class="hl">Продажи не потеряли в качестве.</b> Конверсия визита в сделку осталась прежней —
+        агент не «дешевит» воронку, а забирает на себя объём на входе.</li>
+      <li><b class="hl">Быстрое масштабирование.</b> За несколько месяцев поток вырос с сотен до ~1 650 обращений
+        в месяц — на прежних двух менеджерах это было невозможно, а новых в нише не найти.</li>
+    </ul>
+    <p class="quote">«Агент Савви работает как пулемёт — обрабатывает все обращения и ведёт людей на встречу,
+      снимая рутину с менеджеров».</p>
+    <p class="lead" style="margin:8px 0 0">— клиент, Trust Taxi</p>
+  </div>
+
+  <div class="card">
+    <div class="foot"><div class="chip">S</div>
+      <div>Данные по проекту в Савви: объём диалогов и доля автономности агента — из аналитики платформы
+        за 3 месяца. Конверсии — показатели клиента. <span class="tag">Савви для отдела продаж</span></div></div>
+  </div>
+
+</div>
+</body>
+</html>
