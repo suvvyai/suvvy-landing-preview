@@ -295,12 +295,13 @@
           <td class="calc" id="c-salesA">—</td></tr>
         <tr><td class="lbl">Средняя маржа с одной сделки, ₽<small>с одного выкупа — одинакова до и после</small></td>
           <td class="mid2" colspan="2"><input id="margin" class="askv" type="number" value="60000"><span class="rate">одинаково для ДО и СЕЙЧАС</span></td></tr>
-        <tr class="sep"><td class="lbl">Менеджеров на приёме этих диалогов<small>ДО — вели вручную · СЕЙЧАС — бот тянет 72%, остаётся ~28% на людях</small></td>
+        <tr class="sep"><td class="lbl">Менеджеров на приёме этих диалогов<small>ДО — вели поток вручную · СЕЙЧАС — с ботом (бот тянет 72% сам)</small></td>
           <td class="val"><input id="mgrB" class="askv" type="number" value="3"></td>
-          <td class="calc" id="c-mgrA">—</td></tr>
-        <tr><td class="lbl">ФОТ на 1 менеджера, ₽/мес<small>оклад + налоги + рабочее место — ставка на человека</small></td>
-          <td class="mid2" colspan="2"><input id="salary" class="askv" type="number" value="80000"><span class="rate">ставка на 1 человека, одинакова для ДО и СЕЙЧАС</span></td></tr>
-        <tr><td class="lbl">= ФОТ на этот поток, ₽/мес<small>менеджеры × ставка</small></td>
+          <td class="val"><input id="mgrA" class="askv" type="number" value="1"></td></tr>
+        <tr><td class="lbl">ЗП одного менеджера, ₽/мес<small>оклад + налоги + рабочее место</small></td>
+          <td class="val"><input id="salB" class="askv" type="number" value="80000"></td>
+          <td class="val"><input id="salA" class="askv" type="number" value="80000"></td></tr>
+        <tr><td class="lbl">= ФОТ на этот поток, ₽/мес<small>ЗП × число менеджеров</small></td>
           <td class="calc" id="c-fotB">—</td>
           <td class="calc" id="c-fotA">—</td></tr>
         <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы (июнь 114,8к · июль 120к)</small></td>
@@ -338,9 +339,9 @@
         Прирост <b id="d-ddSales">—</b> сделок/мес.</li>
       <li><b>Рост выручки.</b> <span class="eq" id="d-rev">—</span> — прирост сделок × маржа с одного выкупа
         <b id="d-margin">—</b> ₽ <span class="src a">со встречи</span>.</li>
-      <li><b>Оптимизация ФОТ.</b> Поток вели <b id="d-mgrB">—</b> менеджера <span class="src a">со встречи</span>;
-        бот ведёт <b>72%</b> диалогов сам <span class="src s">из системы</span>, осталось <b id="d-mgrA">—</b>.
-        Экономия <span class="eq" id="d-fot">—</span> при ФОТ <b id="d-salary">—</b> ₽/мес на человека.</li>
+      <li><b>Оптимизация ФОТ.</b> Поток вели <b id="d-mgrB">—</b> менеджера, с ботом осталось <b id="d-mgrA">—</b>
+        <span class="src a">со встречи</span> (бот ведёт 72% сам <span class="src s">из системы</span>).
+        ФОТ по каждой колонке = ЗП × число: <span class="eq" id="d-fot">—</span>.</li>
       <li><b>Минус стоимость Савви.</b> Реальный расход <b id="d-savvi">—</b> ₽/мес <span class="src s">из системы</span>.</li>
       <li><b>Итого в месяц:</b> <span class="eq" id="d-month">—</span>. За год ×12 — <b id="d-year">—</b>.</li>
     </ol>
@@ -368,19 +369,16 @@
   function set(id,txt){var el=document.getElementById(id);if(el)el.textContent=txt;}
   function calc(){
     var L=v('leads'), b=v('before')/100, a=v('after')/100, M=v('margin');
-    var mgrB=v('mgrB'), sal=v('salary'), sv=v('savvi');
-    // СЕЙЧАС менеджеров — из измеренной автономности: бот ведёт 72%, людям остаётся ~28%
-    var mgrA=Math.max(1,Math.round(mgrB*0.28));
+    var mgrB=v('mgrB'), mgrA=v('mgrA'), salB=v('salB'), salA=v('salA'), sv=v('savvi');
     // Блок А — выручка от роста доходимости
     var salesB=Math.round(L*b), salesA=Math.round(L*a), ddSales=Math.max(0,salesA-salesB);
     var rev=ddSales*M;
-    // Блок Б — экономия ФОТ
-    var fotB=mgrB*sal, fotA=mgrA*sal, fotSave=Math.max(0,fotB-fotA);
+    // Блок Б — экономия ФОТ: ФОТ = ЗП × число менеджеров по каждой колонке
+    var fotB=mgrB*salB, fotA=mgrA*salA, fotSave=Math.max(0,fotB-fotA);
     // Итог
     var month=rev+fotSave-sv, year=month*12;
     // ── таблица «Ваши цифры» (серые ячейки) ──
     set('c-salesB','≈ '+S(salesB)); set('c-salesA','≈ '+S(salesA));
-    set('c-mgrA','≈ '+S(mgrA));
     set('c-fotB',rubFull(fotB)); set('c-fotA',rubFull(fotA));
     // ── карточки «Что это даёт» ──
     set('r-salesB','≈ '+S(salesB)); set('r-salesA','≈ '+S(salesA));
@@ -395,13 +393,13 @@
     set('d-ddSales','+'+S(ddSales));
     set('d-rev',S(ddSales)+' сделок × '+rubFull(M)+' = '+rub(rev)+'/мес');
     set('d-margin',S(M));
-    set('d-mgrB',S(mgrB)); set('d-mgrA',S(mgrA)); set('d-salary',S(sal));
-    set('d-fot',S(mgrB)+' − '+S(mgrA)+' = '+S(Math.max(0,mgrB-mgrA))+' чел × '+rubFull(sal)+' = '+rub(fotSave)+'/мес');
+    set('d-mgrB',S(mgrB)); set('d-mgrA',S(mgrA));
+    set('d-fot',S(mgrB)+' × '+rubFull(salB)+' = '+rub(fotB)+' → '+S(mgrA)+' × '+rubFull(salA)+' = '+rub(fotA)+'; экономия '+rub(fotSave)+'/мес');
     set('d-savvi',S(sv));
     set('d-month','+ '+rub(rev)+' (выручка) + '+rub(fotSave)+' (ФОТ) − '+rub(sv)+' (Савви) = '+rub(month));
     set('d-year',rub(year));
   }
-  ['leads','before','after','margin','mgrB','salary','savvi'].forEach(function(id){
+  ['leads','before','after','margin','mgrB','mgrA','salB','salA','savvi'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.addEventListener('input',calc);});
   calc();
 </script>
