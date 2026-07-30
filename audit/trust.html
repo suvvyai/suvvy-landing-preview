@@ -71,6 +71,9 @@
   table.io td.val{text-align:right;}
   table.io td.calc{text-align:right;font-weight:800;font-size:16px;color:var(--ink);white-space:nowrap;}
   table.io td.calc .u{display:block;font-weight:500;font-size:11px;color:var(--ink3);}
+  table.io td.mid2{text-align:center;}
+  table.io td.mid2 input{max-width:200px;}
+  table.io td.mid2 .rate{display:block;font-size:11px;font-weight:600;color:var(--ink3);margin-top:4px;}
   table.io tr.sep td{border-top:2px solid var(--ink3);}
   table.io tr.tot td{background:var(--soft);}
   .deriv{counter-reset:d;list-style:none;padding:0;margin:6px 0 0;}
@@ -291,13 +294,13 @@
           <td class="calc" id="c-salesB">—</td>
           <td class="calc" id="c-salesA">—</td></tr>
         <tr><td class="lbl">Средняя маржа с одной сделки, ₽<small>с одного выкупа — одинакова до и после</small></td>
-          <td class="val" colspan="2"><input id="margin" class="askv" type="number" value="60000"></td></tr>
-        <tr class="sep"><td class="lbl">Менеджеров на приёме этих диалогов<small>кто вёл поток вручную; сейчас бот тянет 72% сам</small></td>
-          <td class="val"><input id="mgrB" class="askv" type="number" value="4"></td>
-          <td class="val"><input id="mgrA" class="askv" type="number" value="1"></td></tr>
-        <tr><td class="lbl">ФОТ одного менеджера, ₽/мес<small>оклад + налоги + рабочее место</small></td>
-          <td class="val" colspan="2"><input id="salary" class="askv" type="number" value="80000"></td></tr>
-        <tr><td class="lbl">= Расходы на приём обращений, ₽/мес<small>менеджеры × ФОТ</small></td>
+          <td class="mid2" colspan="2"><input id="margin" class="askv" type="number" value="60000"><span class="rate">одинаково для ДО и СЕЙЧАС</span></td></tr>
+        <tr class="sep"><td class="lbl">Менеджеров на приёме этих диалогов<small>ДО — вели вручную · СЕЙЧАС — бот тянет 72%, остаётся ~28% на людях</small></td>
+          <td class="val"><input id="mgrB" class="askv" type="number" value="3"></td>
+          <td class="calc" id="c-mgrA">—</td></tr>
+        <tr><td class="lbl">ФОТ на 1 менеджера, ₽/мес<small>оклад + налоги + рабочее место — ставка на человека</small></td>
+          <td class="mid2" colspan="2"><input id="salary" class="askv" type="number" value="80000"><span class="rate">ставка на 1 человека, одинакова для ДО и СЕЙЧАС</span></td></tr>
+        <tr><td class="lbl">= ФОТ на этот поток, ₽/мес<small>менеджеры × ставка</small></td>
           <td class="calc" id="c-fotB">—</td>
           <td class="calc" id="c-fotA">—</td></tr>
         <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы (июнь 114,8к · июль 120к)</small></td>
@@ -365,7 +368,9 @@
   function set(id,txt){var el=document.getElementById(id);if(el)el.textContent=txt;}
   function calc(){
     var L=v('leads'), b=v('before')/100, a=v('after')/100, M=v('margin');
-    var mgrB=v('mgrB'), mgrA=v('mgrA'), sal=v('salary'), sv=v('savvi');
+    var mgrB=v('mgrB'), sal=v('salary'), sv=v('savvi');
+    // СЕЙЧАС менеджеров — из измеренной автономности: бот ведёт 72%, людям остаётся ~28%
+    var mgrA=Math.max(1,Math.round(mgrB*0.28));
     // Блок А — выручка от роста доходимости
     var salesB=Math.round(L*b), salesA=Math.round(L*a), ddSales=Math.max(0,salesA-salesB);
     var rev=ddSales*M;
@@ -375,6 +380,7 @@
     var month=rev+fotSave-sv, year=month*12;
     // ── таблица «Ваши цифры» (серые ячейки) ──
     set('c-salesB','≈ '+S(salesB)); set('c-salesA','≈ '+S(salesA));
+    set('c-mgrA','≈ '+S(mgrA));
     set('c-fotB',rubFull(fotB)); set('c-fotA',rubFull(fotA));
     // ── карточки «Что это даёт» ──
     set('r-salesB','≈ '+S(salesB)); set('r-salesA','≈ '+S(salesA));
@@ -395,7 +401,7 @@
     set('d-month','+ '+rub(rev)+' (выручка) + '+rub(fotSave)+' (ФОТ) − '+rub(sv)+' (Савви) = '+rub(month));
     set('d-year',rub(year));
   }
-  ['leads','before','after','margin','mgrB','mgrA','salary','savvi'].forEach(function(id){
+  ['leads','before','after','margin','mgrB','salary','savvi'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.addEventListener('input',calc);});
   calc();
 </script>
