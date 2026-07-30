@@ -66,6 +66,22 @@
   table.io input:focus{outline:none;border-color:var(--blue);}
   table.io input.sysv{border-color:#b2e8d2;background:var(--green-bg);}
   table.io input.askv{border-color:#c5c6f5;background:#eeeffe;}
+  table.io input{width:100%;max-width:160px;}
+  table.io th.col{text-align:right;width:180px;}
+  table.io td.val{text-align:right;}
+  table.io td.calc{text-align:right;font-weight:800;font-size:16px;color:var(--ink);white-space:nowrap;}
+  table.io td.calc .u{display:block;font-weight:500;font-size:11px;color:var(--ink3);}
+  table.io tr.sep td{border-top:2px solid var(--ink3);}
+  table.io tr.tot td{background:var(--soft);}
+  .deriv{counter-reset:d;list-style:none;padding:0;margin:6px 0 0;}
+  .deriv li{counter-increment:d;position:relative;padding:12px 0 12px 42px;border-bottom:1px dashed var(--line);font-size:13.5px;}
+  .deriv li:last-child{border-bottom:0;}
+  .deriv li::before{content:counter(d);position:absolute;left:0;top:11px;width:28px;height:28px;background:var(--grad);
+    color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+  .deriv b{color:var(--ink);}.deriv .eq{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;
+    background:var(--soft);border-radius:8px;padding:2px 7px;color:var(--ink);white-space:nowrap;}
+  .deriv .src{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:90px;margin-left:2px;}
+  .deriv .src.s{background:var(--green-bg);color:var(--green);}.deriv .src.a{background:#eeeffe;color:var(--blue);}
   .res{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
   .rc{border-radius:14px;padding:18px;background:var(--green-bg);border:1.5px solid #b2e8d2;}
   .rc.blue{background:#eeeffe;border-color:#c5c6f5;}
@@ -257,43 +273,78 @@
   </div>
 
   <div class="card">
-    <h2>Ваши цифры</h2>
-    <p class="lead"><span class="sys">Зелёные</span> — из системы (можно уточнить). <span class="est">Синие</span> — впишем на встрече по вашим данным.</p>
+    <h2>Ваши цифры — до и после бота</h2>
+    <p class="lead"><span class="sys">Зелёные</span> — измерено в системе. <span class="est">Синие</span> — впишем на встрече по вашим данным.
+      Серые ячейки <b>считаются автоматически</b> из зелёных и синих.</p>
     <table class="io">
+      <thead>
+        <tr><th>Показатель</th><th class="col">ДО бота</th><th class="col">СЕЙЧАС (с ботом)</th></tr>
+      </thead>
       <tbody>
         <tr><td class="lbl">Лидов (диалогов) в месяц<small>входящих на бота — из системы (июнь 1738 · июль 1561)</small></td>
-          <td><input id="leads" class="sysv" type="number" value="1650"></td></tr>
-        <tr><td class="lbl">Доходимость лид → сделка ДО бота, %<small>как было при ручной обработке</small></td>
-          <td><input id="before" class="askv" type="number" value="8"></td></tr>
-        <tr><td class="lbl">Доходимость лид → сделка СЕЙЧАС, %<small>с ботом 24/7</small></td>
-          <td><input id="after" class="askv" type="number" value="12"></td></tr>
-        <tr><td class="lbl">Средняя маржа с одной сделки, ₽<small>с одного выкупа</small></td>
-          <td><input id="margin" class="askv" type="number" value="60000"></td></tr>
+          <td class="calc" style="color:var(--ink3)">тот же поток</td>
+          <td class="val"><input id="leads" class="sysv" type="number" value="1650"></td></tr>
+        <tr><td class="lbl">Доходимость лид → сделка, %<small>ДО — ручная обработка · СЕЙЧАС — бот 24/7</small></td>
+          <td class="val"><input id="before" class="askv" type="number" value="8"></td>
+          <td class="val"><input id="after" class="askv" type="number" value="12"></td></tr>
+        <tr><td class="lbl">= Сделок в месяц<small>лиды × доходимость</small></td>
+          <td class="calc" id="c-salesB">—</td>
+          <td class="calc" id="c-salesA">—</td></tr>
+        <tr><td class="lbl">Средняя маржа с одной сделки, ₽<small>с одного выкупа — одинакова до и после</small></td>
+          <td class="val" colspan="2"><input id="margin" class="askv" type="number" value="60000"></td></tr>
+        <tr class="sep"><td class="lbl">Менеджеров на приёме этих диалогов<small>кто вёл поток вручную; сейчас бот тянет 72% сам</small></td>
+          <td class="val"><input id="mgrB" class="askv" type="number" value="4"></td>
+          <td class="val"><input id="mgrA" class="askv" type="number" value="1"></td></tr>
+        <tr><td class="lbl">ФОТ одного менеджера, ₽/мес<small>оклад + налоги + рабочее место</small></td>
+          <td class="val" colspan="2"><input id="salary" class="askv" type="number" value="80000"></td></tr>
+        <tr><td class="lbl">= Расходы на приём обращений, ₽/мес<small>менеджеры × ФОТ</small></td>
+          <td class="calc" id="c-fotB">—</td>
+          <td class="calc" id="c-fotA">—</td></tr>
         <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы (июнь 114,8к · июль 120к)</small></td>
-          <td><input id="savvi" class="sysv" type="number" value="117000"></td></tr>
+          <td class="calc" style="color:var(--ink3)">не было</td>
+          <td class="val"><input id="savvi" class="sysv" type="number" value="117000"></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="card">
     <h2>Что это даёт</h2>
+    <p class="lead">Два независимых источника эффекта: <b>рост доходимости</b> до сделки и <b>оптимизация ФОТ</b> на приём обращений.</p>
     <div class="res">
-      <div class="rc"><div class="l">Сделок / мес ДО бота</div><div class="v" id="r-before">—</div><div class="s">оценка «как было» до внедрения</div></div>
-      <div class="rc"><div class="l">Сделок / мес СЕЙЧАС</div><div class="v" id="r-now">—</div><div class="s">с ботом 24/7 (+<span id="r-dd">—</span>)</div></div>
-      <div class="rc blue"><div class="l">+ Выручка / мес</div><div class="v" id="r-month">—</div><div class="s">за вычетом стоимости Савви</div></div>
-      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r-year">—</div><div class="s">прирост выручки</div></div>
+      <div class="rc"><div class="l">Сделок / мес ДО бота</div><div class="v" id="r-salesB">—</div><div class="s">оценка «как было»</div></div>
+      <div class="rc"><div class="l">Сделок / мес СЕЙЧАС</div><div class="v" id="r-salesA">—</div><div class="s">с ботом (+<span id="r-ddSales">—</span> сделок)</div></div>
+      <div class="rc blue"><div class="l">+ Выручка / мес</div><div class="v" id="r-rev">—</div><div class="s">прирост сделок × маржа</div></div>
+      <div class="rc blue"><div class="l">+ Экономия ФОТ / мес</div><div class="v" id="r-fot">—</div><div class="s">высвобожденные менеджеры</div></div>
+    </div>
+    <div class="res" style="margin-top:12px;grid-template-columns:1fr 1fr;">
+      <div class="rc big"><div class="l">Итого эффект / мес</div><div class="v" id="r-month">—</div><div class="s">выручка + ФОТ − стоимость Савви</div></div>
+      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r-year">—</div><div class="s">суммарно</div></div>
     </div>
   </div>
 
   <div class="card">
-    <h2>Разбор эффекта</h2>
-    <div class="item"><div class="top"><span class="t2">🚗 Сделок сейчас (с ботом)</span><span class="a" id="e-now">—</span></div><div class="f" id="f-now"></div></div>
-    <div class="item"><div class="top"><span class="t2">📈 Прирост сделок к «до бота»</span><span class="a" id="e-dd">—</span></div><div class="f" id="f-dd"></div></div>
-    <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="e-cost" style="color:var(--red)">—</span></div><div class="f" id="f-cost"></div></div>
-    <div class="note"><b>Как считаем:</b> бот обрабатывает весь поток лидов; доходимость лид → сделка сейчас
-      против «до бота» даёт прирост сделок в месяц. Умножаем на маржу с одной сделки, вычитаем стоимость
-      Савви, ×12 за год. Доходимость и маржу впишем по вашим данным; интересна и цифра «до» подключения бота,
-      чтобы честно посчитать эффект.</div>
+    <h2>Как мы пришли к этим цифрам</h2>
+    <p class="lead">Каждый шаг — из измеренного в системе <span class="src s">из системы</span> или из вашей цифры со встречи
+      <span class="src a">со встречи</span>. Меняете значение в таблице выше — расчёт ниже пересчитывается.</p>
+    <ol class="deriv">
+      <li><b>Поток лидов.</b> Бот обработал <b id="d-leads">—</b> диалогов/мес <span class="src s">из системы</span>
+        (июнь 1738, июль 1561). Это вход воронки.</li>
+      <li><b>Доходимость до сделки.</b> Была <b id="d-b">—</b>% при ручной обработке <span class="src a">со встречи</span>,
+        стала <b id="d-a">—</b>% с ботом 24/7 <span class="src a">со встречи</span>.</li>
+      <li><b>Сделок в месяц.</b> <span class="eq" id="d-salesB">—</span> было → <span class="eq" id="d-salesA">—</span> стало.
+        Прирост <b id="d-ddSales">—</b> сделок/мес.</li>
+      <li><b>Рост выручки.</b> <span class="eq" id="d-rev">—</span> — прирост сделок × маржа с одного выкупа
+        <b id="d-margin">—</b> ₽ <span class="src a">со встречи</span>.</li>
+      <li><b>Оптимизация ФОТ.</b> Поток вели <b id="d-mgrB">—</b> менеджера <span class="src a">со встречи</span>;
+        бот ведёт <b>72%</b> диалогов сам <span class="src s">из системы</span>, осталось <b id="d-mgrA">—</b>.
+        Экономия <span class="eq" id="d-fot">—</span> при ФОТ <b id="d-salary">—</b> ₽/мес на человека.</li>
+      <li><b>Минус стоимость Савви.</b> Реальный расход <b id="d-savvi">—</b> ₽/мес <span class="src s">из системы</span>.</li>
+      <li><b>Итого в месяц:</b> <span class="eq" id="d-month">—</span>. За год ×12 — <b id="d-year">—</b>.</li>
+    </ol>
+    <div class="note"><b>Честно про цифры:</b> из системы измерены поток диалогов, доля автономности бота (72%) и
+      стоимость Савви. Доходимость, маржа, число менеджеров и их ФОТ — ваши данные, вписываем на встрече;
+      значения в таблице сейчас — реалистичный пример, а не факт. Рост выручки и экономия ФОТ считаются
+      раздельно и не пересекаются.</div>
   </div>
 
   <div class="card">
@@ -310,22 +361,42 @@
     if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
   function rubFull(n){return Math.round(n).toLocaleString('ru-RU')+' ₽';}
   function v(id){return parseFloat(document.getElementById(id).value)||0;}
+  function S(id){return id.toLocaleString('ru-RU');}
+  function set(id,txt){var el=document.getElementById(id);if(el)el.textContent=txt;}
   function calc(){
-    var L=v('leads'),b=v('before')/100,a=v('after')/100,M=v('margin'),sv=v('savvi');
-    var before=L*b, now=L*a, dd=L*(a-b), monthGross=dd*M, month=monthGross-sv, year=month*12;
-    document.getElementById('r-before').textContent='≈ '+Math.round(before).toLocaleString('ru-RU');
-    document.getElementById('r-now').textContent='≈ '+Math.round(now).toLocaleString('ru-RU');
-    document.getElementById('r-dd').textContent='+'+Math.round(dd).toLocaleString('ru-RU');
-    document.getElementById('r-month').textContent=rub(month);
-    document.getElementById('r-year').textContent=rub(year);
-    document.getElementById('e-now').textContent='≈ '+Math.round(now).toLocaleString('ru-RU')+' /мес';
-    document.getElementById('f-now').textContent=Math.round(L).toLocaleString('ru-RU')+' лидов × '+Math.round(a*100)+'% доходимости';
-    document.getElementById('e-dd').textContent='+'+Math.round(dd).toLocaleString('ru-RU')+' /мес';
-    document.getElementById('f-dd').textContent=Math.round(L).toLocaleString('ru-RU')+' лидов × ('+Math.round(a*100)+'% − '+Math.round(b*100)+'%) прироста доходимости';
-    document.getElementById('e-cost').textContent='−'+rub(sv);
-    document.getElementById('f-cost').textContent='реальный расход из системы, '+rubFull(sv)+'/мес';
+    var L=v('leads'), b=v('before')/100, a=v('after')/100, M=v('margin');
+    var mgrB=v('mgrB'), mgrA=v('mgrA'), sal=v('salary'), sv=v('savvi');
+    // Блок А — выручка от роста доходимости
+    var salesB=Math.round(L*b), salesA=Math.round(L*a), ddSales=Math.max(0,salesA-salesB);
+    var rev=ddSales*M;
+    // Блок Б — экономия ФОТ
+    var fotB=mgrB*sal, fotA=mgrA*sal, fotSave=Math.max(0,fotB-fotA);
+    // Итог
+    var month=rev+fotSave-sv, year=month*12;
+    // ── таблица «Ваши цифры» (серые ячейки) ──
+    set('c-salesB','≈ '+S(salesB)); set('c-salesA','≈ '+S(salesA));
+    set('c-fotB',rubFull(fotB)); set('c-fotA',rubFull(fotA));
+    // ── карточки «Что это даёт» ──
+    set('r-salesB','≈ '+S(salesB)); set('r-salesA','≈ '+S(salesA));
+    set('r-ddSales',S(ddSales));
+    set('r-rev','+ '+rub(rev)); set('r-fot',fotSave>0?'+ '+rub(fotSave):rub(0));
+    set('r-month',rub(month)); set('r-year',rub(year));
+    // ── разбор «как пришли» ──
+    set('d-leads',S(Math.round(L)));
+    set('d-b',Math.round(b*100)); set('d-a',Math.round(a*100));
+    set('d-salesB',S(Math.round(L))+' × '+Math.round(b*100)+'% = '+S(salesB));
+    set('d-salesA',S(Math.round(L))+' × '+Math.round(a*100)+'% = '+S(salesA));
+    set('d-ddSales','+'+S(ddSales));
+    set('d-rev',S(ddSales)+' сделок × '+rubFull(M)+' = '+rub(rev)+'/мес');
+    set('d-margin',S(M));
+    set('d-mgrB',S(mgrB)); set('d-mgrA',S(mgrA)); set('d-salary',S(sal));
+    set('d-fot',S(mgrB)+' − '+S(mgrA)+' = '+S(Math.max(0,mgrB-mgrA))+' чел × '+rubFull(sal)+' = '+rub(fotSave)+'/мес');
+    set('d-savvi',S(sv));
+    set('d-month','+ '+rub(rev)+' (выручка) + '+rub(fotSave)+' (ФОТ) − '+rub(sv)+' (Савви) = '+rub(month));
+    set('d-year',rub(year));
   }
-  ['leads','before','after','margin','savvi'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+  ['leads','before','after','margin','mgrB','mgrA','salary','savvi'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.addEventListener('input',calc);});
   calc();
 </script>
 </body>
