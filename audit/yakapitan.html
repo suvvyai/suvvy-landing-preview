@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Савви × ЯКапитан — разбор работы ИИ-агента и расчёт эффекта</title>
+<style>
+  :root{
+    --ink:#11253e;--ink2:#5e748d;--ink3:#8695a7;--bg:#fff;--soft:#f0f4fa;--canvas:#e8ecf3;
+    --line:#e1e6ec;--blue:#3520fc;--purple:#9117d2;
+    --grad:linear-gradient(90deg,#3520fc 0%,#9117d2 50%,#ee0ea8 100%);
+    --green:#15803d;--green-bg:#e7f5ec;--red:#b91c1c;--amber:#b45309;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--canvas);}
+  body{font-family:-apple-system,'Segoe UI',Roboto,'Inter',Arial,sans-serif;color:var(--ink);
+    font-size:15px;line-height:1.5;padding:28px 16px;-webkit-font-smoothing:antialiased;}
+  .page{max-width:900px;margin:0 auto;}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:26px 30px;margin-bottom:16px;}
+  .hero{position:relative;overflow:hidden;}.hero::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad);}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--purple);margin:0 0 8px;}
+  h1{font-size:27px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;font-weight:800;}
+  .sub{color:var(--ink2);font-size:14px;margin:0;}
+  h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0 0 4px;}
+  .lead{color:var(--ink2);font-size:13.5px;margin:0 0 18px;}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px;}
+  .m{background:var(--soft);border-radius:10px;padding:14px 16px;}
+  .m .v{font-size:26px;font-weight:800;line-height:1;letter-spacing:-.02em;}
+  .m .l{font-size:11.5px;color:var(--ink2);margin-top:6px;font-weight:600;}
+  .m.good .v{color:var(--green);}.m.bad .v{color:var(--red);}
+  ul{margin:8px 0 0;padding-left:18px;}li{margin:5px 0;}
+  .tag{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 10px;border-radius:90px;}
+  .tag.g{background:var(--green-bg);color:var(--green);}.tag.a{background:#fdf3e6;color:var(--amber);}
+  .box{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+  .box.red{border-color:#f3c9c9;background:#fdf6f6;}.box.amber{border-color:#f0dcbd;background:#fdf9f2;}
+  .box h3{margin:0 0 6px;font-size:15.5px;font-weight:800;}.box p{margin:0;font-size:13.5px;}
+  .box .why{color:var(--ink2);font-size:12.5px;margin-top:6px;}
+  .pb{margin:0 0 14px;}
+  .pb .h{font-size:13px;font-weight:800;margin:0 0 6px;}
+  .pb pre{margin:0;background:#11253e;color:#e3e9f2;border-radius:10px;padding:14px 16px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;
+    white-space:pre-wrap;word-break:break-word;overflow-x:auto;}
+  .pb pre .t{color:#c8b3f0;font-weight:700;}
+  .steps{counter-reset:s;list-style:none;padding:0;margin:8px 0 0;}
+  .steps li{counter-increment:s;position:relative;padding:10px 0 10px 40px;border-bottom:1px dashed var(--line);}
+  .steps li:last-child{border-bottom:0;}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:9px;width:26px;height:26px;background:var(--ink);
+    color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+  .owner{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;}
+  .effect{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .effect .e{background:var(--soft);border-radius:10px;padding:16px;}.effect .e b{display:block;font-size:15px;}
+  /* ── Калькулятор ── */
+  .calc-hero{background:var(--ink);color:#fff;border:none;}
+  .calc-hero .kicker{color:#c8b3f0;}.calc-hero h1{color:#fff;}.calc-hero .sub{color:#b8c1cf;}
+  .fact{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .fc{background:var(--soft);border-radius:12px;padding:14px;}
+  .fc .fv{font-size:20px;font-weight:800;}.fc .fl{font-size:12px;color:var(--ink2);margin-top:4px;line-height:1.4;}
+  table.io{width:100%;border-collapse:collapse;}
+  table.io th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);text-align:right;padding:0 8px 8px;font-weight:700;}
+  table.io th:first-child{text-align:left;}
+  table.io td{padding:6px 8px;border-top:1px solid var(--line);vertical-align:middle;}
+  table.io td.lbl{font-size:13px;font-weight:600;}
+  table.io td.lbl small{display:block;font-weight:500;color:var(--ink2);font-size:11px;}
+  table.io input{width:150px;padding:9px 11px;border:2px solid var(--line);border-radius:10px;
+    font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);text-align:right;}
+  table.io input:focus{outline:none;border-color:var(--blue);}
+  table.io input.sysv{border-color:#b2e8d2;background:var(--green-bg);}
+  table.io input.askv{border-color:#c5c6f5;background:#eeeffe;}
+  table.io input{width:100%;max-width:160px;}
+  table.io th.col{text-align:right;width:180px;}
+  table.io td.val{text-align:right;}
+  table.io td.calc{text-align:right;font-weight:800;font-size:16px;color:var(--ink);white-space:nowrap;}
+  table.io td.calc .u{display:block;font-weight:500;font-size:11px;color:var(--ink3);}
+  table.io td.mid2{text-align:center;}
+  table.io td.mid2 input{max-width:200px;}
+  table.io td.mid2 .rate{display:block;font-size:11px;font-weight:600;color:var(--ink3);margin-top:4px;}
+  table.io tr.sep td{border-top:2px solid var(--ink3);}
+  table.io tr.tot td{background:var(--soft);}
+  .deriv{counter-reset:d;list-style:none;padding:0;margin:6px 0 0;}
+  .deriv li{counter-increment:d;position:relative;padding:12px 0 12px 42px;border-bottom:1px dashed var(--line);font-size:13.5px;}
+  .deriv li:last-child{border-bottom:0;}
+  .deriv li::before{content:counter(d);position:absolute;left:0;top:11px;width:28px;height:28px;background:var(--grad);
+    color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+  .deriv b{color:var(--ink);}.deriv .eq{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;
+    background:var(--soft);border-radius:8px;padding:2px 7px;color:var(--ink);white-space:nowrap;}
+  .deriv .src{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:90px;margin-left:2px;}
+  .deriv .src.s{background:var(--green-bg);color:var(--green);}.deriv .src.a{background:#eeeffe;color:var(--blue);}
+  .res{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
+  .rc{border-radius:14px;padding:18px;background:var(--green-bg);border:1.5px solid #b2e8d2;}
+  .rc.blue{background:#eeeffe;border-color:#c5c6f5;}
+  .rc.big{grid-column:span 1;background:var(--ink);border-color:var(--ink);}
+  .rc .l{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;color:var(--green);}
+  .rc.blue .l{color:var(--blue);}.rc.big .l{color:#c8b3f0;}
+  .rc .v{font-size:23px;font-weight:800;line-height:1.15;color:var(--green);}.rc.blue .v{color:var(--blue);}.rc.big .v{color:#fff;}
+  .rc .s{font-size:12px;color:var(--ink2);margin-top:4px;}.rc.big .s{color:#b8c1cf;}
+  .item{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+  .item .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .item .t2{font-size:14px;font-weight:700;}.item .a{font-size:17px;font-weight:800;color:var(--green);white-space:nowrap;}
+  .item .f{font-size:12px;color:var(--ink2);background:var(--soft);border-radius:8px;padding:7px 10px;margin-top:8px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;}
+  .est{color:var(--blue);font-weight:700;}.sys{color:var(--green);font-weight:700;}
+  .note{font-size:11.5px;color:var(--ink3);line-height:1.5;margin-top:14px;}.note b{color:var(--ink2);}
+  .foot{display:flex;align-items:center;gap:12px;color:var(--ink2);font-size:12.5px;padding:6px 2px 0;}
+  .chip{width:34px;height:34px;border-radius:9px;background:var(--grad);flex-shrink:0;display:flex;
+    align-items:center;justify-content:center;color:#fff;font-weight:800;}
+  @media (max-width:640px){.metrics,.fact,.res,.effect{grid-template-columns:1fr;}table.io input{width:100%;}}
+  @media print{body{background:#fff;padding:0;}.card{break-inside:avoid;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="card hero">
+    <p class="kicker">Разбор работы ИИ-агента</p>
+    <h1>Как ваш ИИ-менеджер по аренде катеров ведёт клиентов к брони — и где скрыт рост</h1>
+    <p class="sub">ЯКапитан · агент «Илона» · июнь–июль 2026 · 1 580 диалогов · Москва · Нижний Новгород · Казань</p>
+  </div>
+
+  <div class="card">
+    <h2>Что мы сделали</h2>
+    <p class="lead">Разобрали переписки вашего ИИ-менеджера за два месяца, проверили его функции и интеграции,
+      прочитали проблемные диалоги. Ниже — что уже работает сильно, где теряются заявки и записи, как это
+      исправить, и расчёт эффекта в деньгах в конце.</p>
+    <div class="metrics">
+      <div class="m"><div class="v">1 580</div><div class="l">диалогов за июнь–июль</div></div>
+      <div class="m good"><div class="v">52%</div><div class="l">ведёт бот сам, без оператора</div></div>
+      <div class="m good"><div class="v">~36 сек</div><div class="l">среднее время ответа, 24/7</div></div>
+      <div class="m bad"><div class="v">48%</div><div class="l">доводит живой оператор</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Сильные стороны <span class="tag g">работает хорошо</span></h2>
+    <ul>
+      <li><b>Отвечает предметно и с цифрами.</b> Считает стоимость по конкретному судну, дню недели и времени
+        суток, различает форматы с капитаном и без, аренду с правами ГИМС и без — не «сейчас уточню», а готовый ответ.</li>
+      <li><b>Держит богатую базу знаний</b> — сезон, инструктаж, документы и залог, отмена/перенос, погода,
+        сертификаты, дети и питомцы на борту, алкоголь, доп.услуги. Отвечает по фактам, а не по памяти.</li>
+      <li><b>Понимает гео и контекст.</b> По каналу распознаёт город (Москва / Нижний Новгород / Казань) и
+        предлагает релевантные суда и локации; узнаёт судно по фото и даёт ссылку на его страницу.</li>
+      <li><b>Отвечает мгновенно и круглосуточно</b> — заявка, пришедшая ночью или в выходной пик сезона,
+        не остывает до утра.</li>
+      <li><b>Аккуратный тон.</b> Вежливо завершает диалог без навязывания, ведёт клиента к онлайн-бронированию,
+        сложное честно передаёт менеджеру.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Где теряются заявки и записи</h2>
+    <p class="lead">Мы разложили диалоги, где до брони не дошло, по причинам из реплик клиентов. Картина
+      чёткая: поток бот отрабатывает сильно, а утечки — в двух технических точках и в двух рыночных.</p>
+
+    <div class="box red">
+      <h3>🔴 Заявки на сотрудничество и рекламу не долетают до команды</h3>
+      <p>В 162 диалогах клиенты писали про рекламу, бартер и коллаборации (блогеры, бренды). Функция, которая
+        должна уведомлять об этом вашу команду, каждый раз возвращает ошибку — уведомление не отправляется,
+        а бот «застревает» на этом шаге.</p>
+      <p class="why"><b>Что это значит:</b> самые ценные партнёрские заявки могут не попадать в работу.
+        Приоритет 1 — восстановить доставку уведомления и научить бота отвечать таким клиентам одной понятной
+        фразой «передала запрос команде по партнёрствам».</p>
+    </div>
+
+    <div class="box red">
+      <h3>🔴 На видео и переводе на менеджера бот зацикливается на «пустом» действии</h3>
+      <p>Когда клиент присылает видео (86 диалогов, 180 видео) или нужно позвать менеджера, бот повторно
+        дёргает шаг, который ничего не возвращает — иногда 8–10 раз подряд. Клиент в этот момент остаётся без
+        ответа, а диалог заметно дорожает.</p>
+      <p class="why"><b>Что это значит:</b> в самых горячих точках (человек уже готов, прислал материалы)
+        общение провисает. Чинится настройкой сценария — один чёткий перевод на менеджера вместо цикла.</p>
+    </div>
+
+    <div class="box amber">
+      <h3>🟡 Операции с бронью — 45% диалогов, и часть уходит на оператора зря</h3>
+      <p>Перенос, отмена, статус оплаты, «когда придёт сертификат» — самая частая тема. Часть из неё
+        <b>типовая</b> (правила переноса и отмены, сроки прихода сертификата, погодные условия) — это бот может
+        закрывать сам по базе. Часть — <b>индивидуальная</b> (статус именно моей брони) — здесь нужен человек
+        или интеграция статуса брони.</p>
+      <p class="why"><b>Где рост:</b> развести типовое и индивидуальное, дозаполнить базу по правилам и
+        сертификатам — и заметная доля этих 45% перестанет отвлекать операторов.</p>
+    </div>
+
+    <div class="box amber">
+      <h3>🟡 Цена и скидки — причина части отказов</h3>
+      <p>Среди вовлечённых, но не забронировавших, <b>около 18%</b> упираются в стоимость или спрашивают про
+        скидки. Бот знает про скидки за длительность и промокод ко дню рождения, но не всегда ведёт к ним
+        проактивно.</p>
+      <p class="why"><b>Где рост:</b> раньше и увереннее подсказывать доступные скидки (2–3 часа = 5–10%,
+        промокод именинникам) и более бюджетные суда чувствительным к цене — снимает часть отказов без
+        изменения самих условий.</p>
+    </div>
+
+    <div class="box amber">
+      <h3>🟡 Диалог дорогой — ~94 ₽ при норме платформы 10–20 ₽</h3>
+      <p>Стоимость диалога — это объём текста, который уходит в модель на <b>каждый</b> ответ, помноженный на
+        выбранную модель. Сейчас у агента стоит самая мощная (и самая дорогая) модель — для ответов по базе
+        знаний и подбору судна достаточно более лёгкой. Плюс холостые циклы из пункта выше добавляют расход.</p>
+      <p class="why"><b>Что снизит стоимость (настройки Савви, без потери качества ответов):</b></p>
+      <ul style="margin-top:6px">
+        <li><b>Более лёгкая модель</b> под FAQ и подбор — проверяется на тестовых диалогах, экономия кратная.</li>
+        <li><b>Убрать холостые вызовы</b> (пустой перевод на менеджера, цикл на видео).</li>
+        <li><b>Ограничить историю диалога</b> в длинных планинг-переписках — не тащить весь «хвост» на каждом шаге.</li>
+        <li><b>Разгрузить инструкцию</b> — объёмную фактуру держать в базе, в инструкции оставить логику.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Что настроить и чем усилить</h2>
+    <p class="lead">Часть правок — в сценарии бота, их можно внести сразу. Часть — дозаполнить базу знаний
+      (материалы собираем из ваших регламентов и ответов менеджеров, содержание не выдумываем).</p>
+    <ul>
+      <li><b>Восстановить уведомление о сотрудничестве</b> и дать боту одну понятную фразу-подтверждение.</li>
+      <li><b>Разорвать циклы</b> на видео и переводе на менеджера — один чёткий шаг вместо повторов.</li>
+      <li><b>Дозаполнить базу</b> по кейтерингу, различию локаций (Строгино/Красногорск), парковке в Казани —
+        из реальных ответов ваших менеджеров.</li>
+      <li><b>Убрать дубли в базе</b> с расхождениями (режим работы, диапазон цен с капитаном) — оставить одну актуальную версию.</li>
+    </ul>
+    <div class="pb" style="margin-top:14px"><div class="h">🧹 Правки сценария, которые можно внести сразу</div><pre><span class="t">#ЭСКАЛАЦИЯ И СОТРУДНИЧЕСТВО (дополнить инструкцию бота)</span>
+- Для перевода на оператора вызывай функцию call_manager (не пустой документ).
+- Если пришло видео - один раз вызови call_manager и напиши "Передаю менеджеру,
+  он посмотрит и ответит". Не повторяй вызов на каждое следующее видео.
+- При запросе про рекламу/бартер/коллаборацию вызови уведомление один раз и ответь
+  "Передала ваш запрос команде по партнёрствам, с вами свяжутся".
+- При «дорого» проактивно подскажи скидки за длительность (2-3 ч) и промокод ко дню
+  рождения, для чувствительных к цене предложи более бюджетное судно.
+- Не повторяй один и тот же ответ из таблицы дословно на переспрос - расширь или переведи на оператора.</pre></div>
+  </div>
+
+  <div class="card">
+    <h2>Новые возможности Савви, которые здесь усилят результат <span class="tag a">апгрейд</span></h2>
+    <ul>
+      <li><b>Анализатор</b> — автоматически размечает все диалоги по темам и исходам: видно в реальном времени,
+        сколько заявок срывается на цене, сколько — про сотрудничество, где теряются согласившиеся. Тот разбор,
+        что мы сделали руками, вы получаете постоянно и сами. Сейчас он у вас выключен.</li>
+      <li><b>Автообучение</b> — бот подсказывает, каких ответов не хватает под реальные вопросы (кейтеринг,
+        локации, парковка), вы подтверждаете формулировку — база растёт, доля закрытий без оператора увеличивается.</li>
+      <li><b>Автонапоминания (follow-up)</b> — возвращают тех, кто сказал «подумаю» или не завершил бронь:
+        «держим для вас удобное время, подобрать дату?». Тёплая аудитория не теряется молча.</li>
+      <li><b>Голосовой агент</b> — у вас уже подготовлен голосовой сценарий (Регина), но он не подключён к каналам.
+        Его запуск закроет телефонные обращения тем же качеством, что и переписку.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>План действий</h2>
+    <ol class="steps">
+      <li><span class="owner">Техника · приоритет 1</span><br>Восстановить уведомление о заявках на сотрудничество и разорвать холостые циклы на видео/переводе на менеджера — чтобы горячие заявки не терялись.</li>
+      <li><span class="owner">Сценарий · быстрый эффект</span><br>Проактивно вести к скидкам при «дорого», развести типовые и индивидуальные операции с бронью, убрать дубли в базе.</li>
+      <li><span class="owner">База</span><br>Дозаполнить темы (кейтеринг, локации, парковка) из ответов менеджеров; подключить Автообучение.</li>
+      <li><span class="owner">Возможности</span><br>Включить Анализатор для контроля причин срыва, автонапоминания на «подумаю»/незавершённую бронь, рассмотреть запуск голосового агента.</li>
+      <li><span class="owner">Оптимизация</span><br>Снизить стоимость с ~94 ₽ к норме — более лёгкая модель, убрать холостые вызовы, ограничить историю — по настройкам Савви, без потери качества.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Насколько ещё можно поднять долю бота</h2>
+    <p class="lead">Бот уже обрабатывает весь поток и мгновенно отвечает 24/7. Рост упирается не в приём,
+      а в устранимые причины передачи оператору, которые видно в переписках.</p>
+    <div class="metrics">
+      <div class="m good"><div class="v">52%</div><div class="l">диалогов ведёт бот сам</div></div>
+      <div class="m bad"><div class="v">48%</div><div class="l">доводит оператор</div></div>
+      <div class="m"><div class="v">~45%</div><div class="l">диалогов — операции с бронью</div></div>
+      <div class="m"><div class="v">~10%</div><div class="l">— заявки на сотрудничество</div></div>
+    </div>
+    <p style="margin:16px 0 0"><b>Где именно берётся рост:</b> восстановление уведомления возвращает партнёрские
+      заявки; типовые операции с бронью (правила, сертификаты, погода) закрывает база; автонапоминания
+      возвращают «подумаю». Это управляемые изменения, а не «бот не справляется».</p>
+    <p class="lead" style="margin:12px 0 0">Точную прибавку оценим после правок и подключения Анализатора —
+      цифры выше это структура текущей нагрузки, а не обещание.</p>
+  </div>
+
+  <!-- ═══════════════ КАЛЬКУЛЯТОР ЭФФЕКТА ═══════════════ -->
+  <div class="card calc-hero">
+    <p class="kicker">Расчёт эффекта · заполняем вместе</p>
+    <h1>Сколько даёт рост доходимости до брони</h1>
+    <p class="sub">Зелёным — уже измерено в системе. Синим — впишем ваши цифры на встрече. Расчёт пересчитается сразу, внизу — эффект за год.</p>
+  </div>
+
+  <div class="card">
+    <h2>Что бот уже делает сам <span class="sys">из системы</span></h2>
+    <p class="lead">Факты за период — их не нужно спрашивать, они измерены.</p>
+    <div class="fact">
+      <div class="fc"><div class="fv">~1 030</div><div class="fl">диалогов в месяц обрабатывает бот (июль)</div></div>
+      <div class="fc"><div class="fv">52%</div><div class="fl">ведёт сам, без живого оператора</div></div>
+      <div class="fc"><div class="fv">~36 сек</div><div class="fl">среднее время ответа 24/7, лид не остывает</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Ваши цифры — до и после бота</h2>
+    <p class="lead"><span class="sys">Зелёные</span> — измерено в системе. <span class="est">Синие</span> — впишем на встрече по вашим данным.
+      Серые ячейки <b>считаются автоматически</b> из зелёных и синих.</p>
+    <table class="io">
+      <thead>
+        <tr><th>Показатель</th><th class="col">ДО бота</th><th class="col">СЕЙЧАС (с ботом)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lbl">Обращений (диалогов) в месяц<small>входящих на бота — из системы (июнь 551 · июль 1029)</small></td>
+          <td class="calc" style="color:var(--ink3)">тот же поток</td>
+          <td class="val"><input id="leads" class="sysv" type="number" value="1030"></td></tr>
+        <tr><td class="lbl">Конверсия обращение → бронь, %<small>ДО — ручная обработка · СЕЙЧАС — бот 24/7</small></td>
+          <td class="val"><input id="before" class="askv" type="number" value="10"></td>
+          <td class="val"><input id="after" class="askv" type="number" value="14"></td></tr>
+        <tr><td class="lbl">= Броней в месяц<small>обращения × конверсия</small></td>
+          <td class="calc" id="c-salesB">—</td>
+          <td class="calc" id="c-salesA">—</td></tr>
+        <tr><td class="lbl">Средний чек аренды, ₽<small>одинаков до и после</small></td>
+          <td class="mid2" colspan="2"><input id="margin" class="askv" type="number" value="12000"><span class="rate">одинаково для ДО и СЕЙЧАС</span></td></tr>
+        <tr class="sep"><td class="lbl">Менеджеров на приёме этих обращений<small>ДО — вели поток вручную · СЕЙЧАС — с ботом (бот тянет 52% сам)</small></td>
+          <td class="val"><input id="mgrB" class="askv" type="number" value="3"></td>
+          <td class="val"><input id="mgrA" class="askv" type="number" value="2"></td></tr>
+        <tr><td class="lbl">ЗП одного менеджера, ₽/мес<small>оклад + налоги + рабочее место</small></td>
+          <td class="val"><input id="salB" class="askv" type="number" value="60000"></td>
+          <td class="val"><input id="salA" class="askv" type="number" value="60000"></td></tr>
+        <tr><td class="lbl">= ФОТ на этот поток, ₽/мес<small>ЗП × число менеджеров</small></td>
+          <td class="calc" id="c-fotB">—</td>
+          <td class="calc" id="c-fotA">—</td></tr>
+        <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы (июнь 74,4к · июль 96,9к)</small></td>
+          <td class="calc" style="color:var(--ink3)">не было</td>
+          <td class="val"><input id="savvi" class="sysv" type="number" value="96900"></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Что это даёт</h2>
+    <p class="lead">Два независимых источника эффекта: <b>рост доходимости</b> до брони и <b>оптимизация ФОТ</b> на приём обращений.</p>
+    <div class="res">
+      <div class="rc"><div class="l">Броней / мес ДО бота</div><div class="v" id="r-salesB">—</div><div class="s">оценка «как было»</div></div>
+      <div class="rc"><div class="l">Броней / мес СЕЙЧАС</div><div class="v" id="r-salesA">—</div><div class="s">с ботом (+<span id="r-ddSales">—</span> броней)</div></div>
+      <div class="rc blue"><div class="l">+ Выручка / мес</div><div class="v" id="r-rev">—</div><div class="s">прирост броней × чек</div></div>
+      <div class="rc blue"><div class="l">+ Экономия ФОТ / мес</div><div class="v" id="r-fot">—</div><div class="s">высвобожденные менеджеры</div></div>
+    </div>
+    <div class="res" style="margin-top:12px;grid-template-columns:1fr 1fr;">
+      <div class="rc big"><div class="l">Итого эффект / мес</div><div class="v" id="r-month">—</div><div class="s">выручка + ФОТ − стоимость Савви</div></div>
+      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r-year">—</div><div class="s">суммарно</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Как мы пришли к этим цифрам</h2>
+    <p class="lead">Каждый шаг — из измеренного в системе <span class="src s">из системы</span> или из вашей цифры со встречи
+      <span class="src a">со встречи</span>. Меняете значение в таблице выше — расчёт ниже пересчитывается.</p>
+    <ol class="deriv">
+      <li><b>Поток обращений.</b> Бот обработал <b id="d-leads">—</b> диалогов/мес <span class="src s">из системы</span>
+        (июнь 551, июль 1029). Это вход воронки.</li>
+      <li><b>Конверсия в бронь.</b> Была <b id="d-b">—</b>% при ручной обработке <span class="src a">со встречи</span>,
+        стала <b id="d-a">—</b>% с ботом 24/7 <span class="src a">со встречи</span>.</li>
+      <li><b>Броней в месяц.</b> <span class="eq" id="d-salesB">—</span> было → <span class="eq" id="d-salesA">—</span> стало.
+        Прирост <b id="d-ddSales">—</b> броней/мес.</li>
+      <li><b>Рост выручки.</b> <span class="eq" id="d-rev">—</span> — прирост броней × средний чек
+        <b id="d-margin">—</b> ₽ <span class="src a">со встречи</span>.</li>
+      <li><b>Оптимизация ФОТ.</b> Поток вели <b id="d-mgrB">—</b> менеджера, с ботом осталось <b id="d-mgrA">—</b>
+        <span class="src a">со встречи</span> (бот ведёт 52% сам <span class="src s">из системы</span>).
+        ФОТ по каждой колонке = ЗП × число: <span class="eq" id="d-fot">—</span>.</li>
+      <li><b>Минус стоимость Савви.</b> Реальный расход <b id="d-savvi">—</b> ₽/мес <span class="src s">из системы</span>.</li>
+      <li><b>Итого в месяц:</b> <span class="eq" id="d-month">—</span>. За год ×12 — <b id="d-year">—</b>.</li>
+    </ol>
+    <div class="note"><b>Честно про цифры:</b> из системы измерены поток диалогов, доля автономности бота (52%) и
+      стоимость Савви. Конверсия, средний чек, число менеджеров и их ФОТ — ваши данные, вписываем на встрече;
+      значения в таблице сейчас — реалистичный пример, а не факт. Рост выручки и экономия ФОТ считаются
+      раздельно и не пересекаются.</div>
+  </div>
+
+  <div class="card">
+    <div class="foot"><div class="chip">S</div>
+      <div>Разбор подготовлен на данных вашего проекта в Савви (1 580 диалогов за июнь–июль 2026) и чтении
+        проблемных переписок. Цифры калькулятора — ориентир, финальные значения сверяем вместе.</div></div>
+  </div>
+
+</div>
+
+<script>
+  function rub(n){n=Math.round(n);var s=n<0?'−':'';n=Math.abs(n);
+    if(n>=1e6)return s+(n/1e6).toFixed(n>=1e7?0:2).replace('.',',')+' млн ₽';
+    if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
+  function rubFull(n){return Math.round(n).toLocaleString('ru-RU')+' ₽';}
+  function v(id){return parseFloat(document.getElementById(id).value)||0;}
+  function S(id){return id.toLocaleString('ru-RU');}
+  function set(id,txt){var el=document.getElementById(id);if(el)el.textContent=txt;}
+  function calc(){
+    var L=v('leads'), b=v('before')/100, a=v('after')/100, M=v('margin');
+    var mgrB=v('mgrB'), mgrA=v('mgrA'), salB=v('salB'), salA=v('salA'), sv=v('savvi');
+    // Блок А — выручка от роста доходимости
+    var salesB=Math.round(L*b), salesA=Math.round(L*a), ddSales=Math.max(0,salesA-salesB);
+    var rev=ddSales*M;
+    // Блок Б — экономия ФОТ: ФОТ = ЗП × число менеджеров по каждой колонке
+    var fotB=mgrB*salB, fotA=mgrA*salA, fotSave=Math.max(0,fotB-fotA);
+    // Итог
+    var month=rev+fotSave-sv, year=month*12;
+    // ── таблица «Ваши цифры» (серые ячейки) ──
+    set('c-salesB','≈ '+S(salesB)); set('c-salesA','≈ '+S(salesA));
+    set('c-fotB',rubFull(fotB)); set('c-fotA',rubFull(fotA));
+    // ── карточки «Что это даёт» ──
+    set('r-salesB','≈ '+S(salesB)); set('r-salesA','≈ '+S(salesA));
+    set('r-ddSales',S(ddSales));
+    set('r-rev','+ '+rub(rev)); set('r-fot',fotSave>0?'+ '+rub(fotSave):rub(0));
+    set('r-month',rub(month)); set('r-year',rub(year));
+    // ── разбор «как пришли» ──
+    set('d-leads',S(Math.round(L)));
+    set('d-b',Math.round(b*100)); set('d-a',Math.round(a*100));
+    set('d-salesB',S(Math.round(L))+' × '+Math.round(b*100)+'% = '+S(salesB));
+    set('d-salesA',S(Math.round(L))+' × '+Math.round(a*100)+'% = '+S(salesA));
+    set('d-ddSales','+'+S(ddSales));
+    set('d-rev',S(ddSales)+' броней × '+rubFull(M)+' = '+rub(rev)+'/мес');
+    set('d-margin',S(M));
+    set('d-mgrB',S(mgrB)); set('d-mgrA',S(mgrA));
+    set('d-fot',S(mgrB)+' × '+rubFull(salB)+' = '+rub(fotB)+' → '+S(mgrA)+' × '+rubFull(salA)+' = '+rub(fotA)+'; экономия '+rub(fotSave)+'/мес');
+    set('d-savvi',S(sv));
+    set('d-month','+ '+rub(rev)+' (выручка) + '+rub(fotSave)+' (ФОТ) − '+rub(sv)+' (Савви) = '+rub(month));
+    set('d-year',rub(year));
+  }
+  ['leads','before','after','margin','mgrB','mgrA','salB','salA','savvi'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.addEventListener('input',calc);});
+  calc();
+</script>
+</body>
+</html>
