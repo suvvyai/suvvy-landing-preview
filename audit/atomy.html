@@ -274,22 +274,27 @@
       </thead>
       <tbody>
         <tr><td class="lbl">Обращений в месяц<small>весь входящий поток в поддержку — из системы</small></td>
-          <td class="mid2" colspan="2"><input id="tickets" class="sysv" type="number" value="6948"><span class="rate">входящий поток, одинаков до и после</span></td></tr>
-        <tr><td class="lbl">Закрывает бот сам, %<small>ДО бота — 0%, сейчас — из системы</small></td>
-          <td class="calc" style="color:var(--ink3)">0%</td>
-          <td class="val"><input id="defl" class="sysv" type="number" value="60"></td></tr>
+          <td class="val"><input id="ticketsB" class="sysv" type="number" value="6948"></td>
+          <td class="val"><input id="ticketsN" class="sysv" type="number" value="6948"></td></tr>
+        <tr><td class="lbl">Закрывает бот сам, %<small>ДО бота — 0, сейчас — из системы</small></td>
+          <td class="val"><input id="deflB" class="sysv" type="number" value="0"></td>
+          <td class="val"><input id="deflN" class="sysv" type="number" value="60"></td></tr>
         <tr><td class="lbl">= Ложится на операторов, обр./мес<small>поток минус закрытое ботом</small></td>
           <td class="calc" id="c-onB">—</td><td class="calc" id="c-onN">—</td></tr>
         <tr><td class="lbl">Оператор закрывает в день<small>сколько обращений успевает один</small></td>
-          <td class="mid2" colspan="2"><input id="perday" class="askv" type="number" value="25"><span class="rate">одинаково для ДО и СЕЙЧАС</span></td></tr>
+          <td class="val"><input id="perdayB" class="askv" type="number" value="25"></td>
+          <td class="val"><input id="perdayN" class="askv" type="number" value="25"></td></tr>
         <tr><td class="lbl">Рабочих дней в месяце</td>
-          <td class="mid2" colspan="2"><input id="days" class="askv" type="number" value="22"></td></tr>
+          <td class="val"><input id="daysB" class="askv" type="number" value="22"></td>
+          <td class="val"><input id="daysN" class="askv" type="number" value="22"></td></tr>
         <tr><td class="lbl">= Нужно операторов<small>обращения на людях ÷ пропускная способность</small></td>
           <td class="calc" id="c-opsB">—</td><td class="calc" id="c-opsN">—</td></tr>
         <tr class="sep"><td class="lbl">Зарплата оператора, ₽/мес<small>на руки</small></td>
-          <td class="mid2" colspan="2"><input id="salary" class="askv" type="number" value="50000"><span class="rate">одинаково для ДО и СЕЙЧАС</span></td></tr>
+          <td class="val"><input id="salB" class="askv" type="number" value="50000"></td>
+          <td class="val"><input id="salN" class="askv" type="number" value="50000"></td></tr>
         <tr><td class="lbl">Налоги и взносы, %<small>страховые по ТК РФ, сверх зарплаты</small></td>
-          <td class="mid2" colspan="2"><input id="tax" class="askv" type="number" value="30"></td></tr>
+          <td class="val"><input id="taxB" class="askv" type="number" value="30"></td>
+          <td class="val"><input id="taxN" class="askv" type="number" value="30"></td></tr>
         <tr><td class="lbl">= ФОТ поддержки, ₽/мес<small>операторы × (ЗП + взносы)</small></td>
           <td class="calc" id="c-fotB">—</td><td class="calc" id="c-fotN">—</td></tr>
         <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td>
@@ -349,16 +354,16 @@
   function ops(n){return n.toFixed(1).replace('.',',');}
   function set(id,txt){var el=document.getElementById(id);if(el)el.textContent=txt;}
   function calc(){
-    var t=v('tickets'), d=v('defl')/100, perday=v('perday'), days=v('days'),
-        sal=v('salary'), tax=v('tax')/100, sv=v('savvi');
-    var capacity=perday*days;                 // пропускная способность 1 оператора/мес
-    var fullCost=sal*(1+tax);                 // полная стоимость оператора/мес
-    var onB=t, onN=t*(1-d);                    // обращений на людях ДО / СЕЙЧАС
-    var opsB=capacity>0?onB/capacity:0;        // операторов нужно ДО
-    var opsN=capacity>0?onN/capacity:0;        // операторов нужно СЕЙЧАС
-    var opsD=Math.max(0,opsB-opsN);            // высвобождено
-    var fotB=opsB*fullCost, fotN=opsN*fullCost;
-    var save=Math.max(0,fotB-fotN);            // экономия ФОТ/мес (= d*t/cap*fullCost)
+    var tB=v('ticketsB'), tN=v('ticketsN'), dB=v('deflB')/100, dN=v('deflN')/100,
+        pB=v('perdayB'), pN=v('perdayN'), dyB=v('daysB'), dyN=v('daysN'),
+        sB=v('salB'), sN=v('salN'), xB=v('taxB')/100, xN=v('taxN')/100, sv=v('savvi');
+    var capB=pB*dyB, capN=pN*dyN;               // пропускная способность 1 оператора/мес (ДО/СЕЙЧАС)
+    var onB=tB*(1-dB), onN=tN*(1-dN);           // обращений на людях ДО / СЕЙЧАС
+    var opsB=capB>0?onB/capB:0, opsN=capN>0?onN/capN:0;
+    var opsD=Math.max(0,opsB-opsN);             // высвобождено
+    var fcB=sB*(1+xB), fcN=sN*(1+xN);           // полная стоимость оператора ДО / СЕЙЧАС
+    var fotB=opsB*fcB, fotN=opsN*fcN;
+    var save=Math.max(0,fotB-fotN);             // экономия ФОТ/мес
     var month=save-sv, year=month*12;
     // таблица (серые ячейки)
     set('c-onB',S(onB)); set('c-onN',S(onN));
@@ -369,19 +374,19 @@
     set('r-opsD',ops(opsD));
     set('r-month',rub(month)); set('r-year',rub(year));
     // разбор
-    set('d-tickets',S(t));
-    set('d-opsB',S(onB)+' ÷ '+S(capacity)+' = ≈'+ops(opsB));
-    set('d-cap',S(capacity)); set('d-perday',S(perday)); set('d-days',S(days));
-    set('d-defl',Math.round(d*100)); set('d-onN',S(onN));
+    set('d-tickets',S(tB));
+    set('d-opsB',S(onB)+' ÷ '+S(capB)+' = ≈'+ops(opsB));
+    set('d-cap',S(capB)); set('d-perday',S(pB)); set('d-days',S(dyB));
+    set('d-defl',Math.round(dN*100)); set('d-onN',S(onN));
     set('d-opsN','≈'+ops(opsN));
     set('d-opsD','≈'+ops(opsD));
     set('d-fot',rubFull(fotB)+' → '+rubFull(fotN)+' = экономия '+rub(save)+'/мес');
-    set('d-full',rubFull(fullCost));
+    set('d-full',rubFull(fcN));
     set('d-savvi',S(sv));
     set('d-month',rub(save)+' (экономия ФОТ) − '+rub(sv)+' (Савви) = '+rub(month));
     set('d-year',rub(year));
   }
-  ['tickets','defl','perday','days','salary','tax','savvi']
+  ['ticketsB','ticketsN','deflB','deflN','perdayB','perdayN','daysB','daysN','salB','salN','taxB','taxN','savvi']
     .forEach(function(id){var el=document.getElementById(id); if(el) el.addEventListener('input',calc);});
   calc();
 </script>
