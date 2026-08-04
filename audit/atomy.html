@@ -66,6 +66,23 @@
   table.io input:focus{outline:none;border-color:var(--blue);}
   table.io input.sysv{border-color:#b2e8d2;background:var(--green-bg);}
   table.io input.askv{border-color:#c5c6f5;background:#eeeffe;}
+  table.io input{width:100%;max-width:160px;}
+  table.io th.col{text-align:right;width:180px;}
+  table.io td.val{text-align:right;}
+  table.io td.calc{text-align:right;font-weight:800;font-size:16px;color:var(--ink);white-space:nowrap;}
+  table.io td.mid2{text-align:center;}
+  table.io td.mid2 input{max-width:200px;}
+  table.io td.mid2 .rate{display:block;font-size:11px;font-weight:600;color:var(--ink3);margin-top:4px;}
+  table.io tr.sep td{border-top:2px solid var(--ink3);}
+  .deriv{counter-reset:d;list-style:none;padding:0;margin:6px 0 0;}
+  .deriv li{counter-increment:d;position:relative;padding:12px 0 12px 42px;border-bottom:1px dashed var(--line);font-size:13.5px;}
+  .deriv li:last-child{border-bottom:0;}
+  .deriv li::before{content:counter(d);position:absolute;left:0;top:11px;width:28px;height:28px;background:var(--grad);
+    color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+  .deriv b{color:var(--ink);}.deriv .eq{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;
+    background:var(--soft);border-radius:8px;padding:2px 7px;color:var(--ink);white-space:nowrap;}
+  .deriv .src{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:90px;margin-left:2px;}
+  .deriv .src.s{background:var(--green-bg);color:var(--green);}.deriv .src.a{background:#eeeffe;color:var(--blue);}
   .res{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
   .rc{border-radius:14px;padding:18px;background:var(--green-bg);border:1.5px solid #b2e8d2;}
   .rc.blue{background:#eeeffe;border-color:#c5c6f5;}
@@ -248,49 +265,70 @@
   </div>
 
   <div class="card">
-    <h2>Ваши цифры</h2>
-    <p class="lead"><span class="sys">Зелёные</span> — из системы (можно уточнить). <span class="est">Синие</span> — впишем на встрече по вашим данным поддержки.</p>
+    <h2>Ваши цифры — до и после бота</h2>
+    <p class="lead"><span class="sys">Зелёные</span> — измерено в системе. <span class="est">Синие</span> — впишем на встрече.
+      Серые ячейки <b>считаются автоматически</b>. Логика: <b>ДО</b> бота весь поток шёл на операторов, <b>СЕЙЧАС</b> бот забирает часть.</p>
     <table class="io">
+      <thead>
+        <tr><th>Показатель</th><th class="col">ДО бота</th><th class="col">СЕЙЧАС (с ботом)</th></tr>
+      </thead>
       <tbody>
-        <tr><td class="lbl">Обращений в месяц<small>всего в поддержку — из системы</small></td>
-          <td><input id="tickets" class="sysv" type="number" value="6948"></td></tr>
-        <tr><td class="lbl">Бот закрывает сам, %<small>без передачи оператору — из системы</small></td>
-          <td><input id="defl" class="sysv" type="number" value="60"></td></tr>
-        <tr><td class="lbl">Оператор закрывает обращений в день<small>сколько успевает один человек</small></td>
-          <td><input id="perday" class="askv" type="number" value="25"></td></tr>
+        <tr><td class="lbl">Обращений в месяц<small>весь входящий поток в поддержку — из системы</small></td>
+          <td class="mid2" colspan="2"><input id="tickets" class="sysv" type="number" value="6948"><span class="rate">входящий поток, одинаков до и после</span></td></tr>
+        <tr><td class="lbl">Закрывает бот сам, %<small>ДО бота — 0%, сейчас — из системы</small></td>
+          <td class="calc" style="color:var(--ink3)">0%</td>
+          <td class="val"><input id="defl" class="sysv" type="number" value="60"></td></tr>
+        <tr><td class="lbl">= Ложится на операторов, обр./мес<small>поток минус закрытое ботом</small></td>
+          <td class="calc" id="c-onB">—</td><td class="calc" id="c-onN">—</td></tr>
+        <tr><td class="lbl">Оператор закрывает в день<small>сколько обращений успевает один</small></td>
+          <td class="mid2" colspan="2"><input id="perday" class="askv" type="number" value="25"><span class="rate">одинаково для ДО и СЕЙЧАС</span></td></tr>
         <tr><td class="lbl">Рабочих дней в месяце</td>
-          <td><input id="days" class="askv" type="number" value="22"></td></tr>
-        <tr><td class="lbl">Зарплата оператора, ₽/мес<small>на руки</small></td>
-          <td><input id="salary" class="askv" type="number" value="50000"></td></tr>
+          <td class="mid2" colspan="2"><input id="days" class="askv" type="number" value="22"></td></tr>
+        <tr><td class="lbl">= Нужно операторов<small>обращения на людях ÷ пропускная способность</small></td>
+          <td class="calc" id="c-opsB">—</td><td class="calc" id="c-opsN">—</td></tr>
+        <tr class="sep"><td class="lbl">Зарплата оператора, ₽/мес<small>на руки</small></td>
+          <td class="mid2" colspan="2"><input id="salary" class="askv" type="number" value="50000"><span class="rate">одинаково для ДО и СЕЙЧАС</span></td></tr>
         <tr><td class="lbl">Налоги и взносы, %<small>страховые по ТК РФ, сверх зарплаты</small></td>
-          <td><input id="tax" class="askv" type="number" value="30"></td></tr>
+          <td class="mid2" colspan="2"><input id="tax" class="askv" type="number" value="30"></td></tr>
+        <tr><td class="lbl">= ФОТ поддержки, ₽/мес<small>операторы × (ЗП + взносы)</small></td>
+          <td class="calc" id="c-fotB">—</td><td class="calc" id="c-fotN">—</td></tr>
         <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td>
-          <td><input id="savvi" class="sysv" type="number" value="74000"></td></tr>
+          <td class="calc" style="color:var(--ink3)">не было</td>
+          <td class="val"><input id="savvi" class="sysv" type="number" value="74000"></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="card">
     <h2>Что это даёт</h2>
+    <p class="lead">Измеримый результат — <b>сколько операторов нужно на тот же поток до и после бота</b> и во что это выливается в деньгах.</p>
     <div class="res">
-      <div class="rc"><div class="l">Вопросов на боте</div><div class="v" id="r-tickets">—</div><div class="s">обращений в месяц сам закрывает</div></div>
-      <div class="rc"><div class="l">Заменяет</div><div class="v" id="r-fte">—</div><div class="s">операторов по объёму работы</div></div>
-      <div class="rc blue"><div class="l">Экономия на ФОТ / мес</div><div class="v" id="r-month">—</div><div class="s">зарплата минус стоимость Савви</div></div>
-      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r-year">—</div><div class="s">годовая экономия на ФОТ</div></div>
+      <div class="rc"><div class="l">Операторов ДО бота</div><div class="v" id="r-opsB">—</div><div class="s">весь поток вручную</div></div>
+      <div class="rc"><div class="l">Операторов СЕЙЧАС</div><div class="v" id="r-opsN">—</div><div class="s">с ботом (−<span id="r-opsD">—</span> чел.)</div></div>
+      <div class="rc blue"><div class="l">Экономия ФОТ / мес</div><div class="v" id="r-month">—</div><div class="s">ФОТ до − ФОТ сейчас − Савви</div></div>
+      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r-year">—</div><div class="s">годовая экономия</div></div>
     </div>
   </div>
 
   <div class="card">
-    <h2>Разбор эффекта</h2>
-    <div class="item"><div class="top"><span class="t2">🎧 Вопросов забирает бот</span><span class="a" id="e-load">—</span></div><div class="f" id="f-load"></div></div>
-    <div class="item"><div class="top"><span class="t2">👥 Скольких операторов заменяет</span><span class="a" id="e-fte">—</span></div>
-      <div class="f" id="f-fte"></div><div class="note" style="margin-top:6px" id="n-oper"></div></div>
-    <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="e-cost" style="color:var(--red)">—</span></div><div class="f" id="f-cost"></div></div>
-    <div class="note"><b>Как считаем:</b> бот сам закрывает часть потока (обращения × доля). Делим этот объём
-      на то, сколько обращений в месяц закрывает один оператор (обращений в день × рабочих дней) — получаем,
-      скольких операторов заменяет бот. Умножаем на полную стоимость оператора (зарплата + страховые взносы),
-      вычитаем стоимость Савви, ×12 за год. Если штат не сокращают — это объём, который поддержка тянет без
-      дополнительного найма. Финальные цифры сверяем с вашими данными.</div>
+    <h2>Как мы пришли к этим цифрам</h2>
+    <p class="lead">Каждый шаг — из измеренного в системе <span class="src s">из системы</span> или из вашей цифры со встречи
+      <span class="src a">со встречи</span>. Меняете значение в таблице — расчёт пересчитывается.</p>
+    <ol class="deriv">
+      <li><b>Поток обращений.</b> В поддержку приходит <b id="d-tickets">—</b> обращений/мес <span class="src s">из системы</span>.</li>
+      <li><b>Без бота — весь поток на людях.</b> нужно <span class="eq" id="d-opsB">—</span> операторов при пропускной
+        способности <b id="d-cap">—</b> обр./мес на человека (<span id="d-perday">—</span> в день × <span id="d-days">—</span> дней <span class="src a">со встречи</span>).</li>
+      <li><b>Сейчас бот закрывает часть.</b> Сам отвечает на <b id="d-defl">—</b>% <span class="src s">из системы</span>,
+        на людей остаётся <span class="eq" id="d-onN">—</span> обр. → нужно <b id="d-opsN">—</b> операторов.</li>
+      <li><b>Высвобождено.</b> <span class="eq" id="d-opsD">—</span> оператора. ФОТ падает
+        <span class="eq" id="d-fot">—</span> при полной стоимости <b id="d-full">—</b> ₽/чел (ЗП + взносы).</li>
+      <li><b>Минус стоимость Савви.</b> Реальный расход <b id="d-savvi">—</b> ₽/мес <span class="src s">из системы</span>.</li>
+      <li><b>Итого в месяц:</b> <span class="eq" id="d-month">—</span>. За год ×12 — <b id="d-year">—</b>.</li>
+    </ol>
+    <div class="note"><b>Честно про цифры:</b> из системы измерены поток обращений, доля закрытия ботом и стоимость
+      Савви. Пропускная способность оператора и зарплата — ваши данные, вписываем на встрече. Если штат не
+      сокращают — «операторы ДО» показывают, сколько людей понадобилось бы на текущий поток без бота (объём,
+      который поддержка тянет без дополнительного найма).</div>
   </div>
 
   <div class="card">
@@ -307,30 +345,44 @@
     if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
   function rubFull(n){return Math.round(n).toLocaleString('ru-RU')+' ₽';}
   function v(id){return parseFloat(document.getElementById(id).value)||0;}
+  function S(n){return Math.round(n).toLocaleString('ru-RU');}
+  function ops(n){return n.toFixed(1).replace('.',',');}
+  function set(id,txt){var el=document.getElementById(id);if(el)el.textContent=txt;}
   function calc(){
-    var t=v('tickets'),d=v('defl')/100,perday=v('perday'),days=v('days'),sal=v('salary'),tax=v('tax')/100,sv=v('savvi');
-    var deflected=t*d;                       // вопросов забирает бот/мес
-    var capacity=perday*days;                // пропускная способность 1 оператора/мес
-    var eqOps=capacity>0?deflected/capacity:0; // скольких операторов заменяет по объёму
-    var fullCost=sal*(1+tax);                // полная стоимость оператора/мес (ЗП + взносы)
-    var laborSaved=eqOps*fullCost;           // экономия ФОТ/мес
-    var month=laborSaved-sv;                 // чистая экономия/мес
-    var year=month*12;                       // ×12
-    var fteStr='≈ '+eqOps.toFixed(1).replace('.',',');
-    document.getElementById('r-tickets').textContent=Math.round(deflected).toLocaleString('ru-RU');
-    document.getElementById('r-fte').textContent=fteStr;
-    document.getElementById('r-month').textContent=rub(month);
-    document.getElementById('r-year').textContent=rub(year);
-    document.getElementById('e-load').textContent=Math.round(deflected).toLocaleString('ru-RU')+' обр./мес';
-    document.getElementById('f-load').textContent=Math.round(t).toLocaleString('ru-RU')+' обращений × '+Math.round(d*100)+'% (бот закрывает сам)';
-    document.getElementById('e-fte').textContent=fteStr+' чел.';
-    document.getElementById('f-fte').textContent=Math.round(deflected).toLocaleString('ru-RU')+' обр. ÷ '+Math.round(capacity)+' обр./мес на человека ('+Math.round(perday)+'×'+Math.round(days)+')';
-    document.getElementById('e-cost').textContent='−'+rub(sv);
-    document.getElementById('f-cost').textContent='реальный расход из системы, '+rubFull(sv)+'/мес';
-    var nf=document.getElementById('n-oper'); if(nf) nf.textContent='Полная стоимость оператора: '+rubFull(sal)+' + '+Math.round(tax*100)+'% взносов = '+rubFull(fullCost)+'/мес.';
+    var t=v('tickets'), d=v('defl')/100, perday=v('perday'), days=v('days'),
+        sal=v('salary'), tax=v('tax')/100, sv=v('savvi');
+    var capacity=perday*days;                 // пропускная способность 1 оператора/мес
+    var fullCost=sal*(1+tax);                 // полная стоимость оператора/мес
+    var onB=t, onN=t*(1-d);                    // обращений на людях ДО / СЕЙЧАС
+    var opsB=capacity>0?onB/capacity:0;        // операторов нужно ДО
+    var opsN=capacity>0?onN/capacity:0;        // операторов нужно СЕЙЧАС
+    var opsD=Math.max(0,opsB-opsN);            // высвобождено
+    var fotB=opsB*fullCost, fotN=opsN*fullCost;
+    var save=Math.max(0,fotB-fotN);            // экономия ФОТ/мес (= d*t/cap*fullCost)
+    var month=save-sv, year=month*12;
+    // таблица (серые ячейки)
+    set('c-onB',S(onB)); set('c-onN',S(onN));
+    set('c-opsB','≈ '+ops(opsB)); set('c-opsN','≈ '+ops(opsN));
+    set('c-fotB',rubFull(fotB)); set('c-fotN',rubFull(fotN));
+    // карточки результата
+    set('r-opsB','≈ '+ops(opsB)); set('r-opsN','≈ '+ops(opsN));
+    set('r-opsD',ops(opsD));
+    set('r-month',rub(month)); set('r-year',rub(year));
+    // разбор
+    set('d-tickets',S(t));
+    set('d-opsB',S(onB)+' ÷ '+S(capacity)+' = ≈'+ops(opsB));
+    set('d-cap',S(capacity)); set('d-perday',S(perday)); set('d-days',S(days));
+    set('d-defl',Math.round(d*100)); set('d-onN',S(onN));
+    set('d-opsN','≈'+ops(opsN));
+    set('d-opsD','≈'+ops(opsD));
+    set('d-fot',rubFull(fotB)+' → '+rubFull(fotN)+' = экономия '+rub(save)+'/мес');
+    set('d-full',rubFull(fullCost));
+    set('d-savvi',S(sv));
+    set('d-month',rub(save)+' (экономия ФОТ) − '+rub(sv)+' (Савви) = '+rub(month));
+    set('d-year',rub(year));
   }
   ['tickets','defl','perday','days','salary','tax','savvi']
-    .forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+    .forEach(function(id){var el=document.getElementById(id); if(el) el.addEventListener('input',calc);});
   calc();
 </script>
 </body>
