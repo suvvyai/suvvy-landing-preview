@@ -1,0 +1,395 @@
+<title>Савви на конференциях</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* — токены 1:1 из tokens.css проекта Suvvy — светлая, единственная тема сайта (реальный сайт light-only) — */
+  :root {
+    --suvvy-ink-900:#11253E; --suvvy-ink-700:#5E748D; --suvvy-ink-500:#8695A7; --suvvy-ink-400:#99A6B5;
+    --suvvy-bg:#FFFFFF; --suvvy-bg-soft:#F0F4FA; --suvvy-bg-section:#F1F5FB;
+    --suvvy-border-soft:#E1E6EC; --suvvy-border:#D9DEE4;
+    --suvvy-accent-blue:#3520FC; --suvvy-accent-purple:#9117D2; --suvvy-accent-pink:#EE0EA8;
+    --suvvy-gradient: linear-gradient(120deg, #11253E 0%, #1B2F52 52%, #2A1E63 100%);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--suvvy-bg-section); color: var(--suvvy-ink-900);
+    font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+
+  .frame { max-width: 1160px; margin: 0 auto; padding: 40px 24px 96px; }
+
+  .frame-note {
+    font-size: 12px; color: var(--suvvy-ink-500); background: #fff; border: 1px dashed var(--suvvy-border);
+    border-radius: 10px; padding: 10px 14px; margin: 0 0 40px; line-height: 1.5;
+  }
+  .frame-note b { color: var(--suvvy-ink-700); }
+
+  .option { margin-bottom: 72px; }
+  .option:last-child { margin-bottom: 0; }
+  .option__tag {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase; color: #fff; background: var(--suvvy-ink-900);
+    border-radius: 90px; padding: 5px 12px 5px 6px; margin-bottom: 14px;
+  }
+  .option__tag span { width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; font-family:"Onest",sans-serif; }
+  .option__name { font-family: "Onest", sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -.01em; margin: 0 0 6px; }
+  .option__desc { font-size: 13.5px; line-height: 1.55; color: var(--suvvy-ink-700); max-width: 62ch; margin: 0 0 28px; }
+  .option__desc b { color: var(--suvvy-ink-900); }
+  .divider { border: 0; border-top: 1px dashed var(--suvvy-border); margin: 72px 0 0; }
+
+  /* ————————————————— общая шапка секции (используется во всех вариантах) ————————————————— */
+  .videos__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .videos__eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--suvvy-accent-purple); margin: 0 0 8px; }
+  .videos__title { font-family: "Onest", sans-serif; font-weight: 700; font-size: clamp(24px, 3vw, 30px); letter-spacing: -0.02em; color: var(--suvvy-ink-900); margin: 0; text-wrap: balance; }
+  .videos__sub { font-size: 14px; line-height: 1.5; color: var(--suvvy-ink-700); max-width: 46ch; margin: 10px 0 0; }
+  .videos__all { flex: 0 0 auto; font-size: 13px; font-weight: 700; color: var(--suvvy-ink-900); display: inline-flex; align-items: center; gap: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--suvvy-ink-900); text-decoration: none; }
+
+  .sceneBg { position: absolute; inset: 0; background: radial-gradient(120% 90% at 15% 120%, rgba(196,169,255,.35), transparent 60%), radial-gradient(80% 60% at 90% -10%, rgba(238,14,168,.25), transparent 60%); }
+
+  .play { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,.94); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px -6px rgba(0,0,0,.35); flex: 0 0 auto; transition: transform .18s cubic-bezier(.2,0,0,1); }
+  .play svg { width: 18px; height: 18px; margin-left: 2px; }
+  .play--sm { width: 40px; height: 40px; }
+  .play--sm svg { width: 13px; height: 13px; }
+
+  /* ═══════════════════════ A — карточки-сетка (базовый) ═══════════════════════ */
+  .gridA { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .vcard { background: #fff; border: 1px solid var(--suvvy-border-soft); border-radius: 20px; overflow: hidden; cursor: pointer; padding: 0; text-align: left; font: inherit; color: inherit; display: flex; flex-direction: column; transition: transform .18s cubic-bezier(.2,0,0,1), box-shadow .18s cubic-bezier(.2,0,0,1); }
+  .vcard:hover { transform: translateY(-3px); box-shadow: 0 16px 32px -12px rgba(17,37,62,.16); }
+  .vcard:focus-visible { outline: 2px solid var(--suvvy-accent-purple); outline-offset: 3px; }
+  .vcard__thumb { position: relative; aspect-ratio: 16/9; background: var(--suvvy-gradient); display: flex; align-items: flex-end; overflow: hidden; }
+  .vcard__conf { position: relative; z-index: 1; margin: 14px; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.28); border-radius: 90px; padding: 5px 11px; align-self: flex-start; }
+  .vcard__play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .vcard:hover .vcard__play .play { transform: scale(1.08); }
+  .vcard__dur { position: absolute; right: 12px; bottom: 12px; z-index: 1; font-size: 10.5px; font-weight: 700; color: #fff; background: rgba(0,0,0,.55); border-radius: 6px; padding: 3px 6px; font-variant-numeric: tabular-nums; }
+  .vcard__body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .vcard__title { font-family: "Onest", sans-serif; font-weight: 700; font-size: 15.5px; line-height: 1.32; letter-spacing: -.01em; color: var(--suvvy-ink-900); margin: 0; }
+  .vcard__meta { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--suvvy-ink-500); margin-top: auto; }
+  .vcard__meta b { color: var(--suvvy-ink-700); font-weight: 600; }
+  .vcard__meta i { font-style: normal; color: var(--suvvy-ink-400); }
+
+  /* ═══════════════════════ B — строки-фичи (максимум контекста) ═══════════════════════ */
+  .rows { display: flex; flex-direction: column; gap: 20px; }
+  .row { background: #fff; border: 1px solid var(--suvvy-border-soft); border-radius: 20px; overflow: hidden; display: grid; grid-template-columns: 300px 1fr; align-items: stretch; }
+  .row:nth-child(even) { grid-template-columns: 1fr 300px; }
+  .row:nth-child(even) .row__thumb { order: 2; }
+  .row__thumb { position: relative; background: var(--suvvy-gradient); display: flex; align-items: center; justify-content: center; cursor: pointer; min-height: 190px; }
+  .row__body { padding: 24px 28px; display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  .row__conf { display: inline-flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--suvvy-accent-purple); }
+  .row__conf i { width: 4px; height: 4px; border-radius: 50%; background: var(--suvvy-ink-400); }
+  .row__conf span.meta { color: var(--suvvy-ink-500); letter-spacing: 0; text-transform: none; font-weight: 600; }
+  .row__title { font-family: "Onest", sans-serif; font-weight: 700; font-size: 19px; line-height: 1.3; letter-spacing: -.01em; margin: 0; color: var(--suvvy-ink-900); }
+  .row__quote { font-size: 13.5px; line-height: 1.55; color: var(--suvvy-ink-700); margin: 0; padding-left: 14px; border-left: 2px solid var(--suvvy-border-soft); }
+  .row__foot { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+  .row__speaker { font-size: 12.5px; color: var(--suvvy-ink-500); }
+  .row__speaker b { color: var(--suvvy-ink-900); font-weight: 600; }
+  .row__watch { margin-left: auto; font-size: 12.5px; font-weight: 700; color: var(--suvvy-ink-900); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+
+  /* ═══════════════════════ C — карточки с раскрытием ═══════════════════════ */
+  .gridC { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+  .ecard { background: #fff; border: 1px solid var(--suvvy-border-soft); border-radius: 20px; overflow: hidden; }
+  .ecard__thumb { position: relative; aspect-ratio: 16/9; background: var(--suvvy-gradient); }
+  .ecard__conf { position: absolute; z-index: 1; top: 14px; left: 14px; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.28); border-radius: 90px; padding: 5px 11px; }
+  .ecard__play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .ecard__body { padding: 16px 18px; }
+  .ecard__title { font-family: "Onest", sans-serif; font-weight: 700; font-size: 15px; line-height: 1.32; letter-spacing: -.01em; color: var(--suvvy-ink-900); margin: 0 0 6px; }
+  .ecard__meta { font-size: 12px; color: var(--suvvy-ink-500); }
+  .ecard__meta b { color: var(--suvvy-ink-700); font-weight: 600; }
+  .ecard__toggle { width: 100%; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; background: none; border: 0; border-top: 1px solid var(--suvvy-border-soft); padding: 12px 0 0; font: inherit; font-size: 12px; font-weight: 700; color: var(--suvvy-ink-900); cursor: pointer; }
+  .ecard__toggle svg { width: 12px; height: 12px; transition: transform .18s cubic-bezier(.2,0,0,1); }
+  .ecard.is-open .ecard__toggle svg { transform: rotate(180deg); }
+  .ecard__more { max-height: 0; overflow: hidden; transition: max-height .22s cubic-bezier(.2,0,0,1); }
+  .ecard.is-open .ecard__more { max-height: 260px; }
+  .ecard__more-in { padding: 14px 0 4px; font-size: 12.5px; line-height: 1.55; color: var(--suvvy-ink-700); }
+  .ecard__more-in b { color: var(--suvvy-ink-900); }
+  .ecard__tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .ecard__tag { font-size: 10.5px; font-weight: 600; color: var(--suvvy-ink-500); background: #F1F5FB; border: 1px solid var(--suvvy-border-soft); border-radius: 90px; padding: 3px 9px; }
+
+  /* ═══════════════════════ D — прожектор с переключателем ═══════════════════════ */
+  .spot { background: #fff; border: 1px solid var(--suvvy-border-soft); border-radius: 20px; overflow: hidden; }
+  .spot__stage { position: relative; aspect-ratio: 20/9; background: var(--suvvy-gradient); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .spot__stagemeta { position: absolute; left: 24px; bottom: 22px; z-index: 1; color: #fff; max-width: 60%; }
+  .spot__conf { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.28); border-radius: 90px; padding: 5px 11px; margin-bottom: 10px; }
+  .spot__stagetitle { font-family: "Onest", sans-serif; font-weight: 700; font-size: 20px; line-height: 1.28; margin: 0 0 8px; text-wrap: balance; }
+  .spot__stagemeta p { font-size: 12.5px; color: #C3CEDE; margin: 0; line-height: 1.5; }
+  .spot__tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--suvvy-border-soft); }
+  .spot__tab { padding: 16px 18px; text-align: left; background: none; border: 0; border-right: 1px solid var(--suvvy-border-soft); font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+  .spot__tab:last-child { border-right: 0; }
+  .spot__tab.is-active { background: var(--suvvy-bg-soft); }
+  .spot__tabconf { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--suvvy-ink-500); }
+  .spot__tab.is-active .spot__tabconf { color: var(--suvvy-accent-purple); }
+  .spot__tabtitle { font-size: 13px; font-weight: 600; color: var(--suvvy-ink-900); line-height: 1.35; }
+
+  /* — модалка (общая для всех вариантов) — */
+  .modal { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(11,17,28,.72); backdrop-filter: blur(2px); }
+  .modal.is-open { display: flex; }
+  .modal__panel { width: min(880px, 100%); }
+  .modal__frame { position: relative; aspect-ratio: 16/9; border-radius: 16px; overflow: hidden; background: var(--suvvy-gradient); box-shadow: 0 40px 80px -24px rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; color: #fff; text-align: center; }
+  .modal__frame p { font-size: 13px; color: #C3CEDE; max-width: 32ch; margin: 10px 0 0; line-height: 1.5; }
+  .modal__frame strong { font-family: "Onest", sans-serif; font-size: 16px; }
+  .modal__close { margin: 14px auto 0; display: block; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.24); color: #fff; cursor: pointer; font-size: 16px; line-height: 1; }
+
+  @media (max-width: 900px) {
+    .gridA, .gridC { grid-template-columns: 1fr 1fr; }
+    .row, .row:nth-child(even) { grid-template-columns: 1fr; }
+    .row__thumb, .row:nth-child(even) .row__thumb { order: 0; min-height: 160px; }
+    .spot__tabs { grid-template-columns: 1fr; }
+    .spot__tab { border-right: 0; border-bottom: 1px solid var(--suvvy-border-soft); }
+  }
+  @media (max-width: 620px) {
+    .gridA, .gridC { grid-template-columns: 1fr; }
+    .videos__head { flex-direction: column; align-items: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) { .vcard, .play, .ecard__more, .ecard__toggle svg { transition: none; } }
+</style>
+
+<div class="frame">
+  <p class="frame-note">
+    <b>4 варианта для сравнения на одной странице.</b> Обложки — плейсхолдер (градиент сцены), реальные YouTube-превью встанут на их место 1:1.
+    Названия/конференции/спикеры — заглушки. Во всех вариантах видео открывается в модалке с YouTube-embed (грузится по клику).
+  </p>
+
+  <!-- ═══════════════════════ A ═══════════════════════ -->
+  <div class="option">
+    <div class="option__tag"><span>A</span>Карточки-сетка</div>
+    <h3 class="option__name">Базовый вариант</h3>
+    <p class="option__desc">Три равных карточки в ряд. Контекста немного — конференция в бейдже, заголовок и спикер. <b>Компактно, хорошо сканируется</b>, но каждое мероприятие подсвечено одинаково слабо.</p>
+
+    <section class="videos" aria-labelledby="a-title">
+      <div class="videos__head">
+        <div>
+          <p class="videos__eyebrow">Савви живьём</p>
+          <h2 class="videos__title" id="a-title">Савви на конференциях</h2>
+        </div>
+        <a class="videos__all" href="#" onclick="return false;">Все выступления →</a>
+      </div>
+
+      <div class="gridA">
+        <button class="vcard" type="button" data-open>
+          <span class="vcard__thumb"><span class="sceneBg"></span>
+            <span class="vcard__conf">Название конференции 1</span>
+            <span class="vcard__dur">18:42</span>
+            <span class="vcard__play"><span class="play"><svg viewBox="0 0 24 24" fill="#11253E"><path d="M8 5v14l11-7z"/></svg></span></span>
+          </span>
+          <span class="vcard__body">
+            <span class="vcard__title">Заголовок доклада — вставить название</span>
+            <span class="vcard__meta"><b>Имя Фамилия</b><i>·</i><span>роль, Савви</span></span>
+          </span>
+        </button>
+        <button class="vcard" type="button" data-open>
+          <span class="vcard__thumb"><span class="sceneBg"></span>
+            <span class="vcard__conf">Название конференции 2</span>
+            <span class="vcard__dur">24:10</span>
+            <span class="vcard__play"><span class="play"><svg viewBox="0 0 24 24" fill="#11253E"><path d="M8 5v14l11-7z"/></svg></span></span>
+          </span>
+          <span class="vcard__body">
+            <span class="vcard__title">Заголовок доклада — вставить название</span>
+            <span class="vcard__meta"><b>Имя Фамилия</b><i>·</i><span>роль, Савви</span></span>
+          </span>
+        </button>
+        <button class="vcard" type="button" data-open>
+          <span class="vcard__thumb"><span class="sceneBg"></span>
+            <span class="vcard__conf">Название конференции 3</span>
+            <span class="vcard__dur">12:05</span>
+            <span class="vcard__play"><span class="play"><svg viewBox="0 0 24 24" fill="#11253E"><path d="M8 5v14l11-7z"/></svg></span></span>
+          </span>
+          <span class="vcard__body">
+            <span class="vcard__title">Заголовок доклада — вставить название</span>
+            <span class="vcard__meta"><b>Имя Фамилия</b><i>·</i><span>роль, Савви</span></span>
+          </span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══════════════════════ B ═══════════════════════ -->
+  <div class="option">
+    <div class="option__tag"><span>B</span>Строки-фичи</div>
+    <h3 class="option__name">Максимум контекста на каждое мероприятие</h3>
+    <p class="option__desc">Каждое видео — своя полноширинная строка: обложка + название конференции, дата/город, заголовок доклада, <b>цитата из выступления</b>, спикер. Расположение зигзагом (обложка слева/справа) держит ритм. Больше всего контекста, но секция вытягивается по высоте.</p>
+
+    <div class="rows">
+      <article class="row">
+        <div class="row__thumb" data-open><span class="sceneBg"></span><span class="play"><svg viewBox="0 0 24 24" fill="#11253E"><path d="M8 5v14l11-7z"/></svg></span></div>
+        <div class="row__body">
+          <div class="row__conf">Название конференции 1<i></i><span class="meta">15 сентября 2026 · Москва</span></div>
+          <h4 class="row__title">Заголовок доклада — вставить название выступления</h4>
+          <p class="row__quote">«Цитата из выступления — ключевая мысль доклада в одно предложение, вставить реальную».</p>
+          <div class="row__foot">
+            <span class="row__speaker"><b>Имя Фамилия</b> · роль, Савви</span>
+            <span class="row__watch" data-open>Смотреть · 18:42 →</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="row">
+        <div class="row__thumb" data-open><span class="sceneBg"></span><span class="play"><svg viewBox="0 0 24 24" fill="#11253E"><path d="M8 5v14l11-7z"/></svg></span></div>
+        <div class="row__body">
+          <div class="row__conf">Название конференции 2<i></i><span class="meta">3 октября 2026 · Санкт-Петербург</span></div>
+          <h4 class="row__title">Заголовок доклада — вставить название выступления</h4>
+          <p class="row__quote">«Цитата из выступления — ключевая мысль доклада в одно предложение, вставить реальную».</p>
+          <div class="row__foot">
+            <span class="row__speaker"><b>Имя Фамилия</b> · роль, Савви</span>
+            <span class="row__watch" data-open>Смотреть · 24:10 →</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="row">
+        <div class="row__thumb" data-open><span class="sceneBg"></span><span class="play"><svg viewBox="0 0 24 24" fill="#11253E"><path d="M8 5v14l11-7z"/></svg></span></div>
+        <div class="row__body">
+          <div class="row__conf">Название конференции 3<i></i><span class="meta">21 октября 2026 · онлайн</span></div>
+          <h4 class="row__title">Заголовок доклада — вставить название выступления</h4>
+          <p class="row__quote">«Цитата из выступления — ключевая мысль доклада в одно предложение, вставить реальную».</p>
+          <div class="row__foot">
+            <span class="row__speaker"><b>Имя Фамилия</b> · роль, Савви</span>
+            <span class="row__watch" data-open>Смотреть · 12:05 →</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══════════════════════ C ═══════════════════════ -->
+  <div class="option">
+    <div class="option__tag"><span>C</span>Карточки с раскрытием</div>
+    <h3 class="option__name">Компактно по умолчанию, контекст по клику на «Подробнее»</h3>
+    <p class="option__desc">Как вариант A, но клик на стрелку разворачивает карточку: описание доклада, цитата, теги темы. Видео при этом открывается отдельным кликом по обложке. <b>Баланс между компактностью и глубиной</b> — читатель сам решает, куда нужен контекст.</p>
+
+    <div class="gridC">
+      <article class="ecard" id="ecard-1">
+        <div class="ecard__thumb">
+          <span class="sceneBg"></span>
+          <span class="ecard__conf">Название конференции 1</span>
+          <div class="ecard__play" data-open><span class="play play--sm"><svg viewBox="0 0 24 24" fill="#11253E"><path d="M8 5v14l11-7z"/></svg></span></div>
+        </div>
+        <div class="ecard__body">
+          <h4 class="ecard__title">Заголовок доклада — вставить название</h4>
+          <div class="ecard__meta"><b>Имя Фамилия</b> · роль, Савви</div>
+          <button class="ecard__toggle" data-toggle="ecard-1">Подробнее о докладе <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="ecard__more">
+            <div class="ecard__more-in">
+              <p><b>О чём доклад:</b> короткое описание содержания выступления — 2–3 предложения, вставить реальный текст.</p>
+              <div class="ecard__tags"><span class="ecard__tag">ИИ-агенты</span><span class="ecard__tag">Продажи</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ecard" id="ecard-2">
+        <div class="ecard__thumb">
+          <span class="sceneBg"></span>
+          <span class="ecard__conf">Название конференции 2</span>
+          <div class="ecard__play" data-open><span class="play play--sm"><svg viewBox="0 0 24 24" fill="#11253E"><path d="M8 5v14l11-7z"/></svg></span></div>
+        </div>
+        <div class="ecard__body">
+          <h4 class="ecard__title">Заголовок доклада — вставить название</h4>
+          <div class="ecard__meta"><b>Имя Фамилия</b> · роль, Савви</div>
+          <button class="ecard__toggle" data-toggle="ecard-2">Подробнее о докладе <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="ecard__more">
+            <div class="ecard__more-in">
+              <p><b>О чём доклад:</b> короткое описание содержания выступления — 2–3 предложения, вставить реальный текст.</p>
+              <div class="ecard__tags"><span class="ecard__tag">Автоматизация</span><span class="ecard__tag">Поддержка</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ecard" id="ecard-3">
+        <div class="ecard__thumb">
+          <span class="sceneBg"></span>
+          <span class="ecard__conf">Название конференции 3</span>
+          <div class="ecard__play" data-open><span class="play play--sm"><svg viewBox="0 0 24 24" fill="#11253E"><path d="M8 5v14l11-7z"/></svg></span></div>
+        </div>
+        <div class="ecard__body">
+          <h4 class="ecard__title">Заголовок доклада — вставить название</h4>
+          <div class="ecard__meta"><b>Имя Фамилия</b> · роль, Савви</div>
+          <button class="ecard__toggle" data-toggle="ecard-3">Подробнее о докладе <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="ecard__more">
+            <div class="ecard__more-in">
+              <p><b>О чём доклад:</b> короткое описание содержания выступления — 2–3 предложения, вставить реальный текст.</p>
+              <div class="ecard__tags"><span class="ecard__tag">Кейсы</span><span class="ecard__tag">ROMI</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══════════════════════ D ═══════════════════════ -->
+  <div class="option">
+    <div class="option__tag"><span>D</span>Прожектор с переключателем</div>
+    <h3 class="option__name">Одна крупная витрина, вкладки снизу</h3>
+    <p class="option__desc">Одно мероприятие показано крупно и подробно (заголовок, дата, короткое описание прямо на сцене), два других — вкладки-переключатели под витриной. <b>Самая сильная подсветка выбранного мероприятия</b>, но в моменте видно контекст только одного из трёх.</p>
+
+    <div class="spot">
+      <div class="spot__stage" data-open id="spot-stage">
+        <span class="sceneBg"></span>
+        <div class="spot__stagemeta">
+          <span class="spot__conf" id="spot-conf">Название конференции 1</span>
+          <h4 class="spot__stagetitle" id="spot-title">Заголовок доклада — вставить название выступления</h4>
+          <p id="spot-desc">15 сентября 2026, Москва · Имя Фамилия, роль в Савви</p>
+        </div>
+        <span class="play" style="position:relative; z-index:1;"><svg viewBox="0 0 24 24" fill="#11253E"><path d="M8 5v14l11-7z"/></svg></span>
+      </div>
+      <div class="spot__tabs">
+        <button class="spot__tab is-active" data-tab="0">
+          <span class="spot__tabconf">Название конференции 1</span>
+          <span class="spot__tabtitle">Заголовок доклада — вставить название</span>
+        </button>
+        <button class="spot__tab" data-tab="1">
+          <span class="spot__tabconf">Название конференции 2</span>
+          <span class="spot__tabtitle">Заголовок доклада — вставить название</span>
+        </button>
+        <button class="spot__tab" data-tab="2">
+          <span class="spot__tabconf">Название конференции 3</span>
+          <span class="spot__tabtitle">Заголовок доклада — вставить название</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal__panel">
+    <div class="modal__frame">
+      <div>
+        <strong>Здесь встанет YouTube-embed выбранного видео</strong>
+        <p>iframe грузится только по клику — до этого на странице лежит лёгкая карточка-превью, ничего лишнего не подгружается.</p>
+      </div>
+    </div>
+    <button class="modal__close" id="modal-close" aria-label="Закрыть">✕</button>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('modal');
+  document.querySelectorAll('[data-open]').forEach((el) => el.addEventListener('click', (e) => { e.stopPropagation(); modal.classList.add('is-open'); }));
+  document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('is-open'));
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('is-open'); });
+
+  document.querySelectorAll('.ecard__toggle').forEach((btn) => btn.addEventListener('click', () => {
+    document.getElementById(btn.dataset.toggle).classList.toggle('is-open');
+  }));
+
+  const tabData = [
+    { conf: 'Название конференции 1', title: 'Заголовок доклада — вставить название выступления', desc: '15 сентября 2026, Москва · Имя Фамилия, роль в Савви' },
+    { conf: 'Название конференции 2', title: 'Заголовок доклада — вставить название выступления', desc: '3 октября 2026, Санкт-Петербург · Имя Фамилия, роль в Савви' },
+    { conf: 'Название конференции 3', title: 'Заголовок доклада — вставить название выступления', desc: '21 октября 2026, онлайн · Имя Фамилия, роль в Савви' },
+  ];
+  document.querySelectorAll('.spot__tab').forEach((tab) => tab.addEventListener('click', () => {
+    document.querySelectorAll('.spot__tab').forEach((t) => t.classList.remove('is-active'));
+    tab.classList.add('is-active');
+    const d = tabData[+tab.dataset.tab];
+    document.getElementById('spot-conf').textContent = d.conf;
+    document.getElementById('spot-title').textContent = d.title;
+    document.getElementById('spot-desc').textContent = d.desc;
+  }));
+</script>
