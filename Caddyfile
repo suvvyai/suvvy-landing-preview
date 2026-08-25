@@ -1,0 +1,7 @@
+:{$PORT:8080} {
+	root * /srv
+	basic_auth /audit/* {
+		dima $2b$10$p2gvNH5i8r8a8keAdb/0hOBy/bC4vUJTMvlk.e7vfiH5caJqakebO
+	}
+	file_server
+}
