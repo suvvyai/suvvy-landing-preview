@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Воронка подключения Продамуса</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,-apple-system,Segoe UI,sans-serif;background:#f6f7f9;color:#14161a;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+section{padding:52px 0;border-bottom:1px solid #e6e8ec}
+section:last-of-type{border-bottom:none}
+.kicker{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#6b7280;margin-bottom:14px}
+h1{font-size:42px;line-height:1.15;font-weight:700;letter-spacing:-.02em}
+h2{font-size:27px;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+h3{font-size:17px;font-weight:600;margin-bottom:6px}
+.sub{font-size:16px;color:#5b6270;margin-top:14px}
+.lead{font-size:16px;color:#4b5260;margin-bottom:26px;max-width:760px}
+.hero{background:#fff;border-bottom:1px solid #e6e8ec;padding:64px 0 56px}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid #d6dae1;color:#4b5260;background:#fff;margin-bottom:14px}
+.tag.good{border-color:#b6e0c4;color:#1c7a44;background:#f1fbf5}
+.tag.up{border-color:#c3d4f7;color:#2a4fa8;background:#f2f6ff}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:820px){.g4,.g3,.g2{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.g4,.g3,.g2{grid-template-columns:1fr}h1{font-size:31px}}
+.m{background:#fff;border:1px solid #e2e5ea;border-radius:12px;padding:18px}
+.m .v{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.m .l{font-size:13px;color:#6b7280;margin-top:6px}
+.m.ok .v{color:#1c7a44}.m.bad .v{color:#c0392f}.m.warn .v{color:#b5761b}
+ul.list{list-style:none;display:grid;gap:11px}
+ul.list li{background:#fff;border:1px solid #e2e5ea;border-radius:10px;padding:14px 16px;font-size:15px}
+ul.list li b{font-weight:600}
+.box{border-radius:12px;padding:18px 20px;border:1px solid;margin-bottom:12px}
+.box.red{background:#fdf3f2;border-color:#f0cfcb}
+.box.yel{background:#fdf9ee;border-color:#eee0bd}
+.box .bt{font-weight:600;font-size:16px;margin-bottom:8px}
+.box .bp{font-size:14.5px;color:#41474f;margin-bottom:7px}
+.box .bp b{font-weight:600;color:#14161a}
+.quote{background:#fff;border-left:3px solid #c0392f;border-radius:0 8px 8px 0;padding:12px 16px;margin:10px 0;font-size:14.5px;color:#41474f}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e2e5ea;border-radius:12px;overflow:hidden;font-size:14.5px}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid #eef0f3}
+th{background:#fafbfc;font-weight:600;font-size:13px;color:#5b6270}
+tr:last-child td{border-bottom:none}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+pre{background:#15181d;color:#e6e9ee;border-radius:12px;padding:18px 20px;font-size:13px;line-height:1.6;overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap}
+ol.plan{list-style:none;counter-reset:s;display:grid;gap:11px}
+ol.plan li{counter-increment:s;background:#fff;border:1px solid #e2e5ea;border-radius:10px;padding:14px 16px 14px 52px;position:relative;font-size:15px}
+ol.plan li:before{content:counter(s);position:absolute;left:16px;top:13px;width:24px;height:24px;border-radius:7px;background:#14161a;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.own{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:5px;background:#eef1f5;color:#5b6270;margin-right:8px;vertical-align:1px}
+.calc-hero{background:#15181d;color:#fff;border-radius:16px;padding:34px;margin-bottom:24px}
+.calc-hero h2{color:#fff}.calc-hero p{color:#a8b0bd;font-size:15px;margin-top:10px}
+.fact{background:#fff;border:1px solid #e2e5ea;border-radius:12px;padding:16px}
+.fact .fv{font-size:23px;font-weight:700}.fact .fl{font-size:13px;color:#6b7280;margin-top:5px}
+table.io input{width:120px;padding:7px 9px;border:1px solid #cfd5dd;border-radius:7px;font:inherit;font-size:14px;text-align:right;font-variant-numeric:tabular-nums}
+table.io .sysv{background:#f1fbf5;border-color:#b6e0c4}
+table.io .askv{background:#f2f6ff;border-color:#c3d4f7}
+.legend{font-size:13px;color:#6b7280;margin:10px 0 22px}
+.legend span{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin:0 5px 0 14px}
+.legend span:first-child{margin-left:0}
+.sq1{background:#d6f0e0;border:1px solid #b6e0c4}.sq2{background:#dfe9fd;border:1px solid #c3d4f7}
+.res{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
+@media(max-width:820px){.res{grid-template-columns:1fr 1fr}}
+.rc{background:#fff;border:1px solid #e2e5ea;border-radius:12px;padding:18px}
+.rc .rv{font-size:26px;font-weight:700;letter-spacing:-.02em;color:#1c7a44}
+.rc .rl{font-size:13px;color:#6b7280;margin-top:6px}
+.rc.dark{background:#15181d;border-color:#15181d}
+.rc.dark .rv{color:#6ee7a0;font-size:29px}.rc.dark .rl{color:#a8b0bd}
+.item{background:#fff;border:1px solid #e2e5ea;border-radius:10px;padding:13px 16px;font-size:14.5px;margin-bottom:9px;display:flex;justify-content:space-between;gap:16px}
+.item b{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.note{font-size:13px;color:#6b7280;margin-top:14px;line-height:1.6}
+footer{padding:34px 0 46px;text-align:center;color:#8a919c;font-size:13.5px}
+.chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #e2e5ea;border-radius:999px;padding:7px 15px;font-size:13px;font-weight:600;color:#14161a}
+.dot{width:8px;height:8px;border-radius:50%;background:#14161a}
+</style></head><body>
+
+<div class="hero"><div class="wrap">
+<div class="kicker">Разбор работы ИИ-агента</div>
+<h1>Треть обращений доходит до анкеты.<br>Больше всего теряется на самых горячих.</h1>
+<div class="sub">ООО «ПРОДАМУС» · «ИИ-бот продаж» в amoCRM · 29 июня — 27 августа 2026 · 2 751 обращение</div>
+</div></div>
+
+<section><div class="wrap">
+<h2>Что мы сделали</h2>
+<p class="lead">Разобрали все 2 751 обращение за два месяца: где бот довёл клиента до анкеты, где собрал контакт, где передал менеджеру и на каком шаге люди уходят. Трафик растёт: июль — 1 117 обращений, август — 1 629.</p>
+<div class="grid g4">
+<div class="m"><div class="v">2 751</div><div class="l">обращение за 60 дней</div></div>
+<div class="m ok"><div class="v">31,7 %</div><div class="l">доведены до анкеты</div></div>
+<div class="m ok"><div class="v">25,7 %</div><div class="l">контакт записан в amoCRM</div></div>
+<div class="m bad"><div class="v">24 %</div><div class="l">вовлечённых ушли без анкеты и без менеджера</div></div>
+</div>
+</div></section>
+
+<section><div class="wrap">
+<div class="tag good">Работает хорошо</div>
+<h2>Сильные стороны</h2>
+<ul class="list">
+<li><b>Круглосуточная первичная консультация.</b> Средний ответ — 15,8 секунды, 99 % ответов укладываются в полминуты. Ни один вопрос не остаётся без реакции ночью и в выходные.</li>
+<li><b>873 обращения доведены до анкеты</b> без участия менеджера — почти треть всего потока.</li>
+<li><b>Контакты собираются автоматически.</b> 708 обращений закончились записью почты или телефона прямо в карточку amoCRM, 804 успешных вызова без единой ошибки.</li>
+<li><b>Задачи менеджерам ставятся надёжно.</b> 541 задача в amoCRM за два месяца, ноль сбоев — менеджер получает лид с саммари разговора.</li>
+<li><b>Бот держится базы знаний.</b> 364 быстрых ответа и 340 документов, 1 787 обращений к базе за период — фактов от себя бот не придумывает.</li>
+</ul>
+</div></section>
+
+<section><div class="wrap">
+<h2>Где теряются заявки</h2>
+<p class="lead">Из 1 638 вовлечённых обращений (клиент написал три и более раз) 649 закончились ничем: ни ссылки на анкету, ни передачи менеджеру. Это 40 % вовлечённых. Ниже — куда именно они делись.</p>
+
+<div class="box red">
+<div class="bt">🔴 Формальности идут раньше пользы — 232 обращения обрываются на входе</div>
+<div class="bp"><b>Что происходит.</b> Прежде чем ответить на вопрос, бот просит согласие на обработку данных, затем контакт, и только потом переходит к делу. 176 человек не ответили на запрос согласия, ещё 56 — на запрос контакта. Всего 232 обращения (8,4 %) закончились ровно на этом шаге.</div>
+<div class="bp"><b>Ещё масштабнее.</b> В 1 196 обращениях (43 %) приветствие «Здравствуйте, давайте знакомиться!» уходит <b>в ответ на уже заданный вопрос</b> — человек спросил по делу, а получил шаблон и просьбу подтвердить согласие. Вопрос при этом остаётся без ответа.</div>
+<div class="quote">Клиент подробно описал задачу: танцевальный онлайн-клуб, ежемесячная подписка, нужна связка платёжной системы с ботом и закрытой группой ВК. Бот ответил приветствием и попросил согласие. Потом — контакт. Клиент оставил почту и больше не написал. Ответа по существу не было ни одного.</div>
+<div class="bp"><b>Где рост.</b> Порядок меняется: сначала ответ по базе знаний, формальности — внутри того же сообщения или следом. Согласие остаётся, но перестаёт быть заслоном.</div>
+</div>
+
+<div class="box red">
+<div class="bt">🔴 Самый горячий сегмент конвертируется хуже всех</div>
+<div class="bp"><b>Что происходит.</b> Люди, которые прямо пишут «хочу подключиться», дают <b>153 потери — больше любой другой темы</b>, и получают ссылку на анкету лишь в 32 % случаев. Для сравнения: те, кто спрашивал про тарифы, получают анкету в 62 %.</div>
+<div class="bp"><b>Почему.</b> В инструкции агента прямо записано не давать ссылку на анкету в первом содержательном ответе и не предлагать её больше двух раз. Правило задумано против навязчивости, но бьёт по тем, кто уже готов подключаться.</div>
+<div class="bp"><b>Где рост.</b> Развести два случая: если человек сам просит подключение — ссылка сразу, в первом же ответе. Ограничение оставить только для тех, кто про подключение не спрашивал.</div>
+</div>
+
+<div class="box red">
+<div class="bt">🔴 Правка поля сделки в amoCRM падает в 72 % случаев</div>
+<div class="bp"><b>Что происходит.</b> Из 90 попыток изменить поле сделки 65 завершились ошибкой amoCRM. Именно этим действием проставляется статус «лид с контактами» и признак «бот позвал менеджера».</div>
+<div class="bp"><b>Что это значит.</b> Задачи менеджерам ставятся исправно (541 штука без ошибок), но сама сделка при этом почти не размечается: при 464 передачах менеджеру поле правилось лишь 90 раз, и в большинстве — неудачно. В воронке лид выглядит необработанным.</div>
+<div class="bp"><b>Где рост.</b> Разобрать с вашим интегратором: права доступа, идентификатор поля, формат значения. Клиенту эта ошибка не видна, на диалог не влияет — но ломает отчётность по воронке.</div>
+</div>
+
+<div class="box yel">
+<div class="bt">🟡 Скриншоты: агент их видеть умеет, а инструкция запрещает</div>
+<div class="bp"><b>Что происходит.</b> В настройках распознавание изображений включено, но в инструкции стоит прямой запрет анализировать картинки. В результате в 150 обращениях бот написал клиенту, что не может просматривать изображения. Всего с картинками пришло 323 обращения — 12 % потока.</div>
+<div class="bp"><b>Где рост.</b> Люди присылают скриншоты этапа анкеты и текстов ошибок. Снять запрет — правка на несколько минут, эффект сразу.</div>
+</div>
+
+<div class="box yel">
+<div class="bt">🟡 Нецелевые обращения разбирают менеджеры вручную</div>
+<div class="bp"><b>Что происходит.</b> Действующие клиенты с вопросами техподдержки попадают в отдел подключения, и менеджер вручную отвечает шаблоном «Вы попали в отдел подключения, обратитесь в поддержку».</div>
+<div class="bp"><b>Где рост.</b> Этот шаблон бот может отдавать сам — маршрутизация занимает одно правило в инструкции.</div>
+</div>
+</div></section>
+
+<section><div class="wrap">
+<h2>Что настроить</h2>
+<p class="lead">По убыванию эффекта.</p>
+<ul class="list">
+<li><b>Сначала ответ, потом формальности.</b> Отвечать на вопрос клиента первым сообщением, согласие давать строкой в том же ответе, контакт просить после пользы.</li>
+<li><b>Снять запрет на анкету в первом ответе</b> для тех, кто прямо просит подключение.</li>
+<li><b>Разобрать ошибку правки поля сделки</b> в amoCRM вместе с интегратором.</li>
+<li><b>Включить распознавание скриншотов</b> и убрать запрет из инструкции.</li>
+<li><b>Отдать боту маршрутизацию действующих клиентов</b> в техподдержку.</li>
+<li><b>Сократить глубину истории</b> с 20 сообщений до 8–10: средний диалог — 4–5 реплик клиента, остальное гоняется впустую.</li>
+<li><b>Разгрузить инструкцию.</b> 13 711 символов уходят в модель при каждом сообщении. Справочник в конце дублирует настройку функции, объяснение про терминологию повторяется дважды — фактам место в базе знаний, в инструкции остаётся логика.</li>
+<li><b>Задать русский язык для авто-саммари.</b> Сейчас 19 % кратких описаний диалогов генерируются на английском, французском и испанском.</li>
+<li><b>Убрать в архив три неиспользуемых агента</b> — за два месяца в них не было ни одного обращения.</li>
+</ul>
+
+<h3 style="margin-top:26px">Правки инструкции агента</h3>
+<pre>Уровень 1. Первый контакт
+1. Если клиент сразу написал содержательный вопрос — СНАЧАЛА ответь на него
+   по базе знаний. Приветствие с политикой конфиденциальности добавь
+   к этому же ответу одной строкой, не отдельным сообщением.
+2. Приветствие «Здравствуйте, давайте знакомиться!» целиком отправляй
+   только если клиент не задал вопроса (например, прислал /start).
+3. Контакт запрашивай ПОСЛЕ ответа по существу и связывай с пользой:
+   «Чтобы менеджер подготовил условия под вашу задачу, оставьте почту или телефон.»
+
+Если клиент прямо говорит, что хочет подключиться («хочу подключить»,
+«как подключиться», «хочу начать работать») — дай короткий ответ по существу
+и сразу ссылку на анкету https://anketa.prodamus.ru/ .
+Ждать второго касания в этом случае не нужно.
+Ограничение «максимум 2 напоминания» относится только к тем,
+кто про подключение не спрашивал.
+
+## СКРИНШОТЫ
+Если клиент прислал скриншот — определи, что на нём: этап анкеты, текст ошибки,
+раздел кабинета. Дальше действуй как с текстом: ищи ответ в базе знаний.
+Если изображение нечитаемо — задай один уточняющий вопрос текстом,
+и только потом предлагай менеджера.
+
+## ДЕЙСТВУЮЩИЕ КЛИЕНТЫ
+Если клиент сообщает, что уже подключён, и его вопрос — про работу сервиса,
+оплату, настройки или интеграции, не передавай задачу менеджеру подключения.
+Дай контакты технической поддержки одним сообщением и заверши диалог.</pre>
+</div></section>
+
+<section><div class="wrap">
+<div class="tag up">Главная точка роста</div>
+<h2>Самообучение: пилот стоит начать здесь</h2>
+<p class="lead">Ваши менеджеры подключения уже отвечают клиентам внутри системы агента — за два месяца это 3 215 сообщений в 1 689 обращениях. Значит источник для пополнения базы знаний поступает сам, ничего дополнительно собирать не нужно.</p>
+
+<div class="grid g4" style="margin-bottom:26px">
+<div class="m"><div class="v">1</div><div class="l">Бот ищет ответ в базе. Не нашёл — передаёт менеджеру</div></div>
+<div class="m"><div class="v">2</div><div class="l">Менеджер отвечает клиенту как обычно, ничего дополнительно не делая</div></div>
+<div class="m"><div class="v">3</div><div class="l">Его ответ попадает в очередь кандидатов на пополнение базы</div></div>
+<div class="m ok"><div class="v">4</div><div class="l">Раз в неделю сотрудник проверяет очередь и подтверждает нужное</div></div>
+</div>
+
+<p class="lead">Ничего не попадает в базу автоматически — только через подтверждение человеком. Дальше этот вопрос бот закрывает сам, и доля доведённых до анкеты растёт каждую неделю без отдельного проекта по наполнению базы.</p>
+
+<h3 style="margin-top:26px;margin-bottom:12px">Что нужно</h3>
+<ul class="list">
+<li><b>Создать базу знаний и подключить её к агенту</b> в разделе «База знаний → Самообучение». Сейчас самообучаемая база не подключена: агент работает с 364 быстрыми ответами и 340 документами, которые обновляются вручную.</li>
+<li><b>Включить автоматическое системное действие</b> — тогда сбор кандидатов идёт фоном.</li>
+<li><b>Назначить, кто проверяет очередь</b> — по опыту достаточно одного прохода в неделю на 15–20 минут.</li>
+<li><b>Настроить функцию поиска по документам.</b> Сейчас у неё пустые описание функции и описание запроса: не задано, когда её вызывать и что именно передавать в поиск. Это напрямую влияет на то, найдёт бот ответ или передаст вопрос менеджеру.</li>
+</ul>
+
+<p class="note">Первые кандидаты видны прямо из разбора: кто может подключиться — самозанятый, ИП, юрлицо, нерезидент (126 потерянных обращений); подписки и рекуррентные платежи (анкета выдаётся лишь в 28 % таких обращений); онлайн-касса и чеки (18 %).</p>
+</div></section>
+
+<section><div class="wrap">
+<div class="tag up">Возможности платформы</div>
+<h2>Что можно подключить дополнительно</h2>
+<div class="grid g2">
+<div class="m"><h3>Анализатор</h3><div class="l" style="font-size:14px;color:#4b5260">Автоматическая разметка обращений по темам и исходам: видно, на каком шаге воронки теряются лиды и какие темы пора закрывать базой. Набор тегов под ваш отдел подключения мы уже подготовили.</div></div>
+<div class="m"><h3>Фоллоуапы</h3><div class="l" style="font-size:14px;color:#4b5260">Сейчас не настроены, инструкция прямо запрещает боту напоминать о себе. При этом 649 вовлечённых обращений оборвались без анкеты. Одно аккуратное касание — «вы спрашивали про подключение, оставить ссылку на анкету?» — возвращает часть из них.</div></div>
+</div>
+</div></section>
+
+<section><div class="wrap">
+<h2>План действий</h2>
+<ol class="plan">
+<li><span class="own">Сценарий</span>Переставить порядок: ответ по существу → согласие строкой → контакт после пользы.</li>
+<li><span class="own">Сценарий</span>Разрешить ссылку на анкету в первом ответе тем, кто сам просит подключение.</li>
+<li><span class="own">Техника</span>Разобрать с интегратором ошибку правки поля сделки в amoCRM.</li>
+<li><span class="own">Техника</span>Включить распознавание скриншотов, снять запрет из инструкции.</li>
+<li><span class="own">Сценарий</span>Добавить маршрутизацию действующих клиентов в техподдержку.</li>
+<li><span class="own">Техника</span>Сократить глубину истории, разгрузить инструкцию, задать русский для авто-саммари, убрать неиспользуемых агентов.</li>
+<li><span class="own">База</span>Создать базу знаний, подключить самообучение, включить автоматическое системное действие.</li>
+<li><span class="own">База</span>Назначить, кто раз в неделю подтверждает кандидатов в базу.</li>
+<li><span class="own">Возможности</span>Подключить Анализатор с подготовленным набором тегов, обсудить фоллоуап.</li>
+</ol>
+</div></section>
+
+<section><div class="wrap">
+<h2>Насколько ещё можно поднять долю доведённых до анкеты</h2>
+<p class="lead">Оценка по разбору: часть обращений человеку останется — сложные индивидуальные условия, вопросы по конкретной сделке, нецелевые обращения. Остальное закрывается порядком в сценарии и базой знаний.</p>
+<div class="grid g4">
+<div class="m ok"><div class="v">31,7 %</div><div class="l">доводится до анкеты сейчас</div></div>
+<div class="m ok"><div class="v">~45 %</div><div class="l">достижимо после правок</div></div>
+<div class="m"><div class="v">+13 п.п.</div><div class="l">прирост доли</div></div>
+<div class="m"><div class="v">~185</div><div class="l">дополнительных анкет в месяц</div></div>
+</div>
+<p class="note">Откуда рост: 232 обращения в месяц гибнут на формальностях; 153 потери приходятся на людей, прямо просящих подключение; 150 раз бот отказывается смотреть присланный скриншот. Это правки сценария и настроек — они дают разовый скачок. Дальше планка растёт сама: с подключённым самообучением каждая неделя работы менеджеров добавляет в базу новые ответы.</p>
+</div></section>
+
+<section><div class="wrap">
+<div class="calc-hero">
+<div class="kicker" style="color:#8a919c">Калькулятор</div>
+<h2>Что дают дополнительные анкеты</h2>
+<p>Зелёные цифры — из вашей системы за 60 дней. Синие мы не видим со своей стороны: их впишем на встрече с ваших слов, и расчёт пересчитается при вас.</p>
+</div>
+
+<h3 style="margin-bottom:14px">Что бот уже делает</h3>
+<div class="grid g3" style="margin-bottom:30px">
+<div class="fact"><div class="fv">1 376</div><div class="fl">обращений в месяц</div></div>
+<div class="fact"><div class="fv">31,7 %</div><div class="fl">доводит до анкеты</div></div>
+<div class="fact"><div class="fv">15,8 с</div><div class="fl">среднее время ответа, круглосуточно</div></div>
+</div>
+
+<h3 style="margin-bottom:12px">Ваши цифры</h3>
+<div class="legend"><span class="sq1"></span>из вашей системы<span class="sq2"></span>впишем на встрече</div>
+<div class="scroll"><table class="io">
+<tr><th>Показатель</th><th class="n">Значение</th></tr>
+<tr><td>Обращений в месяц</td><td class="n"><input class="sysv" id="T" value="1376"></td></tr>
+<tr><td>Доводится до анкеты сейчас, %</td><td class="n"><input class="sysv" id="d0" value="31.7"></td></tr>
+<tr><td>Доводится до анкеты после правок, %</td><td class="n"><input class="sysv" id="d1" value="45"></td></tr>
+<tr><td>Стоимость обращения в Савви, ₽</td><td class="n"><input class="sysv" id="cost" value="21.5"></td></tr>
+<tr><td>Из выданной ссылки — заполняют анкету, %</td><td class="n"><input class="askv" id="cf" value="0"></td></tr>
+<tr><td>Из заполненной анкеты — оплачивают подключение, %</td><td class="n"><input class="askv" id="cp" value="0"></td></tr>
+<tr><td>Средний чек подключения, ₽</td><td class="n"><input class="askv" id="avg" value="0"></td></tr>
+</table></div>
+
+<h3 style="margin:30px 0 12px">Как было до бота</h3>
+<p class="lead" style="margin-bottom:14px">Бот в работе с июля 2026. Эти поля заполним с ваших слов — они показывают, что изменилось в отделе подключения.</p>
+<div class="scroll"><table class="io">
+<tr><th>Показатель</th><th class="n">До бота</th><th class="n">Сейчас</th></tr>
+<tr><td>Менеджеров на первичных обращениях</td><td class="n"><input class="askv" id="opBefore" value="0"></td><td class="n"><input class="askv" id="opNow" value="0"></td></tr>
+<tr><td>Зарплата менеджера, ₽/мес</td><td class="n"><input class="askv" id="sal" value="0"></td><td class="n">—</td></tr>
+<tr><td>Страховые взносы, %</td><td class="n"><input class="askv" id="tax" value="30"></td><td class="n">—</td></tr>
+<tr><td>Время первого ответа, минут</td><td class="n"><input class="askv" id="tBefore" value="0"></td><td class="n">0,26 (15,8 с)</td></tr>
+</table></div>
+
+<h3 style="margin:30px 0 0">Что это даёт</h3>
+<div class="res">
+<div class="rc"><div class="rv" id="r1">—</div><div class="rl">дополнительных анкет в месяц</div></div>
+<div class="rc"><div class="rv" id="r2">—</div><div class="rl">дополнительных оплат подключения в месяц</div></div>
+<div class="rc"><div class="rv" id="r3">—</div><div class="rl">эффект в месяц, за вычетом Савви</div></div>
+<div class="rc dark"><div class="rv" id="r4">—</div><div class="rl">эффект за год</div></div>
+</div>
+
+<h3 style="margin:34px 0 12px">Разбор эффекта</h3>
+<div class="item"><span>Доводится до анкеты сейчас</span><b id="i1">—</b></div>
+<div class="item"><span>Будет доводиться после правок</span><b id="i2">—</b></div>
+<div class="item"><span>Дополнительные заполненные анкеты в месяц</span><b id="i3">—</b></div>
+<div class="item"><span>Дополнительная выручка от подключений в месяц</span><b id="i4">—</b></div>
+<div class="item"><span>Оптимизация ФОТ отдела подключения в месяц</span><b id="i5">—</b></div>
+<div class="item"><span>Стоимость Савви в месяц</span><b id="i6">—</b></div>
+<div class="item"><span>Итого эффект в месяц</span><b id="i7">—</b></div>
+<div class="item"><span>Итого эффект за год</span><b id="i8">—</b></div>
+<div class="item"><span>Во столько раз быстрее первый ответ</span><b id="i9">—</b></div>
+<p class="note">Как считаем: прирост доли, доведённой до анкеты, умножаем на объём обращений — получаем дополнительные выданные ссылки. Через вашу конверсию в заполнение и в оплату переводим их в оплаченные подключения и в выручку. Отдельно считаем разницу в фонде оплаты труда: количество менеджеров до и сейчас, умноженное на зарплату со страховыми взносами. Из суммы вычитаем стоимость Савви за тот же объём обращений. Годовая цифра — месячная × 12.</p>
+</div></section>
+
+<footer><div class="wrap"><div class="chip"><span class="dot"></span>Савви · ИИ-агенты для поддержки и продаж</div></div></footer>
+
+<script>
+function n(id){var e=document.getElementById(id);if(!e)return 0;var v=parseFloat(String(e.value).replace(',','.'));return isFinite(v)?v:0}
+function rub(x){return isFinite(x)?Math.round(x).toLocaleString('ru-RU')+' ₽':'—'}
+function num(x){return isFinite(x)?Math.round(x).toLocaleString('ru-RU'):'—'}
+var ASK='впишем на встрече';
+function calc(){
+  var T=n('T'),d0=n('d0')/100,d1=n('d1')/100,cost=n('cost');
+  var cf=n('cf')/100,cp=n('cp')/100,avg=n('avg');
+  var opB=n('opBefore'),opN=n('opNow'),sal=n('sal'),tax=n('tax')/100,tB=n('tBefore');
+  var svv=T*cost;
+  var q0=T*d0,q1=T*d1,dq=q1-q0;
+  var addAnketa=dq*cf;
+  var addPaid=addAnketa*cp;
+  var revenue=addPaid*avg;
+  var fot=(opB-opN)*sal*(1+tax);
+  var haveRev=(cf>0&&cp>0&&avg>0);
+  var haveFot=(sal>0&&opB>0);
+  var effect=(haveRev?revenue:0)+(haveFot?fot:0)-svv;
+  document.getElementById('r1').textContent=num(dq);
+  document.getElementById('r2').textContent=haveRev?num(addPaid):ASK;
+  document.getElementById('r3').textContent=(haveRev||haveFot)?rub(effect):ASK;
+  document.getElementById('r4').textContent=(haveRev||haveFot)?rub(effect*12):ASK;
+  document.getElementById('i1').textContent=num(q0)+' обращений';
+  document.getElementById('i2').textContent=num(q1)+' обращений';
+  document.getElementById('i3').textContent=cf>0?num(addAnketa):ASK;
+  document.getElementById('i4').textContent=haveRev?rub(revenue):ASK;
+  document.getElementById('i5').textContent=haveFot?rub(fot):ASK;
+  document.getElementById('i6').textContent=rub(svv);
+  document.getElementById('i7').textContent=(haveRev||haveFot)?rub(effect):ASK;
+  document.getElementById('i8').textContent=(haveRev||haveFot)?rub(effect*12):ASK;
+  document.getElementById('i9').textContent=tB>0?('×'+Math.round(tB*60/15.8).toLocaleString('ru-RU')):ASK;
+}
+document.querySelectorAll('table.io input').forEach(function(el){el.addEventListener('input',calc)});
+calc();
+</script>
+</body></html>
