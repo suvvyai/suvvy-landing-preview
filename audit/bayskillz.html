@@ -55,6 +55,11 @@
   table.io{width:100%;border-collapse:collapse;}
   table.io td{padding:6px 8px;border-top:1px solid var(--line);vertical-align:middle;}
   table.io td.lbl{font-size:13px;font-weight:600;} table.io td.lbl small{display:block;font-weight:500;color:var(--ink2);font-size:11px;}
+  table.io thead th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);
+    font-weight:700;padding:4px 8px 8px;text-align:right;border-top:0;}
+  table.io thead th.hlbl{text-align:left;}
+  table.io thead th.now{color:var(--green);}
+  table.io td:not(.lbl){text-align:right;width:170px;}
   table.io input{width:150px;padding:9px 11px;border:2px solid var(--line);border-radius:10px;
     font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);text-align:right;}
   table.io input:focus{outline:none;border-color:var(--blue);}
@@ -244,35 +249,44 @@
     </div>
   </div>
   <div class="card">
-    <h2>Ваши цифры</h2>
-    <p class="lead"><span class="sys">Зелёные</span> — из системы. <span class="est">Синие</span> — впишем на встрече.</p>
-    <table class="io"><tbody>
-      <tr><td class="lbl">Диалогов в месяц<small>измерено за два месяца</small></td><td><input id="i1" class="sysv" type="number" value="1526"></td></tr>
-      <tr><td class="lbl">Доходят до лида сейчас, %<small>682 лида из 3 051 диалога</small></td><td><input id="i2" class="sysv" type="number" step="0.1" value="22.4"></td></tr>
-      <tr><td class="lbl">Цель после правок, %<small>впишем на встрече</small></td><td><input id="i3" class="askv" type="number" step="0.1" value=""></td></tr>
-      <tr><td class="lbl">Из лида в оплату, %<small>впишем на встрече</small></td><td><input id="i4" class="askv" type="number" step="0.1" value=""></td></tr>
-      <tr><td class="lbl">Средний чек, ₽<small>впишем на встрече</small></td><td><input id="i5" class="askv" type="number" value=""></td></tr>
-      <tr><td class="lbl">Менеджеров было до бота<small>впишем на встрече</small></td><td><input id="i6" class="askv" type="number" step="0.5" value=""></td></tr>
-      <tr><td class="lbl">Менеджеров сейчас<small>впишем на встрече</small></td><td><input id="i7" class="askv" type="number" step="0.5" value=""></td></tr>
-      <tr><td class="lbl">Зарплата менеджера, ₽/мес<small>впишем на встрече, со взносами</small></td><td><input id="i8" class="askv" type="number" value=""></td></tr>
-      <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td><td><input id="isavvi" class="sysv" type="number" value="72946"></td></tr>
+    <h2>Ваши цифры: было и стало</h2>
+    <p class="lead">Слева — как обработка заявок работала на людях. Справа — как она работает сейчас. <span class="sys">Зелёные</span> поля измерены в системе, <span class="est">синие</span> впишем на встрече.</p>
+    <table class="io">
+      <thead><tr><th class="hlbl">Показатель</th><th class="was">Было: люди</th><th class="now">Стало: агент</th></tr></thead>
+      <tbody>
+      <tr><td class="lbl">Диалогов в месяц<small>сколько обращений обрабатывается</small></td>
+        <td><input id="wDlg" class="askv" type="number" value=""></td>
+        <td><input id="nDlg" class="sysv" type="number" value="1526"></td></tr>
+      <tr><td class="lbl">Человек в обработке<small>кто вёл переписку</small></td>
+        <td><input id="wPpl" class="askv" type="number" step="0.5" value=""></td>
+        <td><input id="nPpl" class="askv" type="number" step="0.5" value=""></td></tr>
+      <tr><td class="lbl">Зарплата на человека, ₽/мес<small>со взносами</small></td>
+        <td><input id="wSal" class="askv" type="number" value=""></td>
+        <td><input id="nSal" class="askv" type="number" value=""></td></tr>
+      <tr><td class="lbl">Конверсия диалог → лид, %<small>справа: 682 лида из 3 051 диалога</small></td>
+        <td><input id="wCr" class="askv" type="number" step="0.1" value=""></td>
+        <td><input id="nCr" class="sysv" type="number" step="0.1" value="22.4"></td></tr>
+      <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td>
+        <td style="text-align:right;color:var(--ink3);font-size:13px">—</td>
+        <td><input id="nSvv" class="sysv" type="number" value="72946"></td></tr>
     </tbody></table>
   </div>
   <div class="card">
     <h2>Что это даёт</h2>
+    <p class="lead">Слева считаем расходы на зарплаты, справа — зарплаты плюс агент. Разница между ними и есть заработок.</p>
     <div class="res">
-      <div class="rc"><div class="l">Лидов в месяц</div><div class="v" id="r1">—</div><div class="s">сверх нынешних 341</div></div>
-      <div class="rc"><div class="l">Доп. оплат в месяц</div><div class="v" id="r2">—</div><div class="s">из добавленных лидов</div></div>
-      <div class="rc blue"><div class="l">Эффект в месяц</div><div class="v" id="r3">—</div><div class="s">выручка + ФОТ − Савви</div></div>
-      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r4">—</div><div class="s">та же цифра на горизонте года</div></div>
+      <div class="rc"><div class="l">Лидов в месяц</div><div class="v" id="r1">—</div><div class="s" id="r1s">было → стало</div></div>
+      <div class="rc"><div class="l">Расходы в месяц</div><div class="v" id="r2">—</div><div class="s" id="r2s">было → стало</div></div>
+      <div class="rc blue"><div class="l">Заработок в месяц</div><div class="v" id="r3">—</div><div class="s">разница расходов</div></div>
+      <div class="rc big"><div class="l">Заработок за год ×12</div><div class="v" id="r4">—</div><div class="s">та же цифра на горизонте года</div></div>
     </div>
   </div>
   <div class="card">
     <h2>Разбор эффекта</h2>
-    <div class="item"><div class="top"><span class="t2">📈 Дополнительная выручка</span><span class="a" id="e1">—</span></div><div class="f" id="f1">диалоги × прирост доли лидов × конверсия в оплату × чек</div></div>
-    <div class="item"><div class="top"><span class="t2">👥 Оптимизация ФОТ</span><span class="a" id="e2">—</span></div><div class="f" id="f2">(менеджеров было − стало) × зарплата</div></div>
-    <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="ec" style="color:var(--red)">−73 тыс ₽</span></div><div class="f" id="fc">72 946 ₽/мес — реальный расход, ≈214 ₽ за переданный лид</div></div>
-    <div class="note"><b>Как считаем:</b> дополнительная выручка = диалоги в месяц × (целевая доля лидов − текущая 22,4 %) × конверсия из лида в оплату × средний чек. К ней прибавляем оптимизацию ФОТ и вычитаем стоимость Савви. Годовая цифра — месячный эффект ×12. Пока синие поля пустые, калькулятор их не выдумывает — заполним вместе, и цифры пересчитаются сразу.</div>
+    <div class="item"><div class="top"><span class="t2">👥 Было: зарплаты команды обработки</span><span class="a" id="e1" style="color:var(--red)">—</span></div><div class="f" id="f1">человек × зарплата</div></div>
+    <div class="item"><div class="top"><span class="t2">🤖 Стало: зарплаты + агент</span><span class="a" id="e2" style="color:var(--red)">—</span></div><div class="f" id="f2">человек сейчас × зарплата + стоимость Савви</div></div>
+    <div class="item"><div class="top"><span class="t2">📈 Лидов стало больше на</span><span class="a" id="e3">—</span></div><div class="f" id="f3">диалоги × конверсия — с обеих сторон</div></div>
+    <div class="note"><b>Как считаем:</b> расходы «было» = человек × зарплата. Расходы «стало» = оставшиеся люди × зарплата + реальный расход на Савви (72 946 ₽/мес, ≈214 ₽ за переданный лид). Заработок — разница между этими суммами, за год ×12. Отдельной строкой показываем, что при этом происходит с количеством лидов: если их стало больше, экономия — не весь эффект. Пока синие поля пустые, калькулятор ничего не выдумывает.</div>
   </div>
 
   <!-- ФУТЕР -->
@@ -283,32 +297,37 @@
 <script>
   function rub(n){n=Math.round(n);var s=n<0?'−':'';n=Math.abs(n);
     if(n>=1e6)return s+(n/1e6).toFixed(n>=1e7?0:2).replace('.',',')+' млн ₽';
-    if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
+    if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';
+    return s+n.toLocaleString('ru-RU')+' ₽';}
+  function num(n){return Math.round(n).toLocaleString('ru-RU');}
   function v(id){return parseFloat(document.getElementById(id).value)||0;}
+  function T(id,t){document.getElementById(id).textContent=t;}
   var ASK='впишем на встрече';
   function calc(){
-    var dlg=v('i1'), now=v('i2')/100, goal=v('i3')/100, sale=v('i4')/100, check=v('i5');
-    var was=v('i6'), is=v('i7'), sal=v('i8'), sv=v('isavvi');
-    var haveGoal=(v('i3')>0), haveRev=(haveGoal&&v('i4')>0&&check>0), haveFot=(was>0&&sal>0);
-    var addLeads=dlg*Math.max(goal-now,0), addSales=addLeads*sale, revenue=addSales*check;
-    var fot=Math.max(was-is,0)*sal;
-    var effect=(haveRev?revenue:0)+(haveFot?fot:0)-sv;
-    document.getElementById('r1').textContent=haveGoal?('+'+Math.round(addLeads).toLocaleString('ru-RU')):ASK;
-    document.getElementById('r2').textContent=haveRev?('≈ +'+Math.round(addSales).toLocaleString('ru-RU')):ASK;
-    document.getElementById('r3').textContent=(haveRev||haveFot)?rub(effect):ASK;
-    document.getElementById('r4').textContent=(haveRev||haveFot)?rub(effect*12):ASK;
-    document.getElementById('e1').textContent=haveRev?rub(revenue):ASK;
-    document.getElementById('e2').textContent=haveFot?rub(fot):ASK;
-    document.getElementById('ec').textContent='−'+rub(sv);
-    document.getElementById('f1').textContent=haveRev
-      ? (dlg+' × ('+v('i3')+'% − '+v('i2')+'%) × '+v('i4')+'% × '+Math.round(check).toLocaleString('ru-RU')+' ₽')
-      : 'диалоги × прирост доли лидов × конверсия в оплату × чек';
-    document.getElementById('f2').textContent=haveFot
-      ? ('('+was+' − '+is+') × '+Math.round(sal).toLocaleString('ru-RU')+' ₽')
-      : '(менеджеров было − стало) × зарплата';
-    document.getElementById('fc').textContent=Math.round(sv).toLocaleString('ru-RU')+' ₽/мес — реальный расход, ≈214 ₽ за переданный лид';
+    var wDlg=v('wDlg'), wPpl=v('wPpl'), wSal=v('wSal'), wCr=v('wCr')/100;
+    var nDlg=v('nDlg'), nPpl=v('nPpl'), nSal=v('nSal'), nCr=v('nCr')/100, svv=v('nSvv');
+    var salNow = nSal>0 ? nSal : wSal;
+    var haveCost = (wPpl>0 && wSal>0);
+    var haveLeads = (wDlg>0 && v('wCr')>0);
+    var costWas = wPpl*wSal;
+    var costNow = nPpl*salNow + svv;
+    var gain = costWas - costNow;
+    var leadsWas = wDlg*wCr, leadsNow = nDlg*nCr;
+
+    T('r1', haveLeads ? num(leadsNow) : num(leadsNow));
+    T('r1s', haveLeads ? (num(leadsWas)+' → '+num(leadsNow)) : ('было — '+ASK));
+    T('r2', haveCost ? rub(costNow) : ASK);
+    T('r2s', haveCost ? (rub(costWas)+' → '+rub(costNow)) : ('было — '+ASK));
+    T('r3', haveCost ? rub(gain) : ASK);
+    T('r4', haveCost ? rub(gain*12) : ASK);
+    T('e1', haveCost ? '−'+rub(costWas) : ASK);
+    T('e2', haveCost ? '−'+rub(costNow) : ASK);
+    T('f1', haveCost ? (wPpl+' чел. × '+num(wSal)+' ₽') : 'человек × зарплата');
+    T('f2', haveCost ? (nPpl+' чел. × '+num(salNow)+' ₽ + '+num(svv)+' ₽') : 'человек сейчас × зарплата + Савви');
+    T('e3', haveLeads ? ((leadsNow-leadsWas>=0?'+':'')+num(leadsNow-leadsWas)) : ASK);
+    T('f3', haveLeads ? (num(wDlg)+' × '+v('wCr')+'% → '+num(nDlg)+' × '+v('nCr')+'%') : 'диалоги × конверсия — с обеих сторон');
   }
-  ['i1','i2','i3','i4','i5','i6','i7','i8','isavvi'].forEach(function(id){
+  ['wDlg','wPpl','wSal','wCr','nDlg','nPpl','nSal','nCr','nSvv'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.addEventListener('input',calc);});
   calc();
 </script>
