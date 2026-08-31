@@ -3,30 +3,25 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Савви × БАЙСКИЛЗ — разбор работы ИИ-агента и расчёт эффекта</title>
+<title>Разбор агентов Lerna и GeekBrains</title>
 <style>
-  :root{
-    --ink:#11253e;--ink2:#5e748d;--ink3:#8695a7;--bg:#fff;--soft:#f0f4fa;--canvas:#e8ecf3;
+  :root{--ink:#11253e;--ink2:#5e748d;--ink3:#8695a7;--bg:#fff;--soft:#f0f4fa;--canvas:#e8ecf3;
     --line:#e1e6ec;--blue:#3520fc;--purple:#9117d2;
     --grad:linear-gradient(90deg,#3520fc 0%,#9117d2 50%,#ee0ea8 100%);
-    --green:#15803d;--green-bg:#e7f5ec;--red:#b91c1c;--amber:#b45309;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  html,body{background:var(--canvas);}
-  body{font-family:-apple-system,'Segoe UI',Roboto,'Inter',Arial,sans-serif;color:var(--ink);
-    font-size:15px;line-height:1.5;padding:28px 16px;-webkit-font-smoothing:antialiased;}
+    --green:#15803d;--green-bg:#e7f5ec;--red:#b91c1c;--amber:#b45309;}
+  *{box-sizing:border-box;margin:0;padding:0;} html,body{background:var(--canvas);}
+  body{font-family:-apple-system,'Segoe UI',Roboto,'Inter',Arial,sans-serif;color:var(--ink);font-size:15px;
+    line-height:1.5;padding:28px 16px;-webkit-font-smoothing:antialiased;}
   .page{max-width:900px;margin:0 auto;}
   .card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:26px 30px;margin-bottom:16px;}
   .hero{position:relative;overflow:hidden;}.hero::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--grad);}
   .kicker{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--purple);margin:0 0 8px;}
   h1{font-size:27px;line-height:1.15;letter-spacing:-.02em;margin:0 0 8px;font-weight:800;}
   .sub{color:var(--ink2);font-size:14px;margin:0;}
-  h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0 0 4px;}
-  .lead{color:var(--ink2);font-size:13.5px;margin:0 0 18px;}
+  h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0 0 4px;} .lead{color:var(--ink2);font-size:13.5px;margin:0 0 18px;}
   .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px;}
   .m{background:var(--soft);border-radius:10px;padding:14px 16px;}
-  .m .v{font-size:26px;font-weight:800;line-height:1;letter-spacing:-.02em;}
-  .m .l{font-size:11.5px;color:var(--ink2);margin-top:6px;font-weight:600;}
+  .m .v{font-size:26px;font-weight:800;line-height:1;letter-spacing:-.02em;} .m .l{font-size:11.5px;color:var(--ink2);margin-top:6px;font-weight:600;}
   .m.good .v{color:var(--green);}.m.bad .v{color:var(--red);}
   ul{margin:8px 0 0;padding-left:18px;}li{margin:5px 0;}
   .tag{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 10px;border-radius:90px;}
@@ -35,8 +30,13 @@
   .box.red{border-color:#f3c9c9;background:#fdf6f6;}.box.amber{border-color:#f0dcbd;background:#fdf9f2;}
   .box h3{margin:0 0 6px;font-size:15.5px;font-weight:800;}.box p{margin:0;font-size:13.5px;}
   .box .why{color:var(--ink2);font-size:12.5px;margin-top:6px;}
-  .pb{margin:0 0 14px;}
-  .pb .h{font-size:13px;font-weight:800;margin:0 0 6px;}
+  .quote{font-size:13px;color:var(--ink2);font-style:italic;border-left:3px solid var(--line);padding-left:12px;margin:10px 0 0;}
+  table.t{width:100%;border-collapse:collapse;margin-top:12px;}
+  table.t th,table.t td{padding:9px 10px;border-top:1px solid var(--line);font-size:13px;text-align:left;}
+  table.t th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);border-top:0;font-weight:700;}
+  table.t td.n{font-weight:700;white-space:nowrap;}
+  table.t tr.best td{background:var(--green-bg);}
+  .pb{margin:0 0 14px;}.pb .h{font-size:13px;font-weight:800;margin:0 0 6px;}
   .pb pre{margin:0;background:#11253e;color:#e3e9f2;border-radius:10px;padding:14px 16px;
     font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;
     white-space:pre-wrap;word-break:break-word;overflow-x:auto;}
@@ -47,20 +47,14 @@
   .steps li::before{content:counter(s);position:absolute;left:0;top:9px;width:26px;height:26px;background:var(--ink);
     color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
   .owner{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;}
-  .effect{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-  .effect .e{background:var(--soft);border-radius:10px;padding:16px;}.effect .e b{display:block;font-size:15px;}
-  /* ── Калькулятор ── */
   .calc-hero{background:var(--ink);color:#fff;border:none;}
   .calc-hero .kicker{color:#c8b3f0;}.calc-hero h1{color:#fff;}.calc-hero .sub{color:#b8c1cf;}
   .fact{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
   .fc{background:var(--soft);border-radius:12px;padding:14px;}
   .fc .fv{font-size:20px;font-weight:800;}.fc .fl{font-size:12px;color:var(--ink2);margin-top:4px;line-height:1.4;}
   table.io{width:100%;border-collapse:collapse;}
-  table.io th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);text-align:right;padding:0 8px 8px;font-weight:700;}
-  table.io th:first-child{text-align:left;}
   table.io td{padding:6px 8px;border-top:1px solid var(--line);vertical-align:middle;}
-  table.io td.lbl{font-size:13px;font-weight:600;}
-  table.io td.lbl small{display:block;font-weight:500;color:var(--ink2);font-size:11px;}
+  table.io td.lbl{font-size:13px;font-weight:600;} table.io td.lbl small{display:block;font-weight:500;color:var(--ink2);font-size:11px;}
   table.io input{width:150px;padding:9px 11px;border:2px solid var(--line);border-radius:10px;
     font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);text-align:right;}
   table.io input:focus{outline:none;border-color:var(--blue);}
@@ -68,8 +62,7 @@
   table.io input.askv{border-color:#c5c6f5;background:#eeeffe;}
   .res{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;}
   .rc{border-radius:14px;padding:18px;background:var(--green-bg);border:1.5px solid #b2e8d2;}
-  .rc.blue{background:#eeeffe;border-color:#c5c6f5;}
-  .rc.big{grid-column:span 1;background:var(--ink);border-color:var(--ink);}
+  .rc.blue{background:#eeeffe;border-color:#c5c6f5;}.rc.big{background:var(--ink);border-color:var(--ink);}
   .rc .l{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;color:var(--green);}
   .rc.blue .l{color:var(--blue);}.rc.big .l{color:#c8b3f0;}
   .rc .v{font-size:23px;font-weight:800;line-height:1.15;color:var(--green);}.rc.blue .v{color:var(--blue);}.rc.big .v{color:#fff;}
@@ -77,245 +70,246 @@
   .item{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
   .item .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
   .item .t2{font-size:14px;font-weight:700;}.item .a{font-size:17px;font-weight:800;color:var(--green);white-space:nowrap;}
-  .item .f{font-size:12px;color:var(--ink2);background:var(--soft);border-radius:8px;padding:7px 10px;margin-top:8px;
-    font-family:ui-monospace,Menlo,Consolas,monospace;}
+  .item .f{font-size:12px;color:var(--ink2);background:var(--soft);border-radius:8px;padding:7px 10px;margin-top:8px;font-family:ui-monospace,Menlo,Consolas,monospace;}
   .est{color:var(--blue);font-weight:700;}.sys{color:var(--green);font-weight:700;}
   .note{font-size:11.5px;color:var(--ink3);line-height:1.5;margin-top:14px;}.note b{color:var(--ink2);}
   .foot{display:flex;align-items:center;gap:12px;color:var(--ink2);font-size:12.5px;padding:6px 2px 0;}
-  .chip{width:34px;height:34px;border-radius:9px;background:var(--grad);flex-shrink:0;display:flex;
-    align-items:center;justify-content:center;color:#fff;font-weight:800;}
-  @media (max-width:640px){.metrics,.fact,.res,.effect{grid-template-columns:1fr;}table.io input{width:100%;}}
+  .chip{width:34px;height:34px;border-radius:9px;background:var(--grad);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;}
+  @media (max-width:640px){.metrics,.fact,.res{grid-template-columns:1fr;}table.io input{width:100%;}
+    table.t{display:block;overflow-x:auto;}}
   @media print{body{background:#fff;padding:0;}.card{break-inside:avoid;}}
 </style>
 </head>
 <body>
 <div class="page">
 
+  <!-- 1. HERO -->
   <div class="card hero">
-    <p class="kicker">Разбор работы ИИ-агента</p>
-    <h1>Как ваш ИИ-менеджер принимает заявки сам — и где скрыт рост лидов</h1>
-    <p class="sub">БАЙСКИЛЗ · агенты Lerna / GeekBrains / Skillbox (Instagram + WhatsApp) · период: ~2 месяца (2 362 диалога)</p>
+    <p class="kicker">Разбор работы ИИ-агентов</p>
+    <h1>Как ваши агенты собирают лиды в пяти каналах и где спрятан рост</h1>
+    <p class="sub">Lerna и GeekBrains · 9 агентов, Instagram и WhatsApp · период: 1 июля — 28 августа 2026, 3 051 диалог</p>
   </div>
 
+  <!-- 2. ЧТО СДЕЛАЛИ -->
   <div class="card">
     <h2>Что мы сделали</h2>
-    <p class="lead">Разобрали все переписки ваших агентов в Instagram и WhatsApp и то, как они передают
-      лиды в отдел продаж. Ниже — что уже работает сильно, где теряется часть заявок, как это исправить,
-      и расчёт эффекта в деньгах в конце.</p>
+    <p class="lead">Разобрали все 3 051 диалог за два месяца — не выборку. Каждый агент и каждый канал считали отдельно, потому что задачи у них разные: в Instagram телефон нужно добыть с нуля, в WhatsApp он часто виден уже на входе. По каждому потоку посчитали воронку, проверили настройки и прочитали проблемные переписки целиком.</p>
     <div class="metrics">
-      <div class="m"><div class="v">2 362</div><div class="l">диалога за период</div></div>
-      <div class="m good"><div class="v">59%</div><div class="l">оставляют телефон в отдел продаж</div></div>
-      <div class="m good"><div class="v">100%</div><div class="l">без единой передачи оператору</div></div>
-      <div class="m good"><div class="v">~12 сек</div><div class="l">среднее время ответа, 24/7</div></div>
+      <div class="m"><div class="v">3 051</div><div class="l">диалог за период</div></div>
+      <div class="m good"><div class="v">12 сек</div><div class="l">медиана ответа, круглосуточно</div></div>
+      <div class="m good"><div class="v">682</div><div class="l">лида передано в продажи</div></div>
+      <div class="m bad"><div class="v">до 44 %</div><div class="l">обращений к каталогу без ответа</div></div>
     </div>
   </div>
 
+  <!-- 3. СИЛЬНЫЕ СТОРОНЫ -->
   <div class="card">
     <h2>Сильные стороны <span class="tag g">работает хорошо</span></h2>
     <ul>
-      <li><b>Каждый второй диалог доходит до телефона в отделе продаж</b> — 59% захвата для входящих из
-        соцсетей это сильный показатель, и достигается он полностью автоматически.</li>
-      <li><b>Полная автономность.</b> За период — ни одной передачи диалога на живого оператора. Весь
-        входящий поток по трём брендам (Lerna, GeekBrains, Skillbox) в Instagram и WhatsApp агенты держат сами.</li>
-      <li><b>Мгновенный ответ (~12 сек) круглосуточно</b> — заявка из соцсети не остывает, пользователь
-        отвечает, пока ему интересно.</li>
-      <li><b>Точно подбирает курс под запрос</b> — по направлению обращается к таблице курсов и выдаёт
-        релевантные программы с описанием и длительностью, а не общие слова.</li>
-      <li><b>Соблюдает регламент и не выдумывает</b>: не называет цену сам, ведёт по методике «цель → барьер →
-        результат», отрабатывает «подумаю», аккуратно уводит тех.вопросы на поддержку. Интеграции (передача
-        лида, таблицы курсов) — <b>без единой ошибки</b> за период.</li>
+      <li><b>Полная автономность.</b> За два месяца в диалоги не зашёл ни один оператор — ни одного сообщения от человека на 3 051 диалог. Первую линию агенты держат целиком сами.</li>
+      <li><b>12 секунд на ответ, одинаково во всех пяти каналах.</b> 97 % ответов быстрее пятнадцати секунд, максимум по потокам — 16 секунд на девяностом процентиле. Ровная скорость на разных агентах — признак здоровой настройки, а не везения.</li>
+      <li><b>Трафик вырос на 21 % за месяц</b> (июль 1 415 диалогов → август 1 710), и это не потребовало ни людей, ни падения скорости.</li>
+      <li><b>Техника не подводит.</b> Ошибок функций по всем потокам практически нет: вызовы передачи лида в amoCRM возвращают номер заявки, сбоев в обработке нет.</li>
+      <li><b>Автонапоминания реально приносят лиды.</b> В потоке Lerna WhatsApp касание после паузы дало 53 лида — это 16,5 % всего результата потока.</li>
+      <li><b>Один из потоков уже собран правильно.</b> GeekBrains WhatsApp доводит до лида 32 % диалогов против 18–23 % у остальных, и мы разобрали, за счёт чего именно.</li>
     </ul>
   </div>
 
+  <!-- 4. ПОТОКИ -->
   <div class="card">
-    <h2>Где теряется часть заявок</h2>
-    <p class="lead">Мы разложили диалоги, где телефон не оставили (41% потока), по темам. Картина чёткая:
-      бот принимает поток отлично, а утечка — в нескольких повторяющихся местах сценария.</p>
-    <div class="box red">
-      <h3>🔴 Ценовая стена — вопрос №1, на который бот не даёт ответа</h3>
-      <p><b>Цена — самый частый вопрос: 15% всех диалогов (≈350).</b> Но бот на него не отвечает вообще —
-        только «стоимость зависит от программы, оставьте телефон, менеджер сориентирует». В переписках видно,
-        как пользователь <b>по 3–4 раза</b> переспрашивает цену и, не получив даже ориентира, уходит без контакта.</p>
-      <p class="why"><b>Что происходит:</b> человек хочет цифру здесь и сейчас, а получает стену. Даже
-        безопасная вилка («от X ₽ или рассрочка от Y ₽/мес, точную сумму со скидками назовёт менеджер»)
-        снимает часть отказов и повышает захват. Что именно раскрывать — согласуем с вами.</p>
-    </div>
-    <div class="box amber">
-      <h3>🟡 Интерес есть, а моста к телефону нет</h3>
-      <p>Среди тех, кто реально общался, но не оставил телефон, <b>треть (32%)</b> — это консультации по выбору
-        направления: бот показал курсы, спросил «какой интереснее?» — и на этом всё. Запрос телефона у бота
-        сейчас жёстко привязан к вопросу цены, а после простого интереса мягкого перехода к контакту нет.</p>
-      <p class="why">Достаточно добавить в сценарий естественный мост («подберу точную программу и передам
-        менеджеру — как вас зовут и куда позвонить?») сразу после проявленного интереса, а не только на цену.</p>
-    </div>
-    <div class="box amber">
-      <h3>🟡 Повтор приветствия и долгие ответы на нецелевое → дорогой диалог</h3>
-      <p>Средний диалог — 38 ₽, дороже типичного. В переписках видно причину: на каждое новое сообщение
-        (например, пересланный Instagram-reel) бот заново шлёт полное приветствие «Меня зовут Михаил…», а на
-        спам и троллинг («1+1», «дай денег», реклама) отвечает развёрнуто и по многу реплик — один такой
-        диалог доходит до 90 ₽.</p>
-      <p class="why">Приветствие один раз за диалог, короткая реакция на явно нецелевое и дробление ответов
-        по необходимости (а не жёсткие 3+ сообщения) заметно снижают стоимость без потери качества.</p>
-    </div>
-    <div class="box amber">
-      <h3>🟡 Нецелевые обращения обрабатываются вручную-развёрнуто</h3>
-      <p>8% потока — не по адресу (создание сайтов, розыгрыши, «не могу войти», возвраты). Это не ваши лиды,
-        но бот отвечает на них подробно, тратя 15–45 ₽ на диалог. Быстрая маршрутизация (короткий ответ +
-        ссылка на нужный канал/почту) сохранит бюджет для целевых обращений.</p>
-    </div>
+    <h2>Потоки: одинаковых агентов у вас нет</h2>
+    <p class="lead">Средняя по аккаунту скрывает разницу в полтора раза. Ниже — воронка каждого потока отдельно.</p>
+    <table class="t">
+      <thead><tr><th>Поток</th><th>Диалогов</th><th>Вовлечённые</th><th>Бот попросил номер</th><th>Лид в CRM</th></tr></thead>
+      <tbody>
+        <tr><td>Lerna WhatsApp виджет</td><td class="n">1 378</td><td class="n">648 (47 %)</td><td class="n">513 (37 %)</td><td class="n">321 (23,3 %)</td></tr>
+        <tr><td>Lerna Instagram</td><td class="n">983</td><td class="n">537 (55 %)</td><td class="n">308 (31 %)</td><td class="n">218 (22,2 %)</td></tr>
+        <tr><td>GeekBrains Instagram</td><td class="n">387</td><td class="n">193 (50 %)</td><td class="n">93 (24 %)</td><td class="n">70 (18,1 %)</td></tr>
+        <tr class="best"><td>GeekBrains WhatsApp</td><td class="n">162</td><td class="n">93 (57 %)</td><td class="n">65 (40 %)</td><td class="n">52 (32,1 %)</td></tr>
+        <tr><td>Lerna WhatsApp чатбот</td><td class="n">98</td><td class="n">48 (49 %)</td><td class="n">—</td><td class="n">21 (21,4 %)</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:16px 0 0"><b>Что делает лучший поток иначе:</b> квалификация из пяти шагов проходит <i>до</i> просьбы о номере, а не вместо неё; на вопрос о цене есть готовая рамка — «разово или в рассрочку без переплат, точная сумма зависит от курса»; перед запросом контакта звучит конкретная цифра дохода по стране клиента. Мы это не придумали — нашли у вас же и предлагаем перенести на остальные потоки.</p>
   </div>
 
+  <!-- 5. ГДЕ ТЕРЯЕТСЯ -->
   <div class="card">
-    <h2>Что настроить и чем наполнить базу</h2>
-    <p class="lead">Часть правок — в сценарии бота, их можно внести сразу. Часть — наполнение базы знаний;
-      содержание мы за вас не выдумываем, соберём из ваших регламентов и ответов менеджеров. Приоритет — по
-      влиянию на захват:</p>
+    <h2>Где теряются лиды</h2>
+    <p class="lead">Разложили по причинам все диалоги, где человек был вовлечён, но до передачи в отдел продаж дело не дошло.</p>
+
+    <div class="box red"><h3>🔴 Бот не просит контакт — 513 диалогов за два месяца</h3>
+      <p>Это самая крупная потеря, и она не про возражения. В части диалогов агент просто ни разу не запрашивает телефон: у Lerna Instagram — в 43 % вовлечённых, у GeekBrains Instagram — в 54 %, у Lerna WhatsApp — в 21 %. А когда просит, номер дают в 63–86 % случаев.</p>
+      <p class="why"><b>Что это значит:</b> шаг пропускается не потому, что клиент против — отказ именно от звонка встречается в 0,6 % диалогов. Правило «спросить контакт, если клиент написал трижды, назвал курс или спросил цену» закрывает эту дыру без переделки сценария.</p></div>
+
+    <div class="box red"><h3>🔴 Каталог курсов не находит курс — до 44 % обращений</h3>
+      <p>Поиск по базе возвращает пустой ответ в 44 % случаев у Lerna WhatsApp, 40 % у GeekBrains WhatsApp, 36 % у Lerna Instagram. В каталоге GeekBrains нет направления «Искусственный интеллект», в каталоге Lerna — психологии, игр, кино и музыки, здоровья, хотя сценарий их обещает. Часть промахов чисто техническая: поиск чувствителен к регистру.</p>
+      <p class="quote">Бот: «курс, возможно, ещё не добавлен или на этапе запуска». Клиент: «Значит это ложная реклама?»</p>
+      <p class="why"><b>Что это значит:</b> у Lerna WhatsApp именно это стало причиной 65 % потерь среди вовлечённых. Человек спрашивает про конкретный курс — самый горячий сигнал, который вообще бывает, — и получает отказ вместо ответа.</p></div>
+
+    <div class="box amber"><h3>🟡 Лид уезжает в CRM без телефона — 67 случаев</h3>
+      <p>У GeekBrains Instagram номер попал в передачу заявки 3 раза из 70 — это 4 %. У Lerna Instagram тот же механизм срабатывает в 100 % случаев. Разница в одной строке сценария: у GeekBrains не указан параметр телефона. Отдельно у Lerna Instagram есть 50 диалогов, где номер получен, а заявка в CRM так и не ушла.</p>
+      <p class="why"><b>Что это значит:</b> это не рост конверсии, а возврат уже заработанного. Лиды собраны и потеряны на последнем шаге.</p></div>
+
+    <div class="box amber"><h3>🟡 Цена — главное возражение, ответа на него нет</h3>
+      <p>На вопросе о стоимости теряется 33 % вовлечённых у Lerna Instagram, 20 % у WhatsApp-виджета, 18 % у GeekBrains Instagram. 6 % клиентов переспрашивают цену дважды и получают тот же отказ. Есть диалог, где человек хотел купить полный комплект курсов и ушёл после третьего «не обладаю информацией».</p>
+      <p class="why"><b>Что это значит:</b> запрет называть цифры сам по себе не вредит — в лучшем потоке он тоже есть. Вредит отсутствие рамки вокруг него: чем ответить вместо цифры и как перевести на специалиста.</p></div>
+  </div>
+
+  <!-- 6. ЧТО НАСТРОИТЬ -->
+  <div class="card">
+    <h2>Что настроить</h2>
+    <p class="lead">Правки сценария можно внести сразу. Наполнение каталога — на вашей стороне, тут нужны материалы по курсам.</p>
     <ul>
-      <li><b>Ценовые ориентиры</b> — вилки «от X ₽ / рассрочка от Y ₽ в месяц» по направлениям, чтобы бот
-        давал ответ, а не стену (что раскрывать — на ваше усмотрение).</li>
-      <li><b>Мост к телефону после интереса</b> — правка сценария: просить контакт сразу после выбора
-        направления, не только на вопрос цены.</li>
-      <li><b>Частые темы в базу знаний</b> — сравнение курсов внутри направления, формат и длительность,
-        трудоустройство, условия рассрочки: по одному выверенному ответу на тему.</li>
+      <li><b>Расширить память агента у Lerna Instagram.</b> Сейчас окно — 5 сообщений и 60 минут, а сценарий требует пройти пять этапов квалификации со сверкой по всей истории. На таком окне это невозможно: этапы фактически не проходятся, агент прыгает с приветствия сразу к просьбе о номере. При этом конверсия ломается ровно на пятой реплике клиента — до неё 10–21 %, на ней 55 %.</li>
+      <li><b>Подключить автонапоминания у Lerna WhatsApp чат-бота</b> — сейчас их нет вообще, при том что половина потока не доходит до второй реплики. Готовая группа уже настроена на соседнем агенте, это одно поле.</li>
+      <li><b>Увеличить склейку сообщений у GeekBrains WhatsApp</b> с 10 до 25–30 секунд: сейчас агент отвечает дважды в 42 % диалогов и повторяет приветствие в 19 %.</li>
+      <li><b>Отсечь служебные сообщения amoCRM от агента.</b> Триггеры вида «Отправь это сообщение без изменения» и «Пришёл запрос из Fasttrack» попадают в диалог как реплики клиента — в один диалог прилетело 30 штук, и агент отвечал приветствием на каждую.</li>
+      <li><b>Поставить лимит на диалог.</b> Сейчас его нет: один диалог на 68 реплик без интента обошёлся в 1 096 ₽ — это 9 % расхода целого потока.</li>
+      <li><b>Включить разметку диалогов тегами</b> — тогда воронку по потокам будет видно прямо в интерфейсе. Готовый набор тегов под ваши направления мы подготовили отдельно.</li>
     </ul>
-    <div class="pb" style="margin-top:14px"><div class="h">🧹 Правки сценария, которые можно внести сразу (без новых материалов)</div><pre><span class="t">#ПРАВИЛА ОТВЕТА (дополнить инструкцию бота)</span>
-- Приветствие «Меня зовут Михаил…» — только в первом сообщении диалога; дальше сразу к сути.
-- На пересланный reel/ссылку/стикер без вопроса — не повторять приветствие, задать один уточняющий вопрос.
-- На явный оффтоп/спам (розыгрыши, «дай денег», не по теме обучения) — один короткий ответ, без длинной консультации.
-- Просить телефон не только на вопрос цены, но и сразу после того, как клиент проявил интерес к направлению.
-- Тех.проблемы/доступ и возвраты — сразу короткий роутинг на нужную почту, без развёрнутого диалога.</pre></div>
+    <div class="pb" style="margin-top:16px"><div class="h">🧹 Правки сценария, которые можно внести сразу</div><pre><span class="t">#ПРАВИЛО КОНТАКТА (приоритет выше этапов диалога)</span>
+Ты ОБЯЗАН запросить контакт, если выполнено хотя бы одно условие:
+— клиент написал три и более сообщения;
+— клиент назвал конкретный курс или направление;
+— клиент спросил про цену, рассрочку, сроки или трудоустройство.
+Не жди прохождения всех этапов: этапы нужны, чтобы запрос контакта
+звучал уместно, а не чтобы отложить его.
+Если клиент не дал контакт с первого раза — запроси ещё раз перед
+завершением разговора и объясни, зачем он нужен.
+
+<span class="t">#ЕСЛИ КУРС НЕ НАЙДЕН</span>
+Никогда не говори «в нашей базе нет», «курс не добавлен», «возможно,
+на этапе запуска» и не строй догадок о наличии курса.
+Скажи: «Уточню по этому направлению у специалиста — оставьте телефон,
+он свяжется и всё расскажет» — и запроси контакт.
+
+<span class="t">#ЦЕНА</span>
+Точную стоимость не называй. Отвечай по схеме:
+1) обучение можно оплатить разово или в рассрочку без переплат;
+2) точная сумма зависит от курса и текущих условий;
+3) специалист назовёт цифру и подберёт формат — оставьте телефон.
+Если клиент спрашивает про цену ВТОРОЙ раз — не повторяй тот же ответ.
+Признай вопрос и сразу переходи к запросу контакта.</pre></div>
   </div>
 
+  <!-- 7. ВОЗМОЖНОСТИ -->
   <div class="card">
     <h2>Новые возможности Савви, которые здесь усилят результат <span class="tag a">апгрейд</span></h2>
     <ul>
-      <li><b>Анализатор</b> — автоматически размечает все диалоги по темам и исходам: видно в реальном
-        времени, сколько заявок упирается в вопрос цены, где обрывается интерес и какой захват по каждому
-        бренду. Тот разбор, что мы сделали руками, вы получаете постоянно и сами.</li>
-      <li><b>Автообучение</b> — бот подсказывает, каких ответов не хватает под реальные вопросы (например,
-        по ценам и сравнению курсов), вы подтверждаете формулировку — база растёт, захват увеличивается.</li>
-      <li><b>Автонапоминания (follow-up)</b> — возвращают тех, кто проявил интерес, но не оставил телефон:
-        полезный материал по направлению + мягкое повторное касание. Тёплая аудитория не теряется молча.</li>
+      <li><b>Анализатор</b> — автоматическая разметка диалогов по темам и исходам. Сейчас она выключена, поэтому разницу между потоками приходится считать вручную. С ней вы будете видеть в интерфейсе, где какой агент теряет людей, без выгрузок.</li>
+      <li><b>Автонапоминания под конкретный шаг.</b> У вас они уже приносят 16,5 % результата в одном потоке. Не хватает малого: подключить их там, где их нет, и починить условия там, где они срабатывают не на тех — например, у GeekBrains Instagram напоминание уходит и тем, кто уже оставил номер.</li>
+      <li><b>База знаний, которая пополняется из ответов ваших менеджеров.</b> Сейчас контур разомкнут: агенты работают полностью автономно, а продавцы отвечают по телефону, и их формулировки в систему не возвращаются. При этом менеджеры каждый день отрабатывают ровно те возражения, на которых буксует бот — цена, рассрочка, трудоустройство, оплата из другой страны. Если эти ответы существуют в виде скриптов, их можно положить в базу как есть.</li>
     </ul>
   </div>
 
+  <!-- 8. ПЛАН -->
   <div class="card">
     <h2>План действий</h2>
     <ol class="steps">
-      <li><span class="owner">Сценарий · приоритет 1</span><br>Дать боту ценовые ориентиры (вилки/рассрочка) — снять «ценовую стену», самый частый повод ухода без контакта.</li>
-      <li><span class="owner">Сценарий · быстрый эффект</span><br>Добавить мост к телефону сразу после интереса к направлению, а не только на вопрос цены.</li>
-      <li><span class="owner">Настройка бота</span><br>Приветствие один раз, короткая реакция на нецелевое/спам, гибкое дробление — снизить стоимость диалога.</li>
-      <li><span class="owner">Возможности</span><br>Включить автонапоминания для догрева не оставивших телефон; подключить Анализатор для контроля захвата.</li>
+      <li><span class="owner">Сценарий · приоритет 1</span><br>Добавить правило обязательного запроса контакта во все лидогенные сценарии. Это самая крупная потеря и самая простая правка.</li>
+      <li><span class="owner">Техника · возврат заработанного</span><br>Указать параметр телефона в передаче заявки у GeekBrains Instagram и проверить условие вызова у Lerna Instagram. Это 67 и 50 лидов соответственно.</li>
+      <li><span class="owner">База знаний</span><br>Добавить в каталог недостающие направления, начиная с «Искусственного интеллекта» у GeekBrains, и привести поиск к нижнему регистру.</li>
+      <li><span class="owner">Сценарий</span><br>Перенести на все потоки рамку ответа на цену из GeekBrains WhatsApp.</li>
+      <li><span class="owner">Техника</span><br>Расширить память у Lerna Instagram, подключить напоминания у чат-бота, поднять склейку у GeekBrains WhatsApp, отсечь служебные триггеры.</li>
+      <li><span class="owner">Гигиена</span><br>Поставить лимиты на диалог, включить теги, убрать дубли документов и неиспользуемые функции, разобраться с простаивающими агентами.</li>
     </ol>
   </div>
 
+  <!-- 9. АПСАЙД -->
   <div class="card">
-    <h2>Насколько ещё можно поднять захват</h2>
-    <p class="lead">Бот уже забирает весь поток сам и доводит до телефона каждый второй диалог. Рост
-      упирается не в приём заявок, а в несколько мест сценария, которые видно в переписках.</p>
+    <h2>Насколько ещё можно поднять поток лидов</h2>
+    <p class="lead">Агенты уже держат весь входящий поток без людей. Рост — в устранимых причинах, которые видны в переписках.</p>
     <div class="metrics">
-      <div class="m good"><div class="v">59%</div><div class="l">оставляют телефон сейчас</div></div>
-      <div class="m bad"><div class="v">41%</div><div class="l">уходят без контакта</div></div>
-      <div class="m"><div class="v">~18%</div><div class="l">вовлечённых утечек — из-за вопроса цены</div></div>
-      <div class="m"><div class="v">~32%</div><div class="l">вовлечённых утечек — интерес без моста к телефону</div></div>
+      <div class="m good"><div class="v">22,4 %</div><div class="l">диалогов доходят до лида сейчас</div></div>
+      <div class="m bad"><div class="v">513</div><div class="l">вовлечённых без запроса контакта</div></div>
+      <div class="m"><div class="v">117</div><div class="l">лидов потеряно на последнем шаге</div></div>
+      <div class="m"><div class="v">32,1 %</div><div class="l">даёт лучший поток уже сейчас</div></div>
     </div>
-    <p style="margin:16px 0 0"><b>Где именно берётся рост:</b> ценовые ориентиры закрывают отказы «не сказали
-      цену»; мост к телефону после интереса добирает тех, кто консультировался, но не дошёл до контакта;
-      автонапоминания возвращают часть ушедших подумать. Это управляемые изменения сценария и базы, а не
-      «бот не справляется».</p>
-    <p class="lead" style="margin:12px 0 0">Точную прибавку в процентных пунктах оценим после правок и
-      подключения Анализатора — цифры выше это ориентир по структуре текущей утечки, не обещание.</p>
+    <p style="margin:16px 0 0"><b>Где именно берётся рост:</b> если запрашивать контакт хотя бы в половине тех диалогов, где сейчас его не запрашивают, при вашей же нынешней конверсии запроса это порядка <b>+90 лидов в месяц к нынешним 341</b> — примерно четверть сверху. Оценка ориентировочная: часть таких диалогов не дошла до просьбы по объективным причинам, точную цифру увидим на замере после правок. Отдельно и без всяких допущений возвращаются 117 лидов, которые уже собраны, но не доехали до CRM. И есть ориентир сверху: лучший из ваших потоков даёт 32,1 % — при том что сценарий у него написан теми же руками.</p>
   </div>
 
-  <!-- ═══════════════ КАЛЬКУЛЯТОР ЭФФЕКТА ═══════════════ -->
+  <!-- 10. КАЛЬКУЛЯТОР -->
   <div class="card calc-hero">
     <p class="kicker">Расчёт эффекта · заполняем вместе</p>
-    <h1>Сколько выручки приносит поток лидов с бота</h1>
-    <p class="sub">Зелёным — уже измерено в системе. Синим — впишем ваши цифры на встрече. Расчёт пересчитается сразу, внизу — эффект за год.</p>
+    <h1>Сколько лидов и выручки добавляют правки</h1>
+    <p class="sub">Зелёным — уже измерено в системе. Синим — впишем ваши цифры на встрече. Внизу — эффект за год.</p>
   </div>
-
   <div class="card">
-    <h2>Что бот уже делает сам <span class="sys">из системы</span></h2>
+    <h2>Что агенты уже делают сами <span class="sys">из системы</span></h2>
     <p class="lead">Факты за период — их не нужно спрашивать, они измерены.</p>
     <div class="fact">
-      <div class="fc"><div class="fv">~1 180</div><div class="fl">диалогов в месяц обрабатывает бот</div></div>
-      <div class="fc"><div class="fv">59%</div><div class="fl">доходят до телефона в отделе продаж, без оператора</div></div>
-      <div class="fc"><div class="fv">~12 сек</div><div class="fl">среднее время ответа 24/7, заявка не остывает</div></div>
+      <div class="fc"><div class="fv">1 526</div><div class="fl">диалогов в месяц, без единого оператора</div></div>
+      <div class="fc"><div class="fv">341</div><div class="fl">лида в месяц передано в продажи</div></div>
+      <div class="fc"><div class="fv">12 сек</div><div class="fl">ответ круглосуточно, во всех каналах</div></div>
     </div>
   </div>
-
   <div class="card">
     <h2>Ваши цифры</h2>
-    <p class="lead"><span class="sys">Зелёные</span> — из системы (можно уточнить). <span class="est">Синие</span> — впишем на встрече по вашим данным отдела продаж.</p>
-    <table class="io">
-      <tbody>
-        <tr><td class="lbl">Диалогов в месяц<small>входящих на бота — из системы</small></td>
-          <td><input id="dlg" class="sysv" type="number" value="1180"></td></tr>
-        <tr><td class="lbl">Захват в телефон, %<small>доходят до лида в отдел — из системы</small></td>
-          <td><input id="cap" class="sysv" type="number" value="59"></td></tr>
-        <tr><td class="lbl">Конверсия лид → продажа, %<small>доводит отдел продаж</small></td>
-          <td><input id="sale" class="askv" type="number" value="12"></td></tr>
-        <tr><td class="lbl">Средний чек / маржа с продажи, ₽<small>с одного оплаченного курса</small></td>
-          <td><input id="check" class="askv" type="number" value="60000"></td></tr>
-        <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td>
-          <td><input id="savvi" class="sysv" type="number" value="47000"></td></tr>
-      </tbody>
-    </table>
+    <p class="lead"><span class="sys">Зелёные</span> — из системы. <span class="est">Синие</span> — впишем на встрече.</p>
+    <table class="io"><tbody>
+      <tr><td class="lbl">Диалогов в месяц<small>измерено за два месяца</small></td><td><input id="i1" class="sysv" type="number" value="1526"></td></tr>
+      <tr><td class="lbl">Доходят до лида сейчас, %<small>682 лида из 3 051 диалога</small></td><td><input id="i2" class="sysv" type="number" step="0.1" value="22.4"></td></tr>
+      <tr><td class="lbl">Цель после правок, %<small>впишем на встрече</small></td><td><input id="i3" class="askv" type="number" step="0.1" value=""></td></tr>
+      <tr><td class="lbl">Из лида в оплату, %<small>впишем на встрече</small></td><td><input id="i4" class="askv" type="number" step="0.1" value=""></td></tr>
+      <tr><td class="lbl">Средний чек, ₽<small>впишем на встрече</small></td><td><input id="i5" class="askv" type="number" value=""></td></tr>
+      <tr><td class="lbl">Менеджеров было до бота<small>впишем на встрече</small></td><td><input id="i6" class="askv" type="number" step="0.5" value=""></td></tr>
+      <tr><td class="lbl">Менеджеров сейчас<small>впишем на встрече</small></td><td><input id="i7" class="askv" type="number" step="0.5" value=""></td></tr>
+      <tr><td class="lbl">Зарплата менеджера, ₽/мес<small>впишем на встрече, со взносами</small></td><td><input id="i8" class="askv" type="number" value=""></td></tr>
+      <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td><td><input id="isavvi" class="sysv" type="number" value="72946"></td></tr>
+    </tbody></table>
   </div>
-
   <div class="card">
     <h2>Что это даёт</h2>
     <div class="res">
-      <div class="rc"><div class="l">Лидов на боте</div><div class="v" id="r-leads">—</div><div class="s">телефонов в отдел / мес</div></div>
-      <div class="rc"><div class="l">Продаж в месяц</div><div class="v" id="r-sales">—</div><div class="s">с лидов бота</div></div>
-      <div class="rc blue"><div class="l">Выручка / мес</div><div class="v" id="r-month">—</div><div class="s">с потока лидов бота</div></div>
-      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r-year">—</div><div class="s">выручка с лидов бота</div></div>
+      <div class="rc"><div class="l">Лидов в месяц</div><div class="v" id="r1">—</div><div class="s">сверх нынешних 341</div></div>
+      <div class="rc"><div class="l">Доп. оплат в месяц</div><div class="v" id="r2">—</div><div class="s">из добавленных лидов</div></div>
+      <div class="rc blue"><div class="l">Эффект в месяц</div><div class="v" id="r3">—</div><div class="s">выручка + ФОТ − Савви</div></div>
+      <div class="rc big"><div class="l">Эффект за год ×12</div><div class="v" id="r4">—</div><div class="s">та же цифра на горизонте года</div></div>
     </div>
   </div>
-
   <div class="card">
     <h2>Разбор эффекта</h2>
-    <div class="item"><div class="top"><span class="t2">📲 Лидов приносит бот</span><span class="a" id="e-leads">—</span></div><div class="f" id="f-leads"></div></div>
-    <div class="item"><div class="top"><span class="t2">🤝 Продаж с этих лидов</span><span class="a" id="e-sales">—</span></div><div class="f" id="f-sales"></div></div>
-    <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="e-cost" style="color:var(--red)">—</span></div><div class="f" id="f-cost"></div></div>
-    <div class="note"><b>Как считаем:</b> бот доводит до телефона часть диалогов (диалоги × захват) — это лиды
-      в отдел продаж. Умножаем на конверсию отдела лид → продажа и на средний чек — получаем выручку в месяц
-      с потока лидов бота, ×12 за год. Стоимость Савви — реальный расход из системы. Конверсию и чек впишем по
-      вашим данным; отдельно посчитаем прибавку от снятия «ценовой стены» и моста к телефону.</div>
+    <div class="item"><div class="top"><span class="t2">📈 Дополнительная выручка</span><span class="a" id="e1">—</span></div><div class="f" id="f1">диалоги × прирост доли лидов × конверсия в оплату × чек</div></div>
+    <div class="item"><div class="top"><span class="t2">👥 Оптимизация ФОТ</span><span class="a" id="e2">—</span></div><div class="f" id="f2">(менеджеров было − стало) × зарплата</div></div>
+    <div class="item"><div class="top"><span class="t2">💬 Стоимость Савви</span><span class="a" id="ec" style="color:var(--red)">−73 тыс ₽</span></div><div class="f" id="fc">72 946 ₽/мес — реальный расход, ≈214 ₽ за переданный лид</div></div>
+    <div class="note"><b>Как считаем:</b> дополнительная выручка = диалоги в месяц × (целевая доля лидов − текущая 22,4 %) × конверсия из лида в оплату × средний чек. К ней прибавляем оптимизацию ФОТ и вычитаем стоимость Савви. Годовая цифра — месячный эффект ×12. Пока синие поля пустые, калькулятор их не выдумывает — заполним вместе, и цифры пересчитаются сразу.</div>
   </div>
 
-  <div class="card">
-    <div class="foot"><div class="chip">S</div>
-      <div>Разбор подготовлен на данных вашего проекта в Савви (2 362 диалога за ~2 месяца). Цифры калькулятора —
-        ориентир, финальные значения сверяем вместе.</div></div>
-  </div>
+  <!-- ФУТЕР -->
+  <div class="card"><div class="foot"><div class="chip">S</div>
+    <div>Разбор подготовлен на данных вашего проекта в Савви: 3 051 диалог и 41 841 сообщение за 1 июля — 28 августа 2026, по каждому агенту и каналу отдельно. Цифры калькулятора — ориентир, финальные значения сверяем вместе.</div></div></div>
 
 </div>
-
 <script>
   function rub(n){n=Math.round(n);var s=n<0?'−':'';n=Math.abs(n);
     if(n>=1e6)return s+(n/1e6).toFixed(n>=1e7?0:2).replace('.',',')+' млн ₽';
     if(n>=1e3)return s+Math.round(n/1e3).toLocaleString('ru-RU')+' тыс ₽';return s+n.toLocaleString('ru-RU')+' ₽';}
-  function rubFull(n){return Math.round(n).toLocaleString('ru-RU')+' ₽';}
   function v(id){return parseFloat(document.getElementById(id).value)||0;}
+  var ASK='впишем на встрече';
   function calc(){
-    var d=v('dlg'),cap=v('cap')/100,sale=v('sale')/100,check=v('check'),sv=v('savvi');
-    var leads=d*cap;
-    var sales=leads*sale;
-    var month=sales*check;
-    var year=month*12;
-    document.getElementById('r-leads').textContent=Math.round(leads).toLocaleString('ru-RU');
-    document.getElementById('r-sales').textContent='≈ '+Math.round(sales).toLocaleString('ru-RU');
-    document.getElementById('r-month').textContent=rub(month);
-    document.getElementById('r-year').textContent=rub(year);
-    document.getElementById('e-leads').textContent=Math.round(leads).toLocaleString('ru-RU')+' /мес';
-    document.getElementById('f-leads').textContent=Math.round(d).toLocaleString('ru-RU')+' диалогов × '+Math.round(cap*100)+'% (доходят до телефона)';
-    document.getElementById('e-sales').textContent='≈ '+Math.round(sales).toLocaleString('ru-RU')+' /мес';
-    document.getElementById('f-sales').textContent=Math.round(leads).toLocaleString('ru-RU')+' лидов × '+Math.round(sale*100)+'% (конверсия отдела)';
-    document.getElementById('e-cost').textContent='−'+rub(sv);
-    document.getElementById('f-cost').textContent='реальный расход из системы, '+rubFull(sv)+'/мес';
+    var dlg=v('i1'), now=v('i2')/100, goal=v('i3')/100, sale=v('i4')/100, check=v('i5');
+    var was=v('i6'), is=v('i7'), sal=v('i8'), sv=v('isavvi');
+    var haveGoal=(v('i3')>0), haveRev=(haveGoal&&v('i4')>0&&check>0), haveFot=(was>0&&sal>0);
+    var addLeads=dlg*Math.max(goal-now,0), addSales=addLeads*sale, revenue=addSales*check;
+    var fot=Math.max(was-is,0)*sal;
+    var effect=(haveRev?revenue:0)+(haveFot?fot:0)-sv;
+    document.getElementById('r1').textContent=haveGoal?('+'+Math.round(addLeads).toLocaleString('ru-RU')):ASK;
+    document.getElementById('r2').textContent=haveRev?('≈ +'+Math.round(addSales).toLocaleString('ru-RU')):ASK;
+    document.getElementById('r3').textContent=(haveRev||haveFot)?rub(effect):ASK;
+    document.getElementById('r4').textContent=(haveRev||haveFot)?rub(effect*12):ASK;
+    document.getElementById('e1').textContent=haveRev?rub(revenue):ASK;
+    document.getElementById('e2').textContent=haveFot?rub(fot):ASK;
+    document.getElementById('ec').textContent='−'+rub(sv);
+    document.getElementById('f1').textContent=haveRev
+      ? (dlg+' × ('+v('i3')+'% − '+v('i2')+'%) × '+v('i4')+'% × '+Math.round(check).toLocaleString('ru-RU')+' ₽')
+      : 'диалоги × прирост доли лидов × конверсия в оплату × чек';
+    document.getElementById('f2').textContent=haveFot
+      ? ('('+was+' − '+is+') × '+Math.round(sal).toLocaleString('ru-RU')+' ₽')
+      : '(менеджеров было − стало) × зарплата';
+    document.getElementById('fc').textContent=Math.round(sv).toLocaleString('ru-RU')+' ₽/мес — реальный расход, ≈214 ₽ за переданный лид';
   }
-  ['dlg','cap','sale','check','savvi'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+  ['i1','i2','i3','i4','i5','i6','i7','i8','isavvi'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.addEventListener('input',calc);});
   calc();
 </script>
 </body>
