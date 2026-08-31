@@ -60,6 +60,9 @@
   table.io thead th.hlbl{text-align:left;}
   table.io thead th.now{color:var(--green);}
   table.io td:not(.lbl){text-align:right;width:170px;}
+  table.io tr.total td{border-top:2px solid var(--line);}
+  table.io .calcval{display:inline-block;min-width:150px;padding:9px 11px;font-size:15px;
+    font-weight:800;color:var(--ink);text-align:right;}
   table.io input{width:150px;padding:9px 11px;border:2px solid var(--line);border-radius:10px;
     font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);text-align:right;}
   table.io input:focus{outline:none;border-color:var(--blue);}
@@ -81,6 +84,7 @@
   .foot{display:flex;align-items:center;gap:12px;color:var(--ink2);font-size:12.5px;padding:6px 2px 0;}
   .chip{width:34px;height:34px;border-radius:9px;background:var(--grad);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;}
   @media (max-width:640px){.metrics,.fact,.res{grid-template-columns:1fr;}table.io input{width:100%;}
+    table.io td:not(.lbl){width:auto;}table.io .calcval{min-width:0;width:100%;padding:9px 0;}
     table.t{display:block;overflow-x:auto;}}
   @media print{body{background:#fff;padding:0;}.card{break-inside:avoid;}}
 </style>
@@ -266,8 +270,8 @@
       <tr><td class="lbl">Конверсия диалог → лид, %<small>справа: 682 лида из 3 051 диалога</small></td>
         <td><input id="wCr" class="askv" type="number" step="0.1" value=""></td>
         <td><input id="nCr" class="sysv" type="number" step="0.1" value="22.4"></td></tr>
-      <tr><td class="lbl">Стоимость Савви, ₽/мес<small>реальный расход из системы</small></td>
-        <td style="text-align:right;color:var(--ink3);font-size:13px">—</td>
+      <tr class="total"><td class="lbl">Расходы на обработку лидов, ₽/мес<small>слева — фонд оплаты труда, справа — стоимость агента</small></td>
+        <td><div class="calcval" id="wFot">—</div></td>
         <td><input id="nSvv" class="sysv" type="number" value="72946"></td></tr>
     </tbody></table>
   </div>
@@ -286,7 +290,7 @@
     <div class="item"><div class="top"><span class="t2">👥 Было: зарплаты команды обработки</span><span class="a" id="e1" style="color:var(--red)">—</span></div><div class="f" id="f1">человек × зарплата</div></div>
     <div class="item"><div class="top"><span class="t2">🤖 Стало: зарплаты + агент</span><span class="a" id="e2" style="color:var(--red)">—</span></div><div class="f" id="f2">человек сейчас × зарплата + стоимость Савви</div></div>
     <div class="item"><div class="top"><span class="t2">📈 Лидов стало больше на</span><span class="a" id="e3">—</span></div><div class="f" id="f3">диалоги × конверсия — с обеих сторон</div></div>
-    <div class="note"><b>Как считаем:</b> расходы «было» = человек × зарплата. Расходы «стало» = оставшиеся люди × зарплата + реальный расход на Савви (72 946 ₽/мес, ≈214 ₽ за переданный лид). Заработок — разница между этими суммами, за год ×12. Отдельной строкой показываем, что при этом происходит с количеством лидов: если их стало больше, экономия — не весь эффект. Пока синие поля пустые, калькулятор ничего не выдумывает.</div>
+    <div class="note"><b>Как считаем:</b> расходы «было» — это фонд оплаты труда команды обработки: человек × зарплата. Расходы «стало» = оставшиеся люди × зарплата + реальный расход на Савви (72 946 ₽/мес, ≈214 ₽ за переданный лид). Заработок — разница между этими суммами, за год ×12. Отдельной строкой показываем, что при этом происходит с количеством лидов: если их стало больше, экономия — не весь эффект. Пока синие поля пустые, калькулятор ничего не выдумывает.</div>
   </div>
 
   <!-- ФУТЕР -->
@@ -320,6 +324,7 @@
     T('r2s', haveCost ? (rub(costWas)+' → '+rub(costNow)) : ('было — '+ASK));
     T('r3', haveCost ? rub(gain) : ASK);
     T('r4', haveCost ? rub(gain*12) : ASK);
+    T('wFot', haveCost ? rub(costWas) : '—');
     T('e1', haveCost ? '−'+rub(costWas) : ASK);
     T('e2', haveCost ? '−'+rub(costNow) : ASK);
     T('f1', haveCost ? (wPpl+' чел. × '+num(wSal)+' ₽') : 'человек × зарплата');
